@@ -1,11 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { signInAction, signOutAction } from "./auth";
+import { signInAction, signUpAction, signOutAction } from "./auth";
 import * as authService from "@/lib/auth-service";
 import * as session from "@/lib/session";
 import { redirect } from "next/navigation";
 
 vi.mock("@/lib/auth-service", () => ({
   authenticateUser: vi.fn(),
+  signUpUser: vi.fn(),
 }));
 
 vi.mock("@/lib/session", () => ({
@@ -66,6 +67,68 @@ describe("auth actions", () => {
       expect(result).toEqual({
         success: false,
         error: "Invalid email or password.",
+      });
+    });
+  });
+
+  describe("signUpAction", () => {
+    it("returns error if email or password missing", async () => {
+      const result = await signUpAction({ email: "", password: "" });
+      expect(result).toEqual({
+        success: false,
+        error: "Email and password are required.",
+      });
+      expect(authService.signUpUser).not.toHaveBeenCalled();
+    });
+
+    it("returns error if password is less than 8 characters", async () => {
+      const result = await signUpAction({
+        email: "test@example.com",
+        password: "short",
+      });
+      expect(result).toEqual({
+        success: false,
+        error: "Password must be at least 8 characters.",
+      });
+      expect(authService.signUpUser).not.toHaveBeenCalled();
+    });
+
+    it("registers user and sets token on success", async () => {
+      vi.mocked(authService.signUpUser).mockResolvedValue({
+        success: true,
+        accessToken: "signup-token-xyz",
+      });
+
+      const result = await signUpAction({
+        email: "new@example.com",
+        password: "password123",
+        workspaceName: "My Workspace",
+      });
+
+      expect(authService.signUpUser).toHaveBeenCalledWith({
+        email: "new@example.com",
+        password: "password123",
+        workspaceName: "My Workspace",
+      });
+      expect(session.setSessionToken).toHaveBeenCalledWith("signup-token-xyz");
+      expect(result).toEqual({ success: true });
+    });
+
+    it("returns error on registration failure", async () => {
+      vi.mocked(authService.signUpUser).mockResolvedValue({
+        success: false,
+        error: "An account with this email already exists.",
+      });
+
+      const result = await signUpAction({
+        email: "existing@example.com",
+        password: "password123",
+      });
+
+      expect(session.setSessionToken).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        success: false,
+        error: "An account with this email already exists.",
       });
     });
   });

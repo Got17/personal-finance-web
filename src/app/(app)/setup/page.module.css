@@ -1,0 +1,94 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 4rem);
+  padding: 2rem 1rem;
+}
+
+.setupCard {
+  max-width: 480px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--forest);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-family: Georgia, serif;
+  font-size: 1.75rem;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+  line-height: 1.25;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: var(--muted-ink);
+  line-height: 1.5;
+  margin-bottom: 1.75rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.select {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  color: var(--ink);
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-soft);
+}
+
+.submitButton {
+  margin-top: 0.5rem;
+  padding: 0.85rem 1.25rem;
+  border: 0;
+  border-radius: 0.55rem;
+  background: var(--forest);
+  color: #fffdf8;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.submitButton:hover {
+  background: var(--forest-deep);
+}
