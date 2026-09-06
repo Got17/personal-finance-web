@@ -7,7 +7,9 @@ export default async function SetupPage() {
   const token = await getSessionToken();
   if (!token) {
     redirect("/login");
+    return null;
   }
+
 
   return (
     <div className={styles.container}>

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { getSessionToken } from "@/lib/session";
+import { getSessionToken, clearSessionToken } from "@/lib/session";
+import { getCurrentUser } from "@/lib/auth-service";
 import { redirect } from "next/navigation";
 import { SignOutButton } from "@/components/SignOutButton";
 import styles from "./layout.module.css";
@@ -11,7 +12,19 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const token = await getSessionToken();
   if (!token) {
     redirect("/login");
+    return null;
   }
+
+  const userResult = await getCurrentUser(token);
+  if (!userResult.success) {
+    await clearSessionToken();
+    redirect("/login");
+    return null;
+  }
+
+  const user = userResult.user;
+  const userInitials = user.email ? user.email.slice(0, 2).toUpperCase() : "PF";
+
 
   return (
     <div className={styles.appContainer}>
@@ -29,7 +42,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <div className={styles.sidebarFooter}>
-          <div className={styles.profile}><span className={styles.avatar}>AL</span><span><strong>Alex Lee</strong><small>Personal workspace</small></span></div>
+          <div className={styles.profile}>
+            <span className={styles.avatar}>{userInitials}</span>
+            <span>
+              <strong>{user.email}</strong>
+              <small>Personal workspace</small>
+            </span>
+          </div>
           <SignOutButton />
         </div>
       </aside>
@@ -40,3 +59,4 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
+

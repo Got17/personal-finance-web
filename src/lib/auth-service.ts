@@ -83,3 +83,47 @@ export async function signUpUser(
     };
   }
 }
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type GetCurrentUserResult =
+  | { success: true; user: UserProfile }
+  | { success: false; error: string };
+
+export async function getCurrentUser(
+  token: string,
+): Promise<GetCurrentUserResult> {
+  const baseUrl = process.env.API_BASE_URL || "http://localhost:8080";
+
+  try {
+    const response = await fetch(`${baseUrl}/v1/users/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      const errorMessage = data?.message || "Unauthenticated.";
+      return { success: false, error: errorMessage };
+    }
+
+    return {
+      success: true,
+      user: data.data,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "Unable to connect to authentication server.",
+    };
+  }
+}
+

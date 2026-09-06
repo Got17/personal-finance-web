@@ -7,7 +7,9 @@ import styles from "../auth-page.module.css";
 export default async function SignupPage() {
   if (await getSessionToken()) {
     redirect("/");
+    return null;
   }
+
 
   return (
     <div className={styles.authPage}>
