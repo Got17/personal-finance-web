@@ -39,10 +39,11 @@ describe("AppLayout", () => {
     expect(redirect).toHaveBeenCalledWith("/login");
   });
 
-  it("clears session and redirects to /login when token is invalid or expired", async () => {
+  it("clears session and redirects to /login when token is 401 unauthenticated", async () => {
     vi.mocked(session.getSessionToken).mockResolvedValue("invalid-token");
     vi.mocked(authService.getCurrentUser).mockResolvedValue({
       success: false,
+      status: 401,
       error: "Unauthenticated or invalid token.",
     });
 
@@ -52,10 +53,25 @@ describe("AppLayout", () => {
     expect(redirect).toHaveBeenCalledWith("/login");
   });
 
+  it("does not clear session token on transient 500 server error", async () => {
+    vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+    vi.mocked(authService.getCurrentUser).mockResolvedValue({
+      success: false,
+      status: 500,
+      error: "HTTP error 500",
+    });
+
+    await AppLayout({ children: <div>Dashboard content</div> });
+
+    expect(session.clearSessionToken).not.toHaveBeenCalled();
+    expect(redirect).toHaveBeenCalledWith("/login");
+  });
+
   it("renders protected layout with authenticated user identity", async () => {
     vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
     vi.mocked(authService.getCurrentUser).mockResolvedValue({
       success: true,
+      status: 200,
       user: {
         id: "usr-123",
         email: "alex@example.com",
@@ -74,4 +90,5 @@ describe("AppLayout", () => {
     expect(screen.getByText("alex@example.com")).toBeTruthy();
   });
 });
+
 

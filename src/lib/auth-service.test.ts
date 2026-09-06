@@ -220,6 +220,7 @@ describe("auth-service", () => {
         "http://localhost:8080/v1/users/me",
         expect.objectContaining({
           method: "GET",
+          cache: "no-store",
           headers: {
             Authorization: "Bearer valid-bearer-token",
           },
@@ -228,6 +229,7 @@ describe("auth-service", () => {
 
       expect(result).toEqual({
         success: true,
+        status: 200,
         user: {
           id: "123e4567-e89b-12d3-a456-426614174000",
           email: "alex@example.com",
@@ -237,7 +239,7 @@ describe("auth-service", () => {
       });
     });
 
-    it("returns error message when token is invalid or unauthorized (401)", async () => {
+    it("returns error message and status code when token is invalid or unauthorized (401)", async () => {
       const mockErrorResponse = {
         success: false,
         error: "UNAUTHORIZED",
@@ -255,7 +257,25 @@ describe("auth-service", () => {
 
       expect(result).toEqual({
         success: false,
+        status: 401,
         error: "Unauthenticated or invalid token.",
+      });
+    });
+
+    it("handles non-JSON error bodies gracefully without throwing", async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 502,
+        json: () => Promise.reject(new Error("Unexpected token < in JSON")),
+      } as Response);
+
+      const { getCurrentUser } = await import("./auth-service");
+      const result = await getCurrentUser("valid-token");
+
+      expect(result).toEqual({
+        success: false,
+        status: 502,
+        error: "HTTP error 502",
       });
     });
 
@@ -272,4 +292,5 @@ describe("auth-service", () => {
     });
   });
 });
+
 

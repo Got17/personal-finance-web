@@ -96,8 +96,8 @@ export interface UserProfile {
 }
 
 export type GetCurrentUserResult =
-  | { success: true; user: UserProfile }
-  | { success: false; error: string };
+  | { success: true; user: UserProfile; status: number }
+  | { success: false; error: string; status?: number };
 
 export async function getCurrentUser(
   token: string,
@@ -107,21 +107,32 @@ export async function getCurrentUser(
   try {
     const response = await fetch(`${baseUrl}/v1/users/me`, {
       method: "GET",
+      cache: "no-store",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    const data = await response.json();
+    let data: { success?: boolean; message?: string; data?: UserProfile } | null = null;
+    try {
+      data = await response.json();
+    } catch {
+      // Handles non-JSON or empty response bodies safely
+    }
 
-    if (!response.ok || !data.success) {
-      const errorMessage = data?.message || "Unauthenticated.";
-      return { success: false, error: errorMessage };
+    if (!response.ok || !data?.success) {
+      const errorMessage =
+        data?.message ||
+        (response.status === 401 || response.status === 403
+          ? "Unauthenticated."
+          : `HTTP error ${response.status}`);
+      return { success: false, error: errorMessage, status: response.status };
     }
 
     return {
       success: true,
-      user: data.data,
+      user: data.data!,
+      status: response.status,
     };
   } catch {
     return {
@@ -130,5 +141,6 @@ export async function getCurrentUser(
     };
   }
 }
+
 
 

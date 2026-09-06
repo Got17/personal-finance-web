@@ -17,10 +17,13 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 
   const userResult = await getCurrentUser(token);
   if (!userResult.success) {
-    await clearSessionToken();
+    if (userResult.status === 401 || userResult.status === 403) {
+      await clearSessionToken();
+    }
     redirect("/login");
     return null;
   }
+
 
   const user = userResult.user;
   const userInitials = user.email ? user.email.slice(0, 2).toUpperCase() : "PF";
