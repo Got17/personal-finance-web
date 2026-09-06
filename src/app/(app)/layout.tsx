@@ -1,11 +1,18 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { getSessionToken } from "@/lib/session";
+import { redirect } from "next/navigation";
 import { SignOutButton } from "@/components/SignOutButton";
 import styles from "./layout.module.css";
 
 const navItems = ["Overview", "Accounts", "Transactions", "Budget", "Goals"];
 
-export default function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
+  const token = await getSessionToken();
+  if (!token) {
+    redirect("/login");
+  }
+
   return (
     <div className={styles.appContainer}>
       <aside className={styles.sidebar}>
