@@ -30,6 +30,18 @@ Use green with intent. It should not flood the interface: on light pages it is r
 - Financial amounts use tabular figures wherever values need comparison or alignment.
 - Titles should be sentence-like and useful, not promotional: “Your money, in focus.” is preferable to “Financial dashboard.”
 
+## Logo and favicon
+
+The identity mark is an interlocking **PF** monogram: the letterforms share a geometric spine so it reads as a compact symbol at small sizes while remaining recognisably tied to Personal Finance Hub.
+
+- The primary mark uses a forest `#276749` asymmetric rounded tile and warm-paper letterforms.
+- The light alternate reverses the relationship for dark or green surfaces.
+- The horizontal logo pairs the mark with a compact sans-serif wordmark; the monogram remains the distinctive element.
+- Use the monochrome logo only where colour reproduction is unavailable.
+- `src/app/icon.svg` is the browser/favicon source. Do not substitute a text “PF” badge in product UI.
+
+Source assets are in `public/brand/`: `pf-mark.svg`, `pf-mark-light.svg`, `pf-logo.svg`, and `pf-logo-mono.svg`.
+
 ## Layout
 
 Desktop uses a 248px warm-paper left rail: PF monogram, five primary destinations, user identity, and sign-out. Mobile swaps this for a compact fixed bottom navigation.
