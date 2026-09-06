@@ -1,13 +1,18 @@
 import Link from "next/link";
 import { getSessionToken } from "@/lib/session";
+import { getCurrentUser } from "@/lib/auth-service";
 import { redirect } from "next/navigation";
 import { SignInForm } from "@/components/SignInForm";
 import styles from "../auth-page.module.css";
 
 export default async function LoginPage() {
-  if (await getSessionToken()) {
-    redirect("/");
-    return null;
+  const token = await getSessionToken();
+  if (token) {
+    const userResult = await getCurrentUser(token);
+    if (userResult.success) {
+      redirect("/");
+      return null;
+    }
   }
 
   return (
