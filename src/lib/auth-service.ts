@@ -1,3 +1,7 @@
+function getBaseUrl(): string {
+  return process.env.API_BASE_URL || "http://localhost:8080";
+}
+
 export interface SignInCredentials {
   email: string;
   password: string;
@@ -10,7 +14,7 @@ export type AuthResult =
 export async function authenticateUser(
   credentials: SignInCredentials,
 ): Promise<AuthResult> {
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:8080";
+  const baseUrl = getBaseUrl();
 
   try {
     const response = await fetch(`${baseUrl}/v1/auth/login`, {
@@ -50,7 +54,7 @@ export interface SignUpCredentials {
 export async function signUpUser(
   credentials: SignUpCredentials,
 ): Promise<AuthResult> {
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:8080";
+  const baseUrl = getBaseUrl();
 
   try {
     const response = await fetch(`${baseUrl}/v1/auth/signup`, {
@@ -83,3 +87,60 @@ export async function signUpUser(
     };
   }
 }
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type GetCurrentUserResult =
+  | { success: true; user: UserProfile; status: number }
+  | { success: false; error: string; status?: number };
+
+export async function getCurrentUser(
+  token: string,
+): Promise<GetCurrentUserResult> {
+  const baseUrl = getBaseUrl();
+
+  try {
+    const response = await fetch(`${baseUrl}/v1/users/me`, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    let data: { success?: boolean; message?: string; data?: UserProfile } | null = null;
+    try {
+      data = await response.json();
+    } catch {
+      // Handles non-JSON or empty response bodies safely
+    }
+
+    if (!response.ok || !data?.success) {
+      const errorMessage =
+        data?.message ||
+        (response.status === 401 || response.status === 403
+          ? "Unauthenticated."
+          : `HTTP error ${response.status}`);
+      return { success: false, error: errorMessage, status: response.status };
+    }
+
+    return {
+      success: true,
+      user: data.data!,
+      status: response.status,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "Unable to connect to authentication server.",
+    };
+  }
+}
+
+
+

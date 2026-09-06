@@ -193,4 +193,104 @@ describe("auth-service", () => {
       });
     });
   });
+
+  describe("getCurrentUser", () => {
+    it("sends GET request to /v1/users/me with Bearer token and returns user profile on success", async () => {
+      const mockUserResponse = {
+        success: true,
+        data: {
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          email: "alex@example.com",
+          created_at: "2026-09-06T10:00:00Z",
+          updated_at: "2026-09-06T10:00:00Z",
+        },
+        message: "The current user identity.",
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(mockUserResponse),
+      } as Response);
+
+      const { getCurrentUser } = await import("./auth-service");
+      const result = await getCurrentUser("valid-bearer-token");
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "http://localhost:8080/v1/users/me",
+        expect.objectContaining({
+          method: "GET",
+          cache: "no-store",
+          headers: {
+            Authorization: "Bearer valid-bearer-token",
+          },
+        }),
+      );
+
+      expect(result).toEqual({
+        success: true,
+        status: 200,
+        user: {
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          email: "alex@example.com",
+          created_at: "2026-09-06T10:00:00Z",
+          updated_at: "2026-09-06T10:00:00Z",
+        },
+      });
+    });
+
+    it("returns error message and status code when token is invalid or unauthorized (401)", async () => {
+      const mockErrorResponse = {
+        success: false,
+        error: "UNAUTHORIZED",
+        message: "Unauthenticated or invalid token.",
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: () => Promise.resolve(mockErrorResponse),
+      } as Response);
+
+      const { getCurrentUser } = await import("./auth-service");
+      const result = await getCurrentUser("invalid-token");
+
+      expect(result).toEqual({
+        success: false,
+        status: 401,
+        error: "Unauthenticated or invalid token.",
+      });
+    });
+
+    it("handles non-JSON error bodies gracefully without throwing", async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 502,
+        json: () => Promise.reject(new Error("Unexpected token < in JSON")),
+      } as Response);
+
+      const { getCurrentUser } = await import("./auth-service");
+      const result = await getCurrentUser("valid-token");
+
+      expect(result).toEqual({
+        success: false,
+        status: 502,
+        error: "HTTP error 502",
+      });
+    });
+
+    it("handles network error gracefully when retrieving user profile", async () => {
+      global.fetch = vi.fn().mockRejectedValue(new Error("Connection error"));
+
+      const { getCurrentUser } = await import("./auth-service");
+      const result = await getCurrentUser("valid-token");
+
+      expect(result).toEqual({
+        success: false,
+        error: "Unable to connect to authentication server.",
+      });
+    });
+  });
 });
+
+
