@@ -1,18 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import HomePage from "./page";
-import * as session from "@/lib/session";
-import { redirect } from "next/navigation";
-
-vi.mock("@/lib/session", () => ({
-  getSessionToken: vi.fn(),
-}));
-
-vi.mock("next/navigation", () => ({
-  redirect: vi.fn(),
-}));
-
-describe("Protected HomePage", () => {
+describe("HomePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -21,25 +10,15 @@ describe("Protected HomePage", () => {
     cleanup();
   });
 
-  it("redirects unauthenticated user to /login", async () => {
-    vi.mocked(session.getSessionToken).mockResolvedValue(null);
-
-    await HomePage();
-
-    expect(redirect).toHaveBeenCalledWith("/login");
-  });
-
-  it("renders protected content for authenticated user", async () => {
-    vi.mocked(session.getSessionToken).mockResolvedValue("valid-user-token");
-
+  it("renders the public dashboard prototype", async () => {
     const pageComponent = await HomePage();
     render(pageComponent);
 
     expect(
-      screen.getByRole("heading", { name: "Personal Finance Hub" }),
+      screen.getByRole("heading", { name: "Your money, in focus." }),
     ).toBeTruthy();
     expect(
-      screen.getByText(/your private place to understand the whole financial picture/i),
+      screen.getByText(/net worth/i),
     ).toBeTruthy();
   });
 });

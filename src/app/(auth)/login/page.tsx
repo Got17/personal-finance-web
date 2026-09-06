@@ -1,25 +1,7 @@
+import Link from "next/link";
 import { getSessionToken } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { SignInForm } from "@/components/SignInForm";
-import styles from "./page.module.css";
+import styles from "../auth-page.module.css";
 
-export default async function LoginPage() {
-  const token = await getSessionToken();
-
-  if (token) {
-    redirect("/");
-  }
-
-  return (
-    <div className={styles.loginWrapper}>
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Personal Finance Hub</p>
-        <h1 className={styles.title}>Sign in to Personal Finance Hub</h1>
-        <p className={styles.subtitle}>
-          Enter your credentials to access your financial workspace.
-        </p>
-      </header>
-      <SignInForm />
-    </div>
-  );
-}
+export default async function LoginPage() { if (await getSessionToken()) redirect("/"); return <div className={styles.authPage}><p className={styles.eyebrow}>Welcome back</p><h1>Sign in to your financial home.</h1><p className={styles.subtitle}>Your accounts, goals, and decisions—held in one private place.</p><SignInForm /><p className={styles.switcher}>New here? <Link href="/signup">Create your workspace</Link></p></div>; }
