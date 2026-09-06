@@ -8,7 +8,7 @@ import styles from "./layout.module.css";
 
 const navItems = ["Overview", "Accounts", "Transactions", "Budget", "Goals"];
 
-export default async function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: Readonly<{ children: ReactNode }>) {
   const token = await getSessionToken();
   if (!token) {
     redirect("/login");
