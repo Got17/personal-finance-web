@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { SignOutButton } from "@/components/SignOutButton";
 import styles from "./layout.module.css";
 
@@ -9,7 +10,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className={styles.appContainer}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <span className={styles.logoBadge} aria-hidden="true">PF</span>
+          <Image className={styles.logoBadge} src="/brand/pf-mark.svg" alt="" width={36} height={36} priority />
           <span className={styles.brandTitle}>Personal<br />Finance Hub</span>
         </div>
         <nav className={styles.navigation} aria-label="Primary navigation">

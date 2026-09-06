@@ -25,17 +25,8 @@
 }
 
 .logoBadge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 0.75rem 0.75rem 0.25rem 0.75rem;
-  background: var(--forest);
-  color: #fffdf8;
-  font-family: Georgia, serif;
-  font-weight: 700;
-  letter-spacing: -0.08em;
 }
 
 .brandTitle {
