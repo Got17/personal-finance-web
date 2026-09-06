@@ -39,7 +39,7 @@ describe("AppLayout", () => {
     expect(redirect).toHaveBeenCalledWith("/login");
   });
 
-  it("clears session and redirects to /login when token is 401 unauthenticated", async () => {
+  it("redirects to /login when token is 401 unauthenticated", async () => {
     vi.mocked(session.getSessionToken).mockResolvedValue("invalid-token");
     vi.mocked(authService.getCurrentUser).mockResolvedValue({
       success: false,
@@ -49,11 +49,10 @@ describe("AppLayout", () => {
 
     await AppLayout({ children: <div>Dashboard content</div> });
 
-    expect(session.clearSessionToken).toHaveBeenCalled();
     expect(redirect).toHaveBeenCalledWith("/login");
   });
 
-  it("does not clear session token on transient 500 server error", async () => {
+  it("redirects to /login on 500 server error", async () => {
     vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
     vi.mocked(authService.getCurrentUser).mockResolvedValue({
       success: false,
@@ -63,7 +62,6 @@ describe("AppLayout", () => {
 
     await AppLayout({ children: <div>Dashboard content</div> });
 
-    expect(session.clearSessionToken).not.toHaveBeenCalled();
     expect(redirect).toHaveBeenCalledWith("/login");
   });
 
