@@ -1,0 +1,41 @@
+export interface SignInCredentials {
+  email: string;
+  password: string;
+}
+
+export type AuthResult =
+  | { success: true; accessToken: string }
+  | { success: false; error: string };
+
+export async function authenticateUser(
+  credentials: SignInCredentials,
+): Promise<AuthResult> {
+  const baseUrl = process.env.API_BASE_URL || "http://localhost:8080";
+
+  try {
+    const response = await fetch(`${baseUrl}/v1/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      const errorMessage = data?.message || "Invalid credentials provided.";
+      return { success: false, error: errorMessage };
+    }
+
+    return {
+      success: true,
+      accessToken: data.data.access_token,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "Unable to connect to authentication server.",
+    };
+  }
+}
