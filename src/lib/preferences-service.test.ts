@@ -144,7 +144,7 @@ describe("preferences-service", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Base currency must be a valid 3-letter currency code (e.g. USD, EUR).",
+        error: "Base currency must be a valid 3-letter ISO 4217 currency code (e.g. USD, EUR).",
       });
       expect(global.fetch).not.toHaveBeenCalled();
     });

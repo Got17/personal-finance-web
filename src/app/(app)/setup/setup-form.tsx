@@ -3,19 +3,8 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { updateBaseCurrencyAction } from "@/app/actions/preferences";
+import { SUPPORTED_CURRENCIES } from "@/lib/schemas/preferences";
 import styles from "./page.module.css";
-
-const currencies = [
-  { code: "USD", name: "USD — US Dollar ($)" },
-  { code: "EUR", name: "EUR — Euro (€)" },
-  { code: "GBP", name: "GBP — British Pound (£)" },
-  { code: "CAD", name: "CAD — Canadian Dollar ($)" },
-  { code: "AUD", name: "AUD — Australian Dollar ($)" },
-  { code: "SGD", name: "SGD — Singapore Dollar ($)" },
-  { code: "JPY", name: "JPY — Japanese Yen (¥)" },
-  { code: "CHF", name: "CHF — Swiss Franc (CHF)" },
-  { code: "NZD", name: "NZD — New Zealand Dollar ($)" },
-];
 
 export interface SetupFormProps {
   initialCurrency?: string;
@@ -26,6 +15,14 @@ export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
   const [selectedCurrency, setSelectedCurrency] = useState(initialCurrency);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const availableCurrencies = [...SUPPORTED_CURRENCIES];
+  if (initialCurrency && !availableCurrencies.some((c) => c.code === initialCurrency)) {
+    availableCurrencies.unshift({
+      code: initialCurrency as typeof SUPPORTED_CURRENCIES[number]["code"],
+      name: `${initialCurrency} — ${initialCurrency}`,
+    });
+  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,7 +66,7 @@ export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
           className={styles.select}
           disabled={isSubmitting}
         >
-          {currencies.map((currency) => (
+          {availableCurrencies.map((currency) => (
             <option key={currency.code} value={currency.code}>
               {currency.name}
             </option>

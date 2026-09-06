@@ -1,3 +1,5 @@
+import { updatePreferencesSchema } from "@/lib/schemas/preferences";
+
 function getBaseUrl(): string {
   return process.env.API_BASE_URL || "http://localhost:8080";
 }
@@ -9,8 +11,6 @@ export type GetUserPreferencesResult =
 export type UpdatePreferencesResult =
   | { success: true; baseCurrency: string }
   | { success: false; error: string; status?: number };
-
-const CURRENCY_CODE_REGEX = /^[A-Z]{3}$/;
 
 export async function getUserPreferences(
   token: string,
@@ -26,16 +26,17 @@ export async function getUserPreferences(
       },
     });
 
-    let data: { success?: boolean; message?: string; data?: { base_currency?: string } } | null = null;
+    let data: { success?: boolean; message?: string; error?: string; data?: { base_currency?: string } } | null = null;
     try {
       data = await response.json();
     } catch {
-      // Handles non-JSON or empty bodies
+      // Empty or non-JSON body
     }
 
     if (!response.ok || !data?.success) {
       const errorMessage =
         data?.message ||
+        data?.error ||
         (response.status === 401 || response.status === 403
           ? "Unauthenticated or invalid token."
           : `HTTP error ${response.status}`);
@@ -58,15 +59,16 @@ export async function updateBaseCurrencyPreference(
   token: string,
   baseCurrency: string,
 ): Promise<UpdatePreferencesResult> {
-  const formattedCurrency = baseCurrency.trim().toUpperCase();
-
-  if (!CURRENCY_CODE_REGEX.test(formattedCurrency)) {
+  const validation = updatePreferencesSchema.safeParse({ baseCurrency });
+  if (!validation.success) {
+    const firstIssue = validation.error.issues[0];
     return {
       success: false,
-      error: "Base currency must be a valid 3-letter currency code (e.g. USD, EUR).",
+      error: firstIssue?.message || "Base currency must be a valid 3-letter currency code (e.g. USD, EUR).",
     };
   }
 
+  const formattedCurrency = validation.data.baseCurrency;
   const baseUrl = getBaseUrl();
 
   try {
@@ -85,7 +87,7 @@ export async function updateBaseCurrencyPreference(
     try {
       data = await response.json();
     } catch {
-      // Handles non-JSON response bodies
+      // Empty or non-JSON body
     }
 
     if (!response.ok || !data?.success) {
