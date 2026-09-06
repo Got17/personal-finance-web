@@ -75,6 +75,10 @@
   color: var(--forest);
 }
 
+.inputError {
+  border-color: var(--rose);
+}
+
 .errorBanner {
   padding: 0.75rem 0.85rem;
   background: #f6e5e1;

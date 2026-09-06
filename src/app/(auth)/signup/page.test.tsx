@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import LoginPage from "./page";
+import SignupPage from "./page";
 import * as session from "@/lib/session";
 import { redirect } from "next/navigation";
 
@@ -21,7 +21,7 @@ vi.mock("next/navigation", () => ({
   })),
 }));
 
-describe("LoginPage", () => {
+describe("SignupPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -33,21 +33,23 @@ describe("LoginPage", () => {
   it("redirects authenticated user to /", async () => {
     vi.mocked(session.getSessionToken).mockResolvedValue("existing-valid-token");
 
-    await LoginPage();
+    await SignupPage();
 
     expect(redirect).toHaveBeenCalledWith("/");
   });
 
-  it("renders sign-in page for unauthenticated user", async () => {
+  it("renders signup page for unauthenticated user", async () => {
     vi.mocked(session.getSessionToken).mockResolvedValue(null);
 
-    const pageComponent = await LoginPage();
+    const pageComponent = await SignupPage();
     render(pageComponent);
 
     expect(
-      screen.getByRole("heading", { name: /sign in to your financial home/i }),
+      screen.getByRole("heading", { name: /create your financial home/i }),
     ).toBeTruthy();
     expect(screen.getByLabelText(/email/i)).toBeTruthy();
-    expect(screen.getByLabelText(/password/i, { selector: "input" })).toBeTruthy();
+    expect(screen.getByLabelText(/^create a password/i)).toBeTruthy();
+    expect(screen.getByRole("button", { name: /create workspace/i })).toBeTruthy();
+    expect(screen.getByText(/already have a workspace\?/i)).toBeTruthy();
   });
 });

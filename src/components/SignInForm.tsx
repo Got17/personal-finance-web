@@ -3,12 +3,14 @@
 import { useState, useTransition, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { signInAction } from "@/app/actions/auth";
+import { EyeIcon, EyeOffIcon } from "@/components/icons/EyeIcons";
 import styles from "./SignInForm.module.css";
 
 export function SignInForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -58,17 +60,28 @@ export function SignInForm() {
         <label htmlFor="password" className={styles.label}>
           Password
         </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={styles.input}
-          disabled={isPending}
-        />
+        <div className={styles.passwordWrapper}>
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={styles.input}
+            disabled={isPending}
+          />
+          <button
+            type="button"
+            className={styles.toggleButton}
+            onClick={() => setShowPassword((prev) => !prev)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            disabled={isPending}
+          >
+            {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+          </button>
+        </div>
       </div>
 
       <button type="submit" className={styles.submitButton} disabled={isPending}>

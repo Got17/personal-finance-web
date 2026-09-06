@@ -1,6 +1,25 @@
 import Link from "next/link";
+import { getSessionToken } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { SignUpForm } from "@/components/SignUpForm";
 import styles from "../auth-page.module.css";
-import formStyles from "@/components/SignInForm.module.css";
 
-export default function SignupPage() { return <div className={styles.authPage}><p className={styles.eyebrow}>Start with clarity</p><h1>Create your financial home.</h1><p className={styles.subtitle}>Sign-up is represented here for the prototype. Account creation will connect once the registration service is ready.</p><form className={formStyles.form}><Field label="Full name" placeholder="Alex Lee" /><Field label="Email address" placeholder="name@example.com" type="email" /><Field label="Create a password" placeholder="At least 8 characters" type="password" /><button className={formStyles.submitButton} type="button" disabled>Create workspace</button></form><p className={styles.switcher}>Already have a workspace? <Link href="/login">Sign in</Link></p></div>; }
-function Field({ label, placeholder, type = "text" }: { label: string; placeholder: string; type?: string }) { return <div className={formStyles.fieldGroup}><label className={formStyles.label}>{label}<input className={formStyles.input} type={type} placeholder={placeholder} disabled /></label></div>; }
+export default async function SignupPage() {
+  if (await getSessionToken()) {
+    redirect("/");
+  }
+
+  return (
+    <div className={styles.authPage}>
+      <p className={styles.eyebrow}>Start with clarity</p>
+      <h1>Create your financial home.</h1>
+      <p className={styles.subtitle}>
+        Your accounts, goals, and decisions—held in one private place.
+      </p>
+      <SignUpForm />
+      <p className={styles.switcher}>
+        Already have a workspace? <Link href="/login">Sign in</Link>
+      </p>
+    </div>
+  );
+}
