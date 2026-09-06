@@ -1,3 +1,7 @@
+function getBaseUrl(): string {
+  return process.env.API_BASE_URL || "http://localhost:8080";
+}
+
 export interface SignInCredentials {
   email: string;
   password: string;
@@ -10,7 +14,7 @@ export type AuthResult =
 export async function authenticateUser(
   credentials: SignInCredentials,
 ): Promise<AuthResult> {
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:8080";
+  const baseUrl = getBaseUrl();
 
   try {
     const response = await fetch(`${baseUrl}/v1/auth/login`, {
@@ -50,7 +54,7 @@ export interface SignUpCredentials {
 export async function signUpUser(
   credentials: SignUpCredentials,
 ): Promise<AuthResult> {
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:8080";
+  const baseUrl = getBaseUrl();
 
   try {
     const response = await fetch(`${baseUrl}/v1/auth/signup`, {
@@ -98,7 +102,7 @@ export type GetCurrentUserResult =
 export async function getCurrentUser(
   token: string,
 ): Promise<GetCurrentUserResult> {
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:8080";
+  const baseUrl = getBaseUrl();
 
   try {
     const response = await fetch(`${baseUrl}/v1/users/me`, {
@@ -126,4 +130,5 @@ export async function getCurrentUser(
     };
   }
 }
+
 
