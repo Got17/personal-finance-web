@@ -48,7 +48,7 @@ describe("SignupPage", () => {
       screen.getByRole("heading", { name: /create your financial home/i }),
     ).toBeTruthy();
     expect(screen.getByLabelText(/email/i)).toBeTruthy();
-    expect(screen.getByLabelText(/password/i)).toBeTruthy();
+    expect(screen.getByLabelText(/^create a password/i)).toBeTruthy();
     expect(screen.getByRole("button", { name: /create workspace/i })).toBeTruthy();
     expect(screen.getByText(/already have a workspace\?/i)).toBeTruthy();
   });

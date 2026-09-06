@@ -3,6 +3,7 @@
 import { authenticateUser, signUpUser, SignInCredentials, SignUpCredentials } from "@/lib/auth-service";
 import { clearSessionToken, setSessionToken } from "@/lib/session";
 import { redirect } from "next/navigation";
+import { signUpSchema } from "@/lib/schemas/auth";
 
 export interface ActionResult {
   success: boolean;
@@ -35,21 +36,20 @@ export async function signInAction(
 export async function signUpAction(
   credentials: SignUpCredentials,
 ): Promise<ActionResult> {
-  if (!credentials.email || !credentials.password) {
+  const parsed = signUpSchema.safeParse(credentials);
+  if (!parsed.success) {
+    const firstIssue = parsed.error.issues[0];
     return {
       success: false,
-      error: "Email and password are required.",
+      error: firstIssue?.message || "Validation failed.",
     };
   }
 
-  if (credentials.password.length < 8) {
-    return {
-      success: false,
-      error: "Password must be at least 8 characters.",
-    };
-  }
-
-  const result = await signUpUser(credentials);
+  const result = await signUpUser({
+    email: parsed.data.email,
+    password: parsed.data.password,
+    workspaceName: parsed.data.workspaceName,
+  });
 
   if (!result.success) {
     return {

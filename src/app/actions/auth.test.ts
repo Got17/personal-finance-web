@@ -72,11 +72,15 @@ describe("auth actions", () => {
   });
 
   describe("signUpAction", () => {
-    it("returns error if email or password missing", async () => {
-      const result = await signUpAction({ email: "", password: "" });
+    it("returns error if email is invalid format (Zod validation)", async () => {
+      const result = await signUpAction({
+        email: "invalid-email",
+        password: "password123",
+        confirmPassword: "password123",
+      });
       expect(result).toEqual({
         success: false,
-        error: "Email and password are required.",
+        error: "Please enter a valid email address.",
       });
       expect(authService.signUpUser).not.toHaveBeenCalled();
     });
@@ -85,10 +89,24 @@ describe("auth actions", () => {
       const result = await signUpAction({
         email: "test@example.com",
         password: "short",
+        confirmPassword: "short",
       });
       expect(result).toEqual({
         success: false,
         error: "Password must be at least 8 characters.",
+      });
+      expect(authService.signUpUser).not.toHaveBeenCalled();
+    });
+
+    it("returns error if passwords do not match", async () => {
+      const result = await signUpAction({
+        email: "test@example.com",
+        password: "password123",
+        confirmPassword: "differentpassword",
+      });
+      expect(result).toEqual({
+        success: false,
+        error: "Passwords do not match.",
       });
       expect(authService.signUpUser).not.toHaveBeenCalled();
     });
@@ -102,6 +120,7 @@ describe("auth actions", () => {
       const result = await signUpAction({
         email: "new@example.com",
         password: "password123",
+        confirmPassword: "password123",
         workspaceName: "My Workspace",
       });
 
@@ -123,6 +142,7 @@ describe("auth actions", () => {
       const result = await signUpAction({
         email: "existing@example.com",
         password: "password123",
+        confirmPassword: "password123",
       });
 
       expect(session.setSessionToken).not.toHaveBeenCalled();

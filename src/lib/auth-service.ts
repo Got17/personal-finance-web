@@ -43,6 +43,7 @@ export async function authenticateUser(
 export interface SignUpCredentials {
   email: string;
   password: string;
+  confirmPassword?: string;
   workspaceName?: string;
 }
 
