@@ -41,8 +41,24 @@ describe("SignInForm", () => {
     render(<SignInForm />);
 
     expect(screen.getByLabelText(/email/i)).toBeTruthy();
-    expect(screen.getByLabelText(/password/i)).toBeTruthy();
+    expect(screen.getByLabelText(/password/i, { selector: "input" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /sign in/i })).toBeTruthy();
+  });
+
+  it("toggles password visibility when eye icon button is clicked", () => {
+    render(<SignInForm />);
+
+    const passwordInput = screen.getByLabelText(/password/i, { selector: "input" }) as HTMLInputElement;
+    const toggleBtn = screen.getByRole("button", { name: /show password/i });
+
+    expect(passwordInput.type).toBe("password");
+
+    fireEvent.click(toggleBtn);
+    expect(passwordInput.type).toBe("text");
+    expect(screen.getByRole("button", { name: /hide password/i })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: /hide password/i }));
+    expect(passwordInput.type).toBe("password");
   });
 
   it("displays error message when sign-in action returns an error", async () => {
@@ -56,7 +72,7 @@ describe("SignInForm", () => {
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: "user@example.com" },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: "input" }), {
       target: { value: "wrong" },
     });
 
@@ -79,7 +95,7 @@ describe("SignInForm", () => {
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: "user@example.com" },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i, { selector: "input" }), {
       target: { value: "password123" },
     });
 

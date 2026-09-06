@@ -48,6 +48,6 @@ describe("LoginPage", () => {
       screen.getByRole("heading", { name: /sign in to your financial home/i }),
     ).toBeTruthy();
     expect(screen.getByLabelText(/email/i)).toBeTruthy();
-    expect(screen.getByLabelText(/password/i)).toBeTruthy();
+    expect(screen.getByLabelText(/password/i, { selector: "input" })).toBeTruthy();
   });
 });

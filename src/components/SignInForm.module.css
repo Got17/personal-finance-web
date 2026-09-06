@@ -1,1 +1,106 @@
-.form{display:flex;flex-direction:column;gap:1.1rem;width:100%}.fieldGroup{display:flex;flex-direction:column;gap:.45rem}.label{color:var(--ink);font-size:.78rem;font-weight:750}.input{width:100%;margin-top:.45rem;padding:.75rem .85rem;background:var(--surface);border:1px solid var(--line);border-radius:.55rem;color:var(--ink);outline:none}.input::placeholder{color:#9da49b}.input:focus{border-color:var(--forest);box-shadow:0 0 0 3px var(--forest-soft)}.errorBanner{padding:.75rem .85rem;background:#f6e5e1;border:1px solid #e8c3bb;border-radius:.55rem;color:#843e32;font-size:.78rem}.submitButton{margin-top:.35rem;padding:.8rem 1rem;border:0;border-radius:.55rem;background:var(--forest);color:#fffdf8;font-size:.85rem;font-weight:800;cursor:pointer}.submitButton:hover:not(:disabled){background:var(--forest-deep)}.submitButton:disabled{opacity:.6;cursor:not-allowed}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  width: 100%;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.label {
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.input {
+  width: 100%;
+  margin-top: 0.45rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  color: var(--ink);
+  outline: none;
+}
+
+.input::placeholder {
+  color: #9da49b;
+}
+
+.input:focus {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-soft);
+}
+
+.passwordWrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 0.45rem;
+}
+
+.passwordWrapper .input {
+  margin-top: 0;
+  padding-right: 2.75rem;
+}
+
+.toggleButton {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  color: var(--muted-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem;
+  transition: color 0.16s ease, background-color 0.16s ease;
+}
+
+.toggleButton:hover {
+  color: var(--ink);
+  background-color: var(--forest-soft);
+}
+
+.toggleButton:focus-visible {
+  outline: 2px solid var(--forest);
+  color: var(--forest);
+}
+
+.errorBanner {
+  padding: 0.75rem 0.85rem;
+  background: #f6e5e1;
+  border: 1px solid #e8c3bb;
+  border-radius: 0.55rem;
+  color: #843e32;
+  font-size: 0.78rem;
+}
+
+.submitButton {
+  margin-top: 0.35rem;
+  padding: 0.8rem 1rem;
+  border: 0;
+  border-radius: 0.55rem;
+  background: var(--forest);
+  color: #fffdf8;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--forest-deep);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
