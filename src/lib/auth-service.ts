@@ -91,6 +91,7 @@ export async function signUpUser(
 export interface UserProfile {
   id: string;
   email: string;
+  base_currency?: string;
   created_at: string;
   updated_at: string;
 }

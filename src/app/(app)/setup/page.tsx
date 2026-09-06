@@ -1,4 +1,5 @@
 import { getSessionToken } from "@/lib/session";
+import { getUserPreferences } from "@/lib/preferences-service";
 import { redirect } from "next/navigation";
 import { SetupForm } from "./setup-form";
 import styles from "./page.module.css";
@@ -10,6 +11,10 @@ export default async function SetupPage() {
     return null;
   }
 
+  const preferencesResult = await getUserPreferences(token);
+  const initialCurrency = preferencesResult.success
+    ? preferencesResult.baseCurrency
+    : "USD";
 
   return (
     <div className={styles.container}>
@@ -19,7 +24,7 @@ export default async function SetupPage() {
         <p className={styles.description}>
           Select the primary currency for your workspace accounts, budgets, and net worth calculations.
         </p>
-        <SetupForm />
+        <SetupForm initialCurrency={initialCurrency} />
       </main>
     </div>
   );

@@ -49,7 +49,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
             <span className={styles.avatar}>{userInitials}</span>
             <span>
               <strong>{user.email}</strong>
-              <small>Personal workspace</small>
+              <small>{user.base_currency ? `Base currency: ${user.base_currency}` : "Personal workspace"}</small>
             </span>
           </div>
           <SignOutButton />

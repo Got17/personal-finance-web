@@ -89,6 +89,28 @@ describe("AppLayout", () => {
     expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeTruthy();
     expect(screen.getByText("alex@example.com")).toBeTruthy();
   });
+
+  it("displays base currency in sidebar footer when set on user profile", async () => {
+    vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+    vi.mocked(authService.getCurrentUser).mockResolvedValue({
+      success: true,
+      status: 200,
+      user: {
+        id: "usr-123",
+        email: "alex@example.com",
+        base_currency: "EUR",
+        created_at: "2026-09-06T00:00:00Z",
+        updated_at: "2026-09-06T00:00:00Z",
+      },
+    });
+
+    const layoutComponent = await AppLayout({
+      children: <div>Dashboard content</div>,
+    });
+    render(layoutComponent);
+
+    expect(screen.getByText("Base currency: EUR")).toBeTruthy();
+  });
 });
 
 
