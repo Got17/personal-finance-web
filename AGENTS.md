@@ -18,4 +18,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Write self-documenting code with domain-aligned naming. Inline comments MUST explain non-obvious business rationale (*why*), never restating *what* readable code already expresses.
 - Keep inline docstrings, API contracts, and external specifications (OpenAPI 3.1, Protocol Buffers, GraphQL) 100% synchronized whenever signatures or data models change.
 - Always read the API contract from `D:\Coding\projects\personal-finance-hub\api\api\openapi.yaml`.
+
+## Git & Branching Workflow
+- Always create and work in a dedicated feature branch (e.g., `feature/<name>`, `fix/<name>`) before making code changes, bug fixes, or implementing new features. Never make changes or push directly on the `main` branch.
 <!-- END AGENT-STANDARD: CLEAN-CODE -->
+
