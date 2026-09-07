@@ -75,6 +75,13 @@
   cursor: pointer;
 }
 
+.input:hover:not(:disabled):not(:focus),
+.select:hover:not(:disabled):not(:focus),
+.textarea:hover:not(:disabled):not(:focus) {
+  border-color: #a39c8c;
+  background-color: #faf8f3;
+}
+
 .input:focus,
 .select:focus,
 .textarea:focus {

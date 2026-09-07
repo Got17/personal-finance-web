@@ -37,12 +37,21 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
 select {
   cursor: pointer;
+}
+
+input:hover:not(:disabled):not(:focus),
+select:hover:not(:disabled):not(:focus),
+textarea:hover:not(:disabled):not(:focus) {
+  border-color: #a39c8c;
+  background-color: #faf8f3;
 }
 
 button:focus-visible,
