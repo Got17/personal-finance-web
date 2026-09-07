@@ -92,3 +92,19 @@
 .submitButton:hover {
   background: var(--forest-deep);
 }
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  padding: 0.75rem 1rem;
+  background: #fdf2f0;
+  border: 1px solid var(--rose);
+  border-radius: 0.55rem;
+  color: var(--rose);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+

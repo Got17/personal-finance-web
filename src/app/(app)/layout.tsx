@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { getSessionToken, clearSessionToken } from "@/lib/session";
+import { getSessionToken } from "@/lib/session";
 import { getCurrentUser } from "@/lib/auth-service";
 import { redirect } from "next/navigation";
 import { SignOutButton } from "@/components/SignOutButton";
@@ -17,9 +17,6 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 
   const userResult = await getCurrentUser(token);
   if (!userResult.success) {
-    if (userResult.status === 401 || userResult.status === 403) {
-      await clearSessionToken();
-    }
     redirect("/login");
     return null;
   }
@@ -49,7 +46,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
             <span className={styles.avatar}>{userInitials}</span>
             <span>
               <strong>{user.email}</strong>
-              <small>Personal workspace</small>
+              <small>{user.base_currency ? `Base currency: ${user.base_currency}` : "Personal workspace"}</small>
             </span>
           </div>
           <SignOutButton />
