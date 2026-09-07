@@ -43,7 +43,9 @@ textarea {
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
-select {
+button,
+select,
+[role="button"] {
   cursor: pointer;
 }
 
