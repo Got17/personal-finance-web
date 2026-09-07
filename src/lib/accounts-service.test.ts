@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { getAccounts, createAccount } from "./accounts-service";
+import { getAccounts, createAccount, updateAccount, deactivateAccount } from "./accounts-service";
 import { Account } from "@/lib/schemas/accounts";
 
 const mockAccount: Account = {
@@ -168,4 +168,156 @@ describe("accounts-service", () => {
       });
     });
   });
+
+  describe("updateAccount", () => {
+    it("updates account when input is valid and PUT /v1/accounts/:id succeeds", async () => {
+      const updatedAccount: Account = {
+        ...mockAccount,
+        name: "Updated Checking",
+        updated_at: "2026-09-07T01:00:00Z",
+      };
+
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          data: updatedAccount,
+          message: "Account updated successfully",
+        }),
+      } as Response);
+
+      const result = await updateAccount("valid-token", "acc-1", {
+        name: "Updated Checking",
+      });
+
+      expect(result).toEqual({
+        success: true,
+        account: updatedAccount,
+      });
+      expect(fetch).toHaveBeenCalledWith(
+        "http://localhost:8080/v1/accounts/acc-1",
+        expect.objectContaining({
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer valid-token",
+          },
+        }),
+      );
+    });
+
+    it("rejects client-side when schema validation fails", async () => {
+      const result = await updateAccount("valid-token", "acc-1", {
+        name: "   ",
+      });
+
+      expect(result).toEqual({
+        success: false,
+        error: "Account name is required.",
+      });
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("returns error on 403 forbidden response", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        json: async () => ({
+          success: false,
+          error: "Forbidden",
+          message: "Caller does not own the account.",
+        }),
+      } as Response);
+
+      const result = await updateAccount("valid-token", "acc-1", {
+        name: "Updated Checking",
+      });
+
+      expect(result).toEqual({
+        success: false,
+        error: "Caller does not own the account.",
+        status: 403,
+      });
+    });
+
+    it("returns error on 404 not found response", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        json: async () => ({
+          success: false,
+          error: "Not Found",
+          message: "Account not found.",
+        }),
+      } as Response);
+
+      const result = await updateAccount("valid-token", "acc-999", {
+        name: "Nonexistent",
+      });
+
+      expect(result).toEqual({
+        success: false,
+        error: "Account not found.",
+        status: 404,
+      });
+    });
+  });
+
+  describe("deactivateAccount", () => {
+    it("deactivates account when DELETE /v1/accounts/:id succeeds", async () => {
+      const deactivatedAccount: Account = {
+        ...mockAccount,
+        is_active: false,
+        updated_at: "2026-09-07T02:00:00Z",
+      };
+
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          data: deactivatedAccount,
+          message: "Account deactivated successfully",
+        }),
+      } as Response);
+
+      const result = await deactivateAccount("valid-token", "acc-1");
+
+      expect(result).toEqual({
+        success: true,
+        account: deactivatedAccount,
+      });
+      expect(fetch).toHaveBeenCalledWith(
+        "http://localhost:8080/v1/accounts/acc-1",
+        expect.objectContaining({
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer valid-token",
+          },
+        }),
+      );
+    });
+
+    it("returns error on 403 forbidden response during deactivation", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        json: async () => ({
+          success: false,
+          error: "Forbidden",
+          message: "Caller does not own the account.",
+        }),
+      } as Response);
+
+      const result = await deactivateAccount("valid-token", "acc-1");
+
+      expect(result).toEqual({
+        success: false,
+        error: "Caller does not own the account.",
+        status: 403,
+      });
+    });
+  });
 });
+

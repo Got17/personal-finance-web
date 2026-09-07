@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { AccountsList } from "./AccountsList";
 import { CreateAccountModal } from "./CreateAccountModal";
+import { EditAccountModal } from "./EditAccountModal";
+import { DeactivateAccountModal } from "./DeactivateAccountModal";
 import styles from "./AccountsView.module.css";
 
 interface AccountsViewProps {
@@ -13,10 +15,24 @@ interface AccountsViewProps {
 
 export function AccountsView({ initialAccounts, defaultCurrency }: AccountsViewProps) {
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
+  const [deactivatingAccount, setDeactivatingAccount] = useState<Account | null>(null);
 
   const handleAccountCreated = (newAccount: Account) => {
     setAccounts((prev) => [newAccount, ...prev]);
+  };
+
+  const handleAccountUpdated = (updatedAccount: Account) => {
+    setAccounts((prev) =>
+      prev.map((acc) => (acc.id === updatedAccount.id ? updatedAccount : acc)),
+    );
+  };
+
+  const handleAccountDeactivated = (deactivatedAccount: Account) => {
+    setAccounts((prev) =>
+      prev.map((acc) => (acc.id === deactivatedAccount.id ? deactivatedAccount : acc)),
+    );
   };
 
   return (
@@ -31,7 +47,7 @@ export function AccountsView({ initialAccounts, defaultCurrency }: AccountsViewP
         <button
           type="button"
           className={styles.addButton}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsCreateModalOpen(true)}
           aria-label="Add new account"
         >
           + Add Account
@@ -39,15 +55,35 @@ export function AccountsView({ initialAccounts, defaultCurrency }: AccountsViewP
       </div>
 
       <section aria-label="Accounts list">
-        <AccountsList accounts={accounts} onAddClick={() => setIsModalOpen(true)} />
+        <AccountsList
+          accounts={accounts}
+          onAddClick={() => setIsCreateModalOpen(true)}
+          onEditClick={(acc) => setEditingAccount(acc)}
+          onDeactivateClick={(acc) => setDeactivatingAccount(acc)}
+        />
       </section>
 
       <CreateAccountModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
         defaultCurrency={defaultCurrency}
         onAccountCreated={handleAccountCreated}
+      />
+
+      <EditAccountModal
+        isOpen={editingAccount !== null}
+        account={editingAccount}
+        onClose={() => setEditingAccount(null)}
+        onAccountUpdated={handleAccountUpdated}
+      />
+
+      <DeactivateAccountModal
+        isOpen={deactivatingAccount !== null}
+        account={deactivatingAccount}
+        onClose={() => setDeactivatingAccount(null)}
+        onAccountDeactivated={handleAccountDeactivated}
       />
     </div>
   );
 }
+

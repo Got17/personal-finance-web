@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { createAccountAction, getAccountsAction } from "./accounts";
+import { createAccountAction, getAccountsAction, updateAccountAction, deactivateAccountAction } from "./accounts";
 import * as session from "@/lib/session";
 import * as accountsService from "@/lib/accounts-service";
 import { Account } from "@/lib/schemas/accounts";
@@ -12,6 +12,8 @@ vi.mock("@/lib/session", () => ({
 vi.mock("@/lib/accounts-service", () => ({
   createAccount: vi.fn(),
   getAccounts: vi.fn(),
+  updateAccount: vi.fn(),
+  deactivateAccount: vi.fn(),
 }));
 
 vi.mock("next/cache", () => ({
@@ -131,4 +133,101 @@ describe("accounts server actions", () => {
       expect(accountsService.getAccounts).toHaveBeenCalledWith("valid-token");
     });
   });
+
+  describe("updateAccountAction", () => {
+    it("returns error if user is unauthenticated", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue(null);
+
+      const result = await updateAccountAction("acc-1", { name: "New Name" });
+
+      expect(result).toEqual({
+        success: false,
+        error: "Unauthenticated.",
+      });
+      expect(accountsService.updateAccount).not.toHaveBeenCalled();
+    });
+
+    it("updates account and revalidates /accounts on success", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+      const updated = { ...mockAccount, name: "New Name" };
+      vi.mocked(accountsService.updateAccount).mockResolvedValue({
+        success: true,
+        account: updated,
+      });
+
+      const result = await updateAccountAction("acc-1", { name: "New Name" });
+
+      expect(result).toEqual({
+        success: true,
+        account: updated,
+      });
+      expect(accountsService.updateAccount).toHaveBeenCalledWith("valid-token", "acc-1", {
+        name: "New Name",
+      });
+      expect(revalidatePath).toHaveBeenCalledWith("/accounts");
+    });
+
+    it("returns error when service fails", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+      vi.mocked(accountsService.updateAccount).mockResolvedValue({
+        success: false,
+        error: "Account not found",
+      });
+
+      const result = await updateAccountAction("acc-1", { name: "New Name" });
+
+      expect(result).toEqual({
+        success: false,
+        error: "Account not found",
+      });
+    });
+  });
+
+  describe("deactivateAccountAction", () => {
+    it("returns error if user is unauthenticated", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue(null);
+
+      const result = await deactivateAccountAction("acc-1");
+
+      expect(result).toEqual({
+        success: false,
+        error: "Unauthenticated.",
+      });
+      expect(accountsService.deactivateAccount).not.toHaveBeenCalled();
+    });
+
+    it("deactivates account and revalidates /accounts on success", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+      const deactivated = { ...mockAccount, is_active: false };
+      vi.mocked(accountsService.deactivateAccount).mockResolvedValue({
+        success: true,
+        account: deactivated,
+      });
+
+      const result = await deactivateAccountAction("acc-1");
+
+      expect(result).toEqual({
+        success: true,
+        account: deactivated,
+      });
+      expect(accountsService.deactivateAccount).toHaveBeenCalledWith("valid-token", "acc-1");
+      expect(revalidatePath).toHaveBeenCalledWith("/accounts");
+    });
+
+    it("returns error when deactivation service fails", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+      vi.mocked(accountsService.deactivateAccount).mockResolvedValue({
+        success: false,
+        error: "Caller does not own the account.",
+      });
+
+      const result = await deactivateAccountAction("acc-1");
+
+      expect(result).toEqual({
+        success: false,
+        error: "Caller does not own the account.",
+      });
+    });
+  });
 });
+

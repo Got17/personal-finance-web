@@ -60,12 +60,22 @@
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 0 1px 3px rgba(31, 43, 36, 0.04);
-  transition: transform 0.16s ease, border-color 0.16s ease;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
 .accountCard:hover {
   border-color: #c2e2d0;
   transform: translateY(-1px);
+}
+
+.clickableCard {
+  cursor: pointer;
+}
+
+.clickableCard:focus-visible {
+  outline: none;
+  border-color: #276749;
+  box-shadow: 0 0 0 3px #e2eee7;
 }
 
 .inactiveCard {
@@ -156,3 +166,52 @@
   background-color: #eee9df;
   color: #687268;
 }
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee9df;
+}
+
+.editButton {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background-color: #eee9df;
+  color: #1f2b24;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+  text-align: center;
+}
+
+.editButton:hover {
+  background-color: #e2eee7;
+  color: #1d4e38;
+}
+
+.deactivateButton {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background-color: transparent;
+  color: #b55042;
+  border: 1px solid #f3c3be;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+  text-align: center;
+}
+
+.deactivateButton:hover {
+  background-color: #fcf0ee;
+  border-color: #b55042;
+}
+

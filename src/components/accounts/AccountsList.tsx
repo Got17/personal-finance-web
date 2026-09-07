@@ -4,6 +4,8 @@ import styles from "./AccountsList.module.css";
 interface AccountsListProps {
   accounts: Account[];
   onAddClick?: () => void;
+  onEditClick?: (account: Account) => void;
+  onDeactivateClick?: (account: Account) => void;
 }
 
 const TYPE_ICONS: Record<string, string> = {
@@ -26,7 +28,12 @@ const TYPE_FORMATTED: Record<string, string> = {
   other: "Other",
 };
 
-export function AccountsList({ accounts, onAddClick }: AccountsListProps) {
+export function AccountsList({
+  accounts,
+  onAddClick,
+  onEditClick,
+  onDeactivateClick,
+}: AccountsListProps) {
   if (accounts.length === 0) {
     return (
       <div className={styles.emptyCard} data-testid="empty-accounts">
@@ -49,12 +56,29 @@ export function AccountsList({ accounts, onAddClick }: AccountsListProps) {
       {accounts.map((account) => {
         const mark = TYPE_ICONS[account.type] || "A";
         const formattedType = TYPE_FORMATTED[account.type] || account.type;
+        const isClickable = Boolean(onEditClick);
 
         return (
           <div
             key={account.id}
-            className={`${styles.accountCard} ${!account.is_active ? styles.inactiveCard : ""}`}
+            className={`${styles.accountCard} ${!account.is_active ? styles.inactiveCard : ""} ${
+              isClickable ? styles.clickableCard : ""
+            }`}
             data-testid={`account-card-${account.id}`}
+            onClick={isClickable ? () => onEditClick!(account) : undefined}
+            onKeyDown={
+              isClickable
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onEditClick!(account);
+                    }
+                  }
+                : undefined
+            }
+            tabIndex={isClickable ? 0 : undefined}
+            role={isClickable ? "button" : undefined}
+            aria-label={isClickable ? `Account ${account.name}` : undefined}
           >
             <div className={styles.cardHeader}>
               <div className={styles.markIcon} aria-hidden="true">
@@ -80,9 +104,41 @@ export function AccountsList({ accounts, onAddClick }: AccountsListProps) {
                 {account.is_active ? "Active" : "Inactive"}
               </span>
             </div>
+
+            {(onEditClick || (onDeactivateClick && account.is_active)) && (
+              <div className={styles.cardActions}>
+                {onEditClick && (
+                  <button
+                    type="button"
+                    className={styles.editButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditClick(account);
+                    }}
+                    aria-label={`Edit ${account.name}`}
+                  >
+                    Edit
+                  </button>
+                )}
+                {onDeactivateClick && account.is_active && (
+                  <button
+                    type="button"
+                    className={styles.deactivateButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeactivateClick(account);
+                    }}
+                    aria-label={`Deactivate ${account.name}`}
+                  >
+                    Deactivate
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         );
       })}
     </div>
   );
 }
+

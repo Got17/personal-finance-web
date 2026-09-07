@@ -1,0 +1,182 @@
+.formCard {
+  background-color: #fffdf8;
+  border: 1px solid #e2ded4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.formHeader {
+  margin-bottom: 20px;
+}
+
+.formHeader h3 {
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2b24;
+  margin: 0 0 4px 0;
+}
+
+.formHeader p {
+  font-size: 0.875rem;
+  color: #687268;
+  margin: 0;
+}
+
+.errorBanner {
+  background-color: #fcf0ee;
+  border: 1px solid #f3c3be;
+  color: #b55042;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+.successBanner {
+  background-color: #e2eee7;
+  border: 1px solid #c2e2d0;
+  color: #1d4e38;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 520px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldGroupFull {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  grid-column: 1 / -1;
+}
+
+.fieldGroup label,
+.fieldGroupFull label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1f2b24;
+}
+
+.input,
+.select {
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: #1f2b24;
+  background-color: #fffdf8;
+  border: 1px solid #dcd7cb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+  outline: none;
+}
+
+.select {
+  cursor: pointer;
+}
+
+.input:hover:not(:disabled):not(:focus),
+.select:hover:not(:disabled):not(:focus) {
+  border-color: #a39c8c;
+  background-color: #faf8f3;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #276749;
+  box-shadow: 0 0 0 3px rgba(39, 103, 73, 0.15);
+}
+
+.inputError {
+  border-color: #b55042;
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  color: #b55042;
+  margin-top: 2px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.875rem;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #276749;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee9df;
+}
+
+.cancelButton {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: transparent;
+  color: #687268;
+  border: 1px solid #dcd7cb;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.cancelButton:hover {
+  background-color: #eee9df;
+  color: #1f2b24;
+}
+
+.submitButton {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: #276749;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.submitButton:hover {
+  background-color: #1d4e38;
+}
+
+.submitButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
