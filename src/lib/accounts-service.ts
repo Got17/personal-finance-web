@@ -52,9 +52,17 @@ export async function getAccounts(token: string): Promise<GetAccountsResult> {
       return { success: false, error: errorMessage, status: response.status };
     }
 
+    if (!Array.isArray(data.data)) {
+      return {
+        success: false,
+        error: "Invalid response from accounts server.",
+        status: response.status,
+      };
+    }
+
     return {
       success: true,
-      accounts: Array.isArray(data.data) ? data.data : [],
+      accounts: data.data,
     };
   } catch {
     return {

@@ -62,4 +62,18 @@ describe("createAccountSchema", () => {
       );
     }
   });
+
+  it("preprocesses whitespace-only description to undefined", () => {
+    const result = createAccountSchema.safeParse({
+      name: "Everyday Checking",
+      type: "checking",
+      currency: "USD",
+      description: "   ",
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.description).toBeUndefined();
+    }
+  });
 });

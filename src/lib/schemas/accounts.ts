@@ -16,7 +16,7 @@ export interface Account {
   id: string;
   user_id: string;
   name: string;
-  type: AccountType | string;
+  type: AccountType;
   currency: string;
   description?: string | null;
   is_active: boolean;
@@ -36,7 +36,14 @@ export const createAccountSchema = z.object({
     .regex(/^[A-Z]{3}$/, {
       message: "Currency must be a valid 3-letter ISO currency code (e.g. USD).",
     }),
-  description: z.string().trim().optional(),
+  description: z.preprocess(
+    (value) => {
+      if (typeof value !== "string") return value;
+      const trimmed = value.trim();
+      return trimmed === "" ? undefined : trimmed;
+    },
+    z.string().optional(),
+  ),
   is_active: z.boolean().default(true),
 });
 

@@ -80,6 +80,26 @@ describe("accounts-service", () => {
         error: "Unable to connect to accounts server.",
       });
     });
+
+    it("returns error when response claims success but data is not an array", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          data: "not-an-array",
+          message: "Invalid response format",
+        }),
+      } as Response);
+
+      const result = await getAccounts("valid-token");
+
+      expect(result).toEqual({
+        success: false,
+        error: "Invalid response from accounts server.",
+        status: 200,
+      });
+    });
   });
 
   describe("createAccount", () => {

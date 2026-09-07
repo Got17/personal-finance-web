@@ -66,9 +66,11 @@ export function CreateAccountForm({
     if (!validation.success) {
       const formattedErrors: { name?: string; type?: string; currency?: string } = {};
       for (const issue of validation.error.issues) {
-        const fieldName = issue.path[0] as "name" | "type" | "currency";
-        if (fieldName && !formattedErrors[fieldName]) {
-          formattedErrors[fieldName] = issue.message;
+        const fieldName = issue.path[0];
+        if (fieldName === "name" || fieldName === "type" || fieldName === "currency") {
+          if (!formattedErrors[fieldName]) {
+            formattedErrors[fieldName] = issue.message;
+          }
         }
       }
       setFieldErrors(formattedErrors);
