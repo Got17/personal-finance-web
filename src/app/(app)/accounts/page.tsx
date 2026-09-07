@@ -2,7 +2,7 @@ import { getSessionToken } from "@/lib/session";
 import { getCurrentUser } from "@/lib/auth-service";
 import { getAccounts } from "@/lib/accounts-service";
 import { redirect } from "next/navigation";
-import { AccountsView } from "@/components/AccountsView";
+import { AccountsView } from "@/components/accounts/AccountsView";
 import styles from "./page.module.css";
 
 export default async function AccountsPage() {

@@ -2,7 +2,7 @@
 
 import { useEffect, MouseEvent } from "react";
 import { Account } from "@/lib/schemas/accounts";
-import { CreateAccountForm } from "@/components/CreateAccountForm";
+import { CreateAccountForm } from "./CreateAccountForm";
 import styles from "./CreateAccountModal.module.css";
 
 interface CreateAccountModalProps {

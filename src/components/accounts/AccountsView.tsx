@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Account } from "@/lib/schemas/accounts";
-import { AccountsList } from "@/components/AccountsList";
-import { CreateAccountModal } from "@/components/CreateAccountModal";
+import { AccountsList } from "./AccountsList";
+import { CreateAccountModal } from "./CreateAccountModal";
 import styles from "./AccountsView.module.css";
 
 interface AccountsViewProps {

@@ -3,8 +3,8 @@ import Image from "next/image";
 import { getSessionToken } from "@/lib/session";
 import { getCurrentUser } from "@/lib/auth-service";
 import { redirect } from "next/navigation";
-import { SignOutButton } from "@/components/SignOutButton";
-import { SidebarNav, MobileNav } from "@/components/Navigation";
+import { SignOutButton } from "@/components/auth/SignOutButton";
+import { SidebarNav, MobileNav } from "@/components/navigation/Navigation";
 import styles from "./layout.module.css";
 
 export default async function AppLayout({ children }: Readonly<{ children: ReactNode }>) {
