@@ -11,6 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 <!-- START AGENT-STANDARD: CLEAN-CODE -->
 ## Code Quality, Maintainability & Documentation
 - Read `DESIGN.md` before designing, reviewing, or modifying user-interface layouts, styles, components, interactions, or responsive behaviour. Treat it as the source of truth for the product's visual direction and UX guardrails.
+- Ensure all interactive action components (buttons, links, selects, toggles, icon controls) explicitly include smooth hover micro-interaction effects and a `cursor: pointer` cursor on hover.
 - Enforce all 5 SOLID principles: Single Responsibility (SRP) per module, Open/Closed (OCP) via extension points, Liskov Substitution (LSP) for behavioral subtyping, Interface Segregation (ISP) with small role-specific contracts, and Dependency Inversion (DIP) via injected abstractions.
 - Apply pragmatic DRY (Don't Repeat Yourself) to consolidate business rules into single sources of truth, while adhering to YAGNI (You Aren't Gonna Need It) and the AHA principle (Avoid Hasty Abstractions). Do NOT write speculative abstractions, dead code, or unused generic parameters.
 - Use guard clauses (early exit returns/throws) at the top of functions instead of deeply nested `if-else` blocks to maintain low cyclomatic complexity ($\le 3$ nesting levels).

@@ -26,10 +26,16 @@
   border-radius: 0.55rem;
   color: var(--ink);
   outline: none;
+  transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
 }
 
 .input::placeholder {
   color: #9da49b;
+}
+
+.input:hover:not(:disabled):not(:focus) {
+  border-color: #a39c8c;
+  background-color: #faf8f3;
 }
 
 .input:focus {

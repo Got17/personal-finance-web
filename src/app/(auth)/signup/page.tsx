@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getSessionToken } from "@/lib/session";
 import { getCurrentUser } from "@/lib/auth-service";
 import { redirect } from "next/navigation";
-import { SignUpForm } from "@/components/SignUpForm";
+import { SignUpForm } from "@/components/auth/SignUpForm";
 import styles from "../auth-page.module.css";
 
 export default async function SignupPage() {

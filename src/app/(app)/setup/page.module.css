@@ -69,6 +69,12 @@
   font-size: 0.9rem;
   outline: none;
   cursor: pointer;
+  transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.select:hover:not(:disabled):not(:focus) {
+  border-color: #a39c8c;
+  background-color: #faf8f3;
 }
 
 .select:focus {
