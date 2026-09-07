@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { updateBaseCurrencyAction } from "@/app/actions/preferences";
-import { SUPPORTED_CURRENCIES } from "@/lib/schemas/preferences";
+import { SUPPORTED_CURRENCIES } from "@/lib/constants/currencies";
 import styles from "./page.module.css";
 
 export interface SetupFormProps {
@@ -12,15 +12,16 @@ export interface SetupFormProps {
 
 export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
   const router = useRouter();
-  const [selectedCurrency, setSelectedCurrency] = useState(initialCurrency);
+  const normalizedInitial = (initialCurrency || "USD").trim().toUpperCase();
+  const [selectedCurrency, setSelectedCurrency] = useState(normalizedInitial);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const availableCurrencies = [...SUPPORTED_CURRENCIES];
-  if (initialCurrency && !availableCurrencies.some((c) => c.code === initialCurrency)) {
+  if (normalizedInitial && !availableCurrencies.some((c) => c.code === normalizedInitial)) {
     availableCurrencies.unshift({
-      code: initialCurrency as typeof SUPPORTED_CURRENCIES[number]["code"],
-      name: `${initialCurrency} — ${initialCurrency}`,
+      code: normalizedInitial,
+      name: `${normalizedInitial} — ${normalizedInitial}`,
     });
   }
 

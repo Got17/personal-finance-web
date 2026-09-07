@@ -39,6 +39,8 @@ export async function getUserPreferences(
         data?.error ||
         (response.status === 401 || response.status === 403
           ? "Unauthenticated or invalid token."
+          : response.ok
+          ? "Invalid response from preferences server."
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -96,6 +98,8 @@ export async function updateBaseCurrencyPreference(
         data?.error ||
         (response.status === 401 || response.status === 403
           ? "Unauthenticated."
+          : response.ok
+          ? "Invalid response from preferences server."
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
