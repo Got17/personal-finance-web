@@ -44,7 +44,7 @@
 }
 
 .activeFilterTab:hover {
-  background-color: #d4e5db;
+  background-color: var(--surface-muted);
 }
 
 .grid {

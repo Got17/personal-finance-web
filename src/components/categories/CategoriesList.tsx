@@ -16,11 +16,17 @@ interface CategoriesListProps {
 
 type FilterType = "all" | CategoryType;
 
-const TABS: { type: FilterType; label: (all: number, inc: number, exp: number) => string }[] = [
-  { type: "all", label: (all) => `All (${all})` },
-  { type: "income", label: (_, inc) => `Income (${inc})` },
-  { type: "expense", label: (_, __, exp) => `Expense (${exp})` },
+const TABS: { type: FilterType; label: string }[] = [
+  { type: "all", label: "All" },
+  { type: "income", label: "Income" },
+  { type: "expense", label: "Expense" },
 ];
+
+function getTabCount(type: FilterType, total: number, income: number, expense: number): number {
+  if (type === "income") return income;
+  if (type === "expense") return expense;
+  return total;
+}
 
 export function CategoriesList({
   categories,
@@ -78,7 +84,8 @@ export function CategoriesList({
       >
         {TABS.map((tab) => {
           const isSelected = filter === tab.type;
-          const label = tab.label(categories.length, incomeCount, expenseCount);
+          const count = getTabCount(tab.type, categories.length, incomeCount, expenseCount);
+          const tabLabel = `${tab.label} (${count})`;
           return (
             <button
               key={tab.type}
@@ -91,7 +98,7 @@ export function CategoriesList({
               className={isSelected ? styles.activeFilterTab : styles.filterTab}
               onClick={() => setFilter(tab.type)}
             >
-              {label}
+              {tabLabel}
             </button>
           );
         })}

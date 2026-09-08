@@ -15,7 +15,6 @@ interface EditCategoryFormProps {
   category: Category;
   onCategoryUpdated?: (category: Category) => void;
   onCancel?: () => void;
-  hideHeader?: boolean;
 }
 
 const CATEGORY_TYPE_LABELS: Record<CategoryType, string> = {
@@ -27,7 +26,6 @@ export function EditCategoryForm({
   category,
   onCategoryUpdated,
   onCancel,
-  hideHeader = true,
 }: EditCategoryFormProps) {
   const [name, setName] = useState(category.name);
   const [type, setType] = useState<CategoryType>(category.type);
@@ -55,11 +53,9 @@ export function EditCategoryForm({
     if (!validation.success) {
       const formattedErrors: { name?: string; type?: string } = {};
       for (const issue of validation.error.issues) {
-        const fieldName = issue.path[0];
-        if (fieldName === "name" || fieldName === "type") {
-          if (!formattedErrors[fieldName]) {
-            formattedErrors[fieldName] = issue.message;
-          }
+        const fieldName = issue.path[0] as "name" | "type";
+        if (fieldName && !formattedErrors[fieldName]) {
+          formattedErrors[fieldName] = issue.message;
         }
       }
       setFieldErrors(formattedErrors);
@@ -81,14 +77,7 @@ export function EditCategoryForm({
   };
 
   return (
-    <form className={hideHeader ? undefined : styles.formCard} onSubmit={handleSubmit} noValidate>
-      {!hideHeader && (
-        <div className={styles.formHeader}>
-          <h3>Edit Category</h3>
-          <p>Update category name, type, or active state.</p>
-        </div>
-      )}
-
+    <form onSubmit={handleSubmit} noValidate>
       {serverError && <div className={styles.errorBanner}>{serverError}</div>}
 
       <div className={styles.formGrid}>
