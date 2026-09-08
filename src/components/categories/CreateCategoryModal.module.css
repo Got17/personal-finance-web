@@ -61,14 +61,12 @@
   font-size: 1.25rem;
   color: var(--ink-muted);
   cursor: pointer;
-  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
   line-height: 1;
 }
 
 .closeButton:hover {
   background-color: var(--surface-muted);
   color: var(--ink);
-  transform: scale(1.08);
 }
 
 .closeButton:focus-visible {
