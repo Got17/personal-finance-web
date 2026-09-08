@@ -44,4 +44,25 @@ describe("AccountsView", () => {
 
     expect(screen.queryByTestId("create-account-modal")).toBeNull();
   });
+
+  it("opens Edit modal when Edit button on card is clicked", () => {
+    render(<AccountsView initialAccounts={[mockInitialAccount]} defaultCurrency="USD" />);
+
+    const editBtn = screen.getByRole("button", { name: "Edit Everyday Checking" });
+    fireEvent.click(editBtn);
+
+    expect(screen.getByTestId("edit-account-modal")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Edit Account" })).toBeTruthy();
+  });
+
+  it("opens Deactivate modal when Deactivate button on card is clicked", () => {
+    render(<AccountsView initialAccounts={[mockInitialAccount]} defaultCurrency="USD" />);
+
+    const deactivateBtn = screen.getByRole("button", { name: "Deactivate Everyday Checking" });
+    fireEvent.click(deactivateBtn);
+
+    expect(screen.getByTestId("deactivate-account-modal")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Deactivate Account" })).toBeTruthy();
+  });
 });
+

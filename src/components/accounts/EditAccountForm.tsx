@@ -5,15 +5,15 @@ import {
   ACCOUNT_TYPES,
   Account,
   AccountType,
-  createAccountSchema,
+  updateAccountSchema,
 } from "@/lib/schemas/accounts";
-import { createAccountAction } from "@/app/actions/accounts";
+import { updateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
-import styles from "./CreateAccountForm.module.css";
+import styles from "./EditAccountForm.module.css";
 
-interface CreateAccountFormProps {
-  defaultCurrency?: string;
-  onAccountCreated?: (account: Account) => void;
+interface EditAccountFormProps {
+  account: Account;
+  onAccountUpdated?: (account: Account) => void;
   onCancel?: () => void;
   hideHeader?: boolean;
 }
@@ -28,17 +28,17 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   other: "Other Account",
 };
 
-export function CreateAccountForm({
-  defaultCurrency = "USD",
-  onAccountCreated,
+export function EditAccountForm({
+  account,
+  onAccountUpdated,
   onCancel,
   hideHeader = true,
-}: CreateAccountFormProps) {
-  const [name, setName] = useState("");
-  const [type, setType] = useState<AccountType>("checking");
-  const [currency, setCurrency] = useState(defaultCurrency);
-  const [description, setDescription] = useState("");
-  const [isActive, setIsActive] = useState(true);
+}: EditAccountFormProps) {
+  const [name, setName] = useState(account.name);
+  const [type, setType] = useState<AccountType>(account.type);
+  const [currency, setCurrency] = useState(account.currency);
+  const [description, setDescription] = useState(account.description || "");
+  const [isActive, setIsActive] = useState(account.is_active);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -46,17 +46,15 @@ export function CreateAccountForm({
     currency?: string;
   }>({});
   const [serverError, setServerError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setServerError(null);
-    setSuccessMessage(null);
     setFieldErrors({});
 
-    const validation = createAccountSchema.safeParse({
+    const validation = updateAccountSchema.safeParse({
       name,
       type,
       currency,
@@ -79,20 +77,15 @@ export function CreateAccountForm({
     }
 
     startTransition(async () => {
-      const result = await createAccountAction(validation.data);
+      const result = await updateAccountAction(account.id, validation.data);
 
       if (!result.success || !result.account) {
-        setServerError(result.error || ERROR_MESSAGES.ACCOUNTS.CREATE_FAILED);
+        setServerError(result.error || ERROR_MESSAGES.ACCOUNTS.UPDATE_FAILED);
         return;
       }
 
-      setSuccessMessage(`Account "${result.account.name}" created successfully.`);
-      setName("");
-      setDescription("");
-      setIsActive(true);
-
-      if (onAccountCreated) {
-        onAccountCreated(result.account);
+      if (onAccountUpdated) {
+        onAccountUpdated(result.account);
       }
     });
   };
@@ -101,19 +94,18 @@ export function CreateAccountForm({
     <form className={hideHeader ? undefined : styles.formCard} onSubmit={handleSubmit} noValidate>
       {!hideHeader && (
         <div className={styles.formHeader}>
-          <h3>Add New Account</h3>
-          <p>Enter details to track a bank account, card, or asset.</p>
+          <h3>Edit Account</h3>
+          <p>Update mutable details for {account.name}.</p>
         </div>
       )}
 
       {serverError && <div className={styles.errorBanner}>{serverError}</div>}
-      {successMessage && <div className={styles.successBanner}>{successMessage}</div>}
 
       <div className={styles.formGrid}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-name">Account Name *</label>
+          <label htmlFor="edit-account-name">Account Name *</label>
           <input
-            id="account-name"
+            id="edit-account-name"
             type="text"
             className={`${styles.input} ${fieldErrors.name ? styles.inputError : ""}`}
             placeholder="e.g. Everyday Checking"
@@ -126,9 +118,9 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-type">Account Type *</label>
+          <label htmlFor="edit-account-type">Account Type *</label>
           <select
-            id="account-type"
+            id="edit-account-type"
             className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
             value={type}
             onChange={(e) => setType(e.target.value as AccountType)}
@@ -144,9 +136,9 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-currency">Currency (ISO Code) *</label>
+          <label htmlFor="edit-account-currency">Currency (ISO Code) *</label>
           <input
-            id="account-currency"
+            id="edit-account-currency"
             type="text"
             className={`${styles.input} ${fieldErrors.currency ? styles.inputError : ""}`}
             placeholder="USD, EUR, GBP..."
@@ -162,9 +154,9 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-description">Description (Optional)</label>
+          <label htmlFor="edit-account-description">Description (Optional)</label>
           <input
-            id="account-description"
+            id="edit-account-description"
             type="text"
             className={styles.input}
             placeholder="e.g. Primary salary checking account"
@@ -175,9 +167,9 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="account-is-active">
+          <label className={styles.checkboxLabel} htmlFor="edit-account-is-active">
             <input
-              id="account-is-active"
+              id="edit-account-is-active"
               type="checkbox"
               className={styles.checkbox}
               checked={isActive}
@@ -201,7 +193,7 @@ export function CreateAccountForm({
           </button>
         )}
         <button type="submit" className={styles.submitButton} disabled={isPending}>
-          {isPending ? "Creating..." : "+ Add Account"}
+          {isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </form>

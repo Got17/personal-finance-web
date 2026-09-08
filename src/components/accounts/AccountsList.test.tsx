@@ -1,5 +1,5 @@
-import { describe, expect, it, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { describe, expect, it, afterEach, vi } from "vitest";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { AccountsList } from "./AccountsList";
 import { Account } from "@/lib/schemas/accounts";
 
@@ -54,4 +54,43 @@ describe("AccountsList", () => {
     expect(screen.getByText("EUR")).toBeTruthy();
     expect(screen.getByText("Inactive")).toBeTruthy();
   });
+
+  it("triggers onEditClick and onDeactivateClick callbacks when action buttons are clicked", () => {
+    const onEdit = vi.fn();
+    const onDeactivate = vi.fn();
+
+    render(
+      <AccountsList
+        accounts={mockAccounts}
+        onEditClick={onEdit}
+        onDeactivateClick={onDeactivate}
+      />
+    );
+
+    const editBtn = screen.getByRole("button", { name: "Edit Everyday Checking" });
+    fireEvent.click(editBtn);
+    expect(onEdit).toHaveBeenCalledWith(mockAccounts[0]);
+
+    const deactivateBtn = screen.getByRole("button", { name: "Deactivate Everyday Checking" });
+    fireEvent.click(deactivateBtn);
+    expect(onDeactivate).toHaveBeenCalledWith(mockAccounts[0]);
+
+    // Inactive account should not show deactivate button
+    expect(screen.queryByRole("button", { name: "Deactivate Old Savings" })).toBeNull();
+  });
+
+  it("renders non-interactive card container and relies on action buttons", () => {
+    const onEdit = vi.fn();
+    render(<AccountsList accounts={[mockAccounts[0]]} onEditClick={onEdit} />);
+
+    const card = screen.getByTestId("account-card-acc-1");
+    expect(card.getAttribute("role")).toBeNull();
+    expect(card.getAttribute("tabIndex")).toBeNull();
+
+    const editBtn = screen.getByRole("button", { name: "Edit Everyday Checking" });
+    fireEvent.click(editBtn);
+    expect(onEdit).toHaveBeenCalledWith(mockAccounts[0]);
+  });
 });
+
+

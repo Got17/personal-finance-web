@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 export const COOKIE_NAME = "pf_session_token";
 
@@ -23,4 +24,18 @@ export async function setSessionToken(token: string): Promise<void> {
 export async function clearSessionToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+}
+
+export async function withAuth<T extends { success: boolean; error?: string }>(
+  handler: (token: string) => Promise<T>,
+): Promise<T> {
+  const token = await getSessionToken();
+  if (!token) {
+    return {
+      success: false,
+      error: ERROR_MESSAGES.AUTH.UNAUTHENTICATED,
+    } as T;
+  }
+
+  return handler(token);
 }
