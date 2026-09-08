@@ -5,6 +5,8 @@ import { Category, CategoryType } from "@/lib/schemas/categories";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { CardActions } from "@/components/ui/CardActions";
 import styles from "./CategoriesList.module.css";
 
 interface CategoriesListProps {
@@ -126,39 +128,16 @@ export function CategoriesList({
                   </div>
 
                   <div className={styles.cardFooter}>
-                    <span
-                      className={`${styles.statusBadge} ${
-                        category.is_active ? styles.activeStatus : styles.inactiveStatus
-                      }`}
-                    >
-                      {category.is_active ? "Active" : "Inactive"}
-                    </span>
+                    <StatusBadge isActive={category.is_active} />
                   </div>
 
-                  {(onEditClick || (onDeactivateClick && category.is_active)) && (
-                    <div className={styles.cardActions}>
-                      {onEditClick && (
-                        <button
-                          type="button"
-                          className={styles.editButton}
-                          onClick={() => onEditClick(category)}
-                          aria-label={`Edit ${category.name}`}
-                        >
-                          Edit
-                        </button>
-                      )}
-                      {onDeactivateClick && category.is_active && (
-                        <button
-                          type="button"
-                          className={styles.deactivateButton}
-                          onClick={() => onDeactivateClick(category)}
-                          aria-label={`Deactivate ${category.name}`}
-                        >
-                          Deactivate
-                        </button>
-                      )}
-                    </div>
-                  )}
+                  <CardActions
+                    onEdit={onEditClick ? () => onEditClick(category) : undefined}
+                    onDeactivate={onDeactivateClick ? () => onDeactivateClick(category) : undefined}
+                    canDeactivate={category.is_active}
+                    editAriaLabel={`Edit ${category.name}`}
+                    deactivateAriaLabel={`Deactivate ${category.name}`}
+                  />
                 </div>
               </Card>
             ))}

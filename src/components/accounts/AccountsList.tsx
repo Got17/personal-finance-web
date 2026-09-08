@@ -1,5 +1,7 @@
 import { Account } from "@/lib/schemas/accounts";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { CardActions } from "@/components/ui/CardActions";
 import styles from "./AccountsList.module.css";
 
 interface AccountsListProps {
@@ -74,39 +76,16 @@ export function AccountsList({
 
             <div className={styles.cardFooter}>
               <span className={styles.currencyBadge}>{account.currency}</span>
-              <span
-                className={`${styles.statusBadge} ${
-                  account.is_active ? styles.activeStatus : styles.inactiveStatus
-                }`}
-              >
-                {account.is_active ? "Active" : "Inactive"}
-              </span>
+              <StatusBadge isActive={account.is_active} />
             </div>
 
-            {(onEditClick || (onDeactivateClick && account.is_active)) && (
-              <div className={styles.cardActions}>
-                {onEditClick && (
-                  <button
-                    type="button"
-                    className={styles.editButton}
-                    onClick={() => onEditClick(account)}
-                    aria-label={`Edit ${account.name}`}
-                  >
-                    Edit
-                  </button>
-                )}
-                {onDeactivateClick && account.is_active && (
-                  <button
-                    type="button"
-                    className={styles.deactivateButton}
-                    onClick={() => onDeactivateClick(account)}
-                    aria-label={`Deactivate ${account.name}`}
-                  >
-                    Deactivate
-                  </button>
-                )}
-              </div>
-            )}
+            <CardActions
+              onEdit={onEditClick ? () => onEditClick(account) : undefined}
+              onDeactivate={onDeactivateClick ? () => onDeactivateClick(account) : undefined}
+              canDeactivate={account.is_active}
+              editAriaLabel={`Edit ${account.name}`}
+              deactivateAriaLabel={`Deactivate ${account.name}`}
+            />
           </div>
         );
       })}
