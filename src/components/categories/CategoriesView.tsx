@@ -6,7 +6,7 @@ import { CategoriesList } from "./CategoriesList";
 import { CreateCategoryModal } from "./CreateCategoryModal";
 import { EditCategoryModal } from "./EditCategoryModal";
 import { DeactivateCategoryModal } from "./DeactivateCategoryModal";
-import { Badge } from "@/components/ui/Badge";
+import { ViewHeader } from "@/components/ui/ViewHeader";
 import styles from "./CategoriesView.module.css";
 
 interface CategoriesViewProps {
@@ -37,22 +37,15 @@ export function CategoriesView({ initialCategories }: CategoriesViewProps) {
 
   return (
     <div className={styles.viewContainer}>
-      <div className={styles.headerRow}>
-        <div className={styles.titleGroup}>
-          <h2 className={styles.sectionTitle}>Your Categories</h2>
-          <Badge variant="count">
-            {categories.length} {categories.length === 1 ? "category" : "categories"}
-          </Badge>
-        </div>
-        <button
-          type="button"
-          className={styles.addButton}
-          onClick={() => setIsCreateModalOpen(true)}
-          aria-label="Add new category"
-        >
-          + Add Category
-        </button>
-      </div>
+      <ViewHeader
+        title="Your Categories"
+        count={categories.length}
+        unitSingular="category"
+        unitPlural="categories"
+        actionLabel="+ Add Category"
+        onAction={() => setIsCreateModalOpen(true)}
+        actionAriaLabel="Add new category"
+      />
 
       <section aria-label="Categories list">
         <CategoriesList
