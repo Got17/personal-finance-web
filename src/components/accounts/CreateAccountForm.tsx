@@ -8,6 +8,7 @@ import {
   createAccountSchema,
 } from "@/lib/schemas/accounts";
 import { createAccountAction } from "@/app/actions/accounts";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import styles from "./CreateAccountForm.module.css";
 
 interface CreateAccountFormProps {
@@ -81,7 +82,7 @@ export function CreateAccountForm({
       const result = await createAccountAction(validation.data);
 
       if (!result.success || !result.account) {
-        setServerError(result.error || "Failed to create account. Please try again.");
+        setServerError(result.error || ERROR_MESSAGES.ACCOUNTS.CREATE_FAILED);
         return;
       }
 

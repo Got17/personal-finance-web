@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 export const COOKIE_NAME = "pf_session_token";
 
@@ -32,7 +33,7 @@ export async function withAuth<T extends { success: boolean; error?: string }>(
   if (!token) {
     return {
       success: false,
-      error: "Unauthenticated.",
+      error: ERROR_MESSAGES.AUTH.UNAUTHENTICATED,
     } as T;
   }
 

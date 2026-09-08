@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
+
 function getBaseUrl(): string {
   return process.env.API_BASE_URL || "http://localhost:8080";
 }
@@ -28,7 +30,7 @@ export async function authenticateUser(
     const data = await response.json();
 
     if (!response.ok || !data.success) {
-      const errorMessage = data?.message || "Invalid credentials provided.";
+      const errorMessage = data?.message || ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS;
       return { success: false, error: errorMessage };
     }
 
@@ -39,7 +41,7 @@ export async function authenticateUser(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to authentication server.",
+      error: ERROR_MESSAGES.AUTH.CANNOT_CONNECT,
     };
   }
 }
@@ -72,7 +74,7 @@ export async function signUpUser(
     const data = await response.json();
 
     if (!response.ok || !data.success) {
-      const errorMessage = data?.message || "Registration failed.";
+      const errorMessage = data?.message || ERROR_MESSAGES.AUTH.REGISTRATION_FAILED;
       return { success: false, error: errorMessage };
     }
 
@@ -83,7 +85,7 @@ export async function signUpUser(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to authentication server.",
+      error: ERROR_MESSAGES.AUTH.CANNOT_CONNECT,
     };
   }
 }
@@ -125,7 +127,7 @@ export async function getCurrentUser(
       const errorMessage =
         data?.message ||
         (response.status === 401 || response.status === 403
-          ? "Unauthenticated."
+          ? ERROR_MESSAGES.AUTH.UNAUTHENTICATED
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -138,7 +140,7 @@ export async function getCurrentUser(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to authentication server.",
+      error: ERROR_MESSAGES.AUTH.CANNOT_CONNECT,
     };
   }
 }

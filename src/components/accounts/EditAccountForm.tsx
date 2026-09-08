@@ -8,6 +8,7 @@ import {
   updateAccountSchema,
 } from "@/lib/schemas/accounts";
 import { updateAccountAction } from "@/app/actions/accounts";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import styles from "./EditAccountForm.module.css";
 
 interface EditAccountFormProps {
@@ -79,7 +80,7 @@ export function EditAccountForm({
       const result = await updateAccountAction(account.id, validation.data);
 
       if (!result.success || !result.account) {
-        setServerError(result.error || "Failed to update account. Please try again.");
+        setServerError(result.error || ERROR_MESSAGES.ACCOUNTS.UPDATE_FAILED);
         return;
       }
 

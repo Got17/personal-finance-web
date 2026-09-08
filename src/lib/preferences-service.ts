@@ -1,4 +1,5 @@
 import { updatePreferencesSchema } from "@/lib/schemas/preferences";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 function getBaseUrl(): string {
   return process.env.API_BASE_URL || "http://localhost:8080";
@@ -38,9 +39,9 @@ export async function getUserPreferences(
         data?.message ||
         data?.error ||
         (response.status === 401 || response.status === 403
-          ? "Unauthenticated or invalid token."
+          ? ERROR_MESSAGES.AUTH.UNAUTHENTICATED_OR_INVALID_TOKEN
           : response.ok
-          ? "Invalid response from preferences server."
+          ? ERROR_MESSAGES.PREFERENCES.INVALID_RESPONSE
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -52,7 +53,7 @@ export async function getUserPreferences(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to preferences server.",
+      error: ERROR_MESSAGES.PREFERENCES.CANNOT_CONNECT,
     };
   }
 }
@@ -66,7 +67,7 @@ export async function updateBaseCurrencyPreference(
     const firstIssue = validation.error.issues[0];
     return {
       success: false,
-      error: firstIssue?.message || "Base currency must be a valid 3-letter currency code (e.g. USD, EUR).",
+      error: firstIssue?.message || ERROR_MESSAGES.PREFERENCES.INVALID_CURRENCY,
     };
   }
 
@@ -97,9 +98,9 @@ export async function updateBaseCurrencyPreference(
         data?.message ||
         data?.error ||
         (response.status === 401 || response.status === 403
-          ? "Unauthenticated."
+          ? ERROR_MESSAGES.AUTH.UNAUTHENTICATED
           : response.ok
-          ? "Invalid response from preferences server."
+          ? ERROR_MESSAGES.PREFERENCES.INVALID_RESPONSE
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -111,7 +112,7 @@ export async function updateBaseCurrencyPreference(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to preferences server.",
+      error: ERROR_MESSAGES.PREFERENCES.CANNOT_CONNECT,
     };
   }
 }

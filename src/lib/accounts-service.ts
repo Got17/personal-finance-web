@@ -5,6 +5,7 @@ import {
   UpdateAccountInput,
   updateAccountSchema,
 } from "@/lib/schemas/accounts";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 function getBaseUrl(): string {
   return process.env.API_BASE_URL || "http://localhost:8080";
@@ -55,9 +56,9 @@ export async function getAccounts(token: string): Promise<GetAccountsResult> {
         data?.message ||
         data?.error ||
         (response.status === 401 || response.status === 403
-          ? "Unauthenticated or invalid token."
+          ? ERROR_MESSAGES.AUTH.UNAUTHENTICATED_OR_INVALID_TOKEN
           : response.ok
-          ? "Invalid response from accounts server."
+          ? ERROR_MESSAGES.ACCOUNTS.INVALID_RESPONSE
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -65,7 +66,7 @@ export async function getAccounts(token: string): Promise<GetAccountsResult> {
     if (!Array.isArray(data.data)) {
       return {
         success: false,
-        error: "Invalid response from accounts server.",
+        error: ERROR_MESSAGES.ACCOUNTS.INVALID_RESPONSE,
         status: response.status,
       };
     }
@@ -77,7 +78,7 @@ export async function getAccounts(token: string): Promise<GetAccountsResult> {
   } catch {
     return {
       success: false,
-      error: "Unable to connect to accounts server.",
+      error: ERROR_MESSAGES.ACCOUNTS.CANNOT_CONNECT,
     };
   }
 }
@@ -91,7 +92,7 @@ export async function createAccount(
     const firstIssue = validation.error.issues[0];
     return {
       success: false,
-      error: firstIssue?.message || "Invalid account details provided.",
+      error: firstIssue?.message || ERROR_MESSAGES.ACCOUNTS.INVALID_DETAILS,
     };
   }
 
@@ -124,11 +125,11 @@ export async function createAccount(
         data?.message ||
         data?.error ||
         (response.status === 401 || response.status === 403
-          ? "Unauthenticated or invalid token."
+          ? ERROR_MESSAGES.AUTH.UNAUTHENTICATED_OR_INVALID_TOKEN
           : response.status === 422
-          ? "Validation failed on accounts server."
+          ? ERROR_MESSAGES.ACCOUNTS.VALIDATION_FAILED
           : response.ok
-          ? "Invalid response from accounts server."
+          ? ERROR_MESSAGES.ACCOUNTS.INVALID_RESPONSE
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -140,7 +141,7 @@ export async function createAccount(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to accounts server.",
+      error: ERROR_MESSAGES.ACCOUNTS.CANNOT_CONNECT,
     };
   }
 }
@@ -155,7 +156,7 @@ export async function updateAccount(
     const firstIssue = validation.error.issues[0];
     return {
       success: false,
-      error: firstIssue?.message || "Invalid account update details provided.",
+      error: firstIssue?.message || ERROR_MESSAGES.ACCOUNTS.INVALID_UPDATE_DETAILS,
     };
   }
 
@@ -188,13 +189,13 @@ export async function updateAccount(
         data?.message ||
         data?.error ||
         (response.status === 401 || response.status === 403
-          ? "Unauthenticated or invalid token."
+          ? ERROR_MESSAGES.AUTH.UNAUTHENTICATED_OR_INVALID_TOKEN
           : response.status === 404
-          ? "Account not found."
+          ? ERROR_MESSAGES.ACCOUNTS.NOT_FOUND
           : response.status === 422
-          ? "Validation failed on accounts server."
+          ? ERROR_MESSAGES.ACCOUNTS.VALIDATION_FAILED
           : response.ok
-          ? "Invalid response from accounts server."
+          ? ERROR_MESSAGES.ACCOUNTS.INVALID_RESPONSE
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -206,7 +207,7 @@ export async function updateAccount(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to accounts server.",
+      error: ERROR_MESSAGES.ACCOUNTS.CANNOT_CONNECT,
     };
   }
 }
@@ -242,11 +243,11 @@ export async function deactivateAccount(
         data?.message ||
         data?.error ||
         (response.status === 401 || response.status === 403
-          ? "Unauthenticated or invalid token."
+          ? ERROR_MESSAGES.AUTH.UNAUTHENTICATED_OR_INVALID_TOKEN
           : response.status === 404
-          ? "Account not found."
+          ? ERROR_MESSAGES.ACCOUNTS.NOT_FOUND
           : response.ok
-          ? "Invalid response from accounts server."
+          ? ERROR_MESSAGES.ACCOUNTS.INVALID_RESPONSE
           : `HTTP error ${response.status}`);
       return { success: false, error: errorMessage, status: response.status };
     }
@@ -258,7 +259,7 @@ export async function deactivateAccount(
   } catch {
     return {
       success: false,
-      error: "Unable to connect to accounts server.",
+      error: ERROR_MESSAGES.ACCOUNTS.CANNOT_CONNECT,
     };
   }
 }

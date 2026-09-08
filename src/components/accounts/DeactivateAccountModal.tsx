@@ -3,6 +3,7 @@
 import { useState, useTransition, useEffect, MouseEvent } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { deactivateAccountAction } from "@/app/actions/accounts";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import styles from "./DeactivateAccountModal.module.css";
 
 interface DeactivateAccountModalProps {
@@ -61,7 +62,7 @@ export function DeactivateAccountModal({
       const result = await deactivateAccountAction(account.id);
 
       if (!result.success || !result.account) {
-        setServerError(result.error || "Failed to deactivate account. Please try again.");
+        setServerError(result.error || ERROR_MESSAGES.ACCOUNTS.DEACTIVATE_FAILED);
         return;
       }
 

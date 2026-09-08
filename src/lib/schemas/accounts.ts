@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 export const ACCOUNT_TYPES = [
   "checking",
@@ -76,7 +77,7 @@ export const updateAccountSchema = z
     is_active: z.boolean().optional(),
   })
   .refine((data) => Object.values(data).some((val) => val !== undefined), {
-    message: "At least one field must be provided for update.",
+    message: ERROR_MESSAGES.ACCOUNTS.AT_LEAST_ONE_FIELD_REQUIRED,
   });
 
 export type UpdateAccountInput = z.infer<typeof updateAccountSchema>;
