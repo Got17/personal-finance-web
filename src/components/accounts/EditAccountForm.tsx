@@ -103,7 +103,9 @@ export function EditAccountForm({
 
       <div className={styles.formGrid}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-name">Account Name *</label>
+          <label htmlFor="edit-account-name">
+            Account Name <span className={styles.requiredStar}>*</span>
+          </label>
           <input
             id="edit-account-name"
             type="text"
@@ -118,7 +120,9 @@ export function EditAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-type">Account Type *</label>
+          <label htmlFor="edit-account-type">
+            Account Type <span className={styles.requiredStar}>*</span>
+          </label>
           <select
             id="edit-account-type"
             className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
@@ -136,7 +140,9 @@ export function EditAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-currency">Currency (ISO Code) *</label>
+          <label htmlFor="edit-account-currency">
+            Currency (ISO Code) <span className={styles.requiredStar}>*</span>
+          </label>
           <input
             id="edit-account-currency"
             type="text"

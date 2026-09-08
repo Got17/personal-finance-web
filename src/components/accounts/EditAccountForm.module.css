@@ -65,6 +65,10 @@
   color: #1f2b24;
 }
 
+.requiredStar {
+  color: var(--rose);
+}
+
 .input,
 .select {
   font-family: inherit;

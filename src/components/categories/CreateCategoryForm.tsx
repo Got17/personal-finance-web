@@ -93,7 +93,9 @@ export function CreateCategoryForm({
 
       <div className={styles.formGrid}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="category-name">Category Name *</label>
+          <label htmlFor="category-name">
+            Category Name <span className={styles.requiredStar}>*</span>
+          </label>
           <input
             id="category-name"
             type="text"
@@ -108,7 +110,9 @@ export function CreateCategoryForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="category-type">Category Type *</label>
+          <label htmlFor="category-type">
+            Category Type <span className={styles.requiredStar}>*</span>
+          </label>
           <select
             id="category-type"
             className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
