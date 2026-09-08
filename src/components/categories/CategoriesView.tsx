@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Category } from "@/lib/schemas/categories";
 import { CategoriesList } from "./CategoriesList";
 import { CreateCategoryModal } from "./CreateCategoryModal";
+import { EditCategoryModal } from "./EditCategoryModal";
+import { DeactivateCategoryModal } from "./DeactivateCategoryModal";
 import { Badge } from "@/components/ui/Badge";
 import styles from "./CategoriesView.module.css";
 
@@ -14,9 +16,23 @@ interface CategoriesViewProps {
 export function CategoriesView({ initialCategories }: CategoriesViewProps) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deactivatingCategory, setDeactivatingCategory] = useState<Category | null>(null);
 
   const handleCategoryCreated = (newCategory: Category) => {
     setCategories((prev) => [newCategory, ...prev]);
+  };
+
+  const handleCategoryUpdated = (updatedCategory: Category) => {
+    setCategories((prev) =>
+      prev.map((cat) => (cat.id === updatedCategory.id ? updatedCategory : cat)),
+    );
+  };
+
+  const handleCategoryDeactivated = (deactivatedCategory: Category) => {
+    setCategories((prev) =>
+      prev.map((cat) => (cat.id === deactivatedCategory.id ? deactivatedCategory : cat)),
+    );
   };
 
   return (
@@ -42,6 +58,8 @@ export function CategoriesView({ initialCategories }: CategoriesViewProps) {
         <CategoriesList
           categories={categories}
           onAddClick={() => setIsCreateModalOpen(true)}
+          onEditClick={(cat) => setEditingCategory(cat)}
+          onDeactivateClick={(cat) => setDeactivatingCategory(cat)}
         />
       </section>
 
@@ -49,6 +67,20 @@ export function CategoriesView({ initialCategories }: CategoriesViewProps) {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onCategoryCreated={handleCategoryCreated}
+      />
+
+      <EditCategoryModal
+        isOpen={editingCategory !== null}
+        category={editingCategory}
+        onClose={() => setEditingCategory(null)}
+        onCategoryUpdated={handleCategoryUpdated}
+      />
+
+      <DeactivateCategoryModal
+        isOpen={deactivatingCategory !== null}
+        category={deactivatingCategory}
+        onClose={() => setDeactivatingCategory(null)}
+        onCategoryDeactivated={handleCategoryDeactivated}
       />
     </div>
   );

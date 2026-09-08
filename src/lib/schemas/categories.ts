@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 export const CATEGORY_TYPES = ["income", "expense"] as const;
 
@@ -23,3 +24,20 @@ export const createCategorySchema = z.object({
 });
 
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
+
+export const updateCategorySchema = z
+  .object({
+    name: z.string().trim().min(1, { message: "Category name is required." }).optional(),
+    type: z
+      .enum(CATEGORY_TYPES, {
+        message: "Please select a valid category type.",
+      })
+      .optional(),
+    is_active: z.boolean().optional(),
+  })
+  .refine((data) => Object.values(data).some((val) => val !== undefined), {
+    message: ERROR_MESSAGES.CATEGORIES.AT_LEAST_ONE_FIELD_REQUIRED,
+  });
+
+export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>;
+

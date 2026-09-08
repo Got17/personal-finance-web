@@ -10,6 +10,8 @@ import styles from "./CategoriesList.module.css";
 interface CategoriesListProps {
   categories: Category[];
   onAddClick?: () => void;
+  onEditClick?: (category: Category) => void;
+  onDeactivateClick?: (category: Category) => void;
 }
 
 type FilterType = "all" | CategoryType;
@@ -20,7 +22,12 @@ const TABS: { type: FilterType; label: (all: number, inc: number, exp: number) =
   { type: "expense", label: (_, __, exp) => `Expense (${exp})` },
 ];
 
-export function CategoriesList({ categories, onAddClick }: CategoriesListProps) {
+export function CategoriesList({
+  categories,
+  onAddClick,
+  onEditClick,
+  onDeactivateClick,
+}: CategoriesListProps) {
   const [filter, setFilter] = useState<FilterType>("all");
 
   const filteredCategories = categories.filter((cat) => {
@@ -100,15 +107,52 @@ export function CategoriesList({ categories, onAddClick }: CategoriesListProps) 
           <div className={styles.grid}>
             {filteredCategories.map((category) => (
               <Card key={category.id}>
-                <div className={styles.categoryMain}>
-                  <h4 className={styles.categoryName}>{category.name}</h4>
-                  <Badge variant={category.type === "income" ? "income" : "expense"}>
-                    {category.type === "income" ? "Income" : "Expense"}
-                  </Badge>
+                <div
+                  className={`${styles.categoryCard} ${!category.is_active ? styles.inactiveCard : ""}`}
+                  data-testid={`category-card-${category.id}`}
+                >
+                  <div className={styles.categoryMain}>
+                    <h4 className={styles.categoryName}>{category.name}</h4>
+                    <Badge variant={category.type === "income" ? "income" : "expense"}>
+                      {category.type === "income" ? "Income" : "Expense"}
+                    </Badge>
+                  </div>
+
+                  <div className={styles.cardFooter}>
+                    <span
+                      className={`${styles.statusBadge} ${
+                        category.is_active ? styles.activeStatus : styles.inactiveStatus
+                      }`}
+                    >
+                      {category.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+
+                  {(onEditClick || (onDeactivateClick && category.is_active)) && (
+                    <div className={styles.cardActions}>
+                      {onEditClick && (
+                        <button
+                          type="button"
+                          className={styles.editButton}
+                          onClick={() => onEditClick(category)}
+                          aria-label={`Edit ${category.name}`}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {onDeactivateClick && category.is_active && (
+                        <button
+                          type="button"
+                          className={styles.deactivateButton}
+                          onClick={() => onDeactivateClick(category)}
+                          aria-label={`Deactivate ${category.name}`}
+                        >
+                          Deactivate
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <span className={styles.statusBadge}>
-                  {category.is_active ? "Active" : "Inactive"}
-                </span>
               </Card>
             ))}
           </div>
