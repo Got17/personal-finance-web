@@ -12,6 +12,7 @@ export interface NavItem {
 const navItems: NavItem[] = [
   { name: "Overview", href: "/" },
   { name: "Accounts", href: "/accounts" },
+  { name: "Categories", href: "/categories" },
   { name: "Transactions", href: "/#transactions" },
   { name: "Budget", href: "/#budget" },
   { name: "Goals", href: "/#goals" },
