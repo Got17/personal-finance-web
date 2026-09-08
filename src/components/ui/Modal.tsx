@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, MouseEvent, ReactNode } from "react";
+import { useEffect, useId, MouseEvent, ReactNode } from "react";
 import styles from "./Modal.module.css";
 
 export interface ModalProps {
@@ -20,6 +20,9 @@ export function Modal({
   children,
   testId = "modal-dialog",
 }: ModalProps) {
+  const titleId = useId();
+  const descriptionId = useId();
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -57,13 +60,14 @@ export function Modal({
         className={styles.dialog}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
         data-testid={testId}
       >
         <div className={styles.dialogHeader}>
           <div className={styles.titleGroup}>
-            <h2 id="modal-title">{title}</h2>
-            {description && <p>{description}</p>}
+            <h2 id={titleId}>{title}</h2>
+            {description && <p id={descriptionId}>{description}</p>}
           </div>
           <button
             type="button"
