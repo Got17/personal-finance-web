@@ -1,6 +1,6 @@
 "use server";
 
-import { getSessionToken } from "@/lib/session";
+import { withAuth } from "@/lib/session";
 import {
   createAccount,
   getAccounts,
@@ -41,109 +41,85 @@ export interface DeactivateAccountActionResult {
 export async function createAccountAction(
   input: CreateAccountInput,
 ): Promise<CreateAccountActionResult> {
-  const token = await getSessionToken();
-  if (!token) {
+  return withAuth(async (token) => {
+    const result = await createAccount(token, input);
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error,
+      };
+    }
+
+    revalidatePath("/accounts");
+
     return {
-      success: false,
-      error: "Unauthenticated.",
+      success: true,
+      account: result.account,
     };
-  }
-
-  const result = await createAccount(token, input);
-
-  if (!result.success) {
-    return {
-      success: false,
-      error: result.error,
-    };
-  }
-
-  revalidatePath("/accounts");
-
-  return {
-    success: true,
-    account: result.account,
-  };
+  });
 }
 
 export async function getAccountsAction(): Promise<GetAccountsActionResult> {
-  const token = await getSessionToken();
-  if (!token) {
+  return withAuth(async (token) => {
+    const result = await getAccounts(token);
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error,
+      };
+    }
+
     return {
-      success: false,
-      error: "Unauthenticated.",
+      success: true,
+      accounts: result.accounts,
     };
-  }
-
-  const result = await getAccounts(token);
-
-  if (!result.success) {
-    return {
-      success: false,
-      error: result.error,
-    };
-  }
-
-  return {
-    success: true,
-    accounts: result.accounts,
-  };
+  });
 }
 
 export async function updateAccountAction(
   id: string,
   input: UpdateAccountInput,
 ): Promise<UpdateAccountActionResult> {
-  const token = await getSessionToken();
-  if (!token) {
+  return withAuth(async (token) => {
+    const result = await updateAccount(token, id, input);
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error,
+      };
+    }
+
+    revalidatePath("/accounts");
+
     return {
-      success: false,
-      error: "Unauthenticated.",
+      success: true,
+      account: result.account,
     };
-  }
-
-  const result = await updateAccount(token, id, input);
-
-  if (!result.success) {
-    return {
-      success: false,
-      error: result.error,
-    };
-  }
-
-  revalidatePath("/accounts");
-
-  return {
-    success: true,
-    account: result.account,
-  };
+  });
 }
 
 export async function deactivateAccountAction(
   id: string,
 ): Promise<DeactivateAccountActionResult> {
-  const token = await getSessionToken();
-  if (!token) {
+  return withAuth(async (token) => {
+    const result = await deactivateAccount(token, id);
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error,
+      };
+    }
+
+    revalidatePath("/accounts");
+
     return {
-      success: false,
-      error: "Unauthenticated.",
+      success: true,
+      account: result.account,
     };
-  }
-
-  const result = await deactivateAccount(token, id);
-
-  if (!result.success) {
-    return {
-      success: false,
-      error: result.error,
-    };
-  }
-
-  revalidatePath("/accounts");
-
-  return {
-    success: true,
-    account: result.account,
-  };
+  });
 }
 

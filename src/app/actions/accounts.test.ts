@@ -7,6 +7,13 @@ import { revalidatePath } from "next/cache";
 
 vi.mock("@/lib/session", () => ({
   getSessionToken: vi.fn(),
+  withAuth: vi.fn(async (handler) => {
+    const token = await session.getSessionToken();
+    if (!token) {
+      return { success: false, error: "Unauthenticated." };
+    }
+    return handler(token);
+  }),
 }));
 
 vi.mock("@/lib/accounts-service", () => ({

@@ -24,3 +24,17 @@ export async function clearSessionToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
+
+export async function withAuth<T extends { success: boolean; error?: string }>(
+  handler: (token: string) => Promise<T>,
+): Promise<T> {
+  const token = await getSessionToken();
+  if (!token) {
+    return {
+      success: false,
+      error: "Unauthenticated.",
+    } as T;
+  }
+
+  return handler(token);
+}

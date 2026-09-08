@@ -5,6 +5,13 @@ import * as preferencesService from "@/lib/preferences-service";
 
 vi.mock("@/lib/session", () => ({
   getSessionToken: vi.fn(),
+  withAuth: vi.fn(async (handler) => {
+    const token = await session.getSessionToken();
+    if (!token) {
+      return { success: false, error: "Unauthenticated." };
+    }
+    return handler(token);
+  }),
 }));
 
 vi.mock("@/lib/preferences-service", () => ({

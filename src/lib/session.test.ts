@@ -1,5 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { getSessionToken, setSessionToken, clearSessionToken, COOKIE_NAME } from "./session";
+import {
+  getSessionToken,
+  setSessionToken,
+  clearSessionToken,
+  withAuth,
+  COOKIE_NAME,
+} from "./session";
 
 // Mock next/headers cookies()
 const mockCookieStore = {
@@ -49,6 +55,31 @@ describe("session", () => {
     it("deletes the session cookie", async () => {
       await clearSessionToken();
       expect(mockCookieStore.delete).toHaveBeenCalledWith(COOKIE_NAME);
+    });
+  });
+
+  describe("withAuth", () => {
+    it("returns error result if no session token exists", async () => {
+      mockCookieStore.get.mockReturnValue(undefined);
+
+      const handler = vi.fn();
+      const result = await withAuth(handler);
+
+      expect(result).toEqual({
+        success: false,
+        error: "Unauthenticated.",
+      });
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    it("executes handler with session token when token exists", async () => {
+      mockCookieStore.get.mockReturnValue({ value: "valid-session-token" });
+
+      const handler = vi.fn().mockResolvedValue({ success: true, data: "ok" });
+      const result = await withAuth(handler);
+
+      expect(handler).toHaveBeenCalledWith("valid-session-token");
+      expect(result).toEqual({ success: true, data: "ok" });
     });
   });
 });
