@@ -79,16 +79,17 @@ describe("AccountsList", () => {
     expect(screen.queryByRole("button", { name: "Deactivate Old Savings" })).toBeNull();
   });
 
-  it("triggers onEditClick when clicking card container itself", () => {
+  it("renders non-interactive card container and relies on action buttons", () => {
     const onEdit = vi.fn();
     render(<AccountsList accounts={[mockAccounts[0]]} onEditClick={onEdit} />);
 
     const card = screen.getByTestId("account-card-acc-1");
-    fireEvent.click(card);
-    expect(onEdit).toHaveBeenCalledWith(mockAccounts[0]);
+    expect(card.getAttribute("role")).toBeNull();
+    expect(card.getAttribute("tabIndex")).toBeNull();
 
-    fireEvent.keyDown(card, { key: "Enter" });
-    expect(onEdit).toHaveBeenCalledTimes(2);
+    const editBtn = screen.getByRole("button", { name: "Edit Everyday Checking" });
+    fireEvent.click(editBtn);
+    expect(onEdit).toHaveBeenCalledWith(mockAccounts[0]);
   });
 });
 

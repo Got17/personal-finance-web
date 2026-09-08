@@ -49,29 +49,35 @@ export const createAccountSchema = z.object({
 
 export type CreateAccountInput = z.infer<typeof createAccountSchema>;
 
-export const updateAccountSchema = z.object({
-  name: z.string().trim().min(1, { message: "Account name is required." }).optional(),
-  type: z.enum(ACCOUNT_TYPES, {
-    message: "Please select a valid account type.",
-  }).optional(),
-  currency: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .regex(/^[A-Z]{3}$/, {
-      message: "Currency must be a valid 3-letter ISO currency code (e.g. USD).",
-    })
-    .optional(),
-  description: z.preprocess(
-    (value) => {
-      if (typeof value !== "string") return value;
-      const trimmed = value.trim();
-      return trimmed === "" ? undefined : trimmed;
-    },
-    z.string().optional().nullable(),
-  ),
-  is_active: z.boolean().optional(),
-});
+export const updateAccountSchema = z
+  .object({
+    name: z.string().trim().min(1, { message: "Account name is required." }).optional(),
+    type: z
+      .enum(ACCOUNT_TYPES, {
+        message: "Please select a valid account type.",
+      })
+      .optional(),
+    currency: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z]{3}$/, {
+        message: "Currency must be a valid 3-letter ISO currency code (e.g. USD).",
+      })
+      .optional(),
+    description: z.preprocess(
+      (value) => {
+        if (typeof value !== "string") return value;
+        const trimmed = value.trim();
+        return trimmed === "" ? undefined : trimmed;
+      },
+      z.string().optional().nullable(),
+    ),
+    is_active: z.boolean().optional(),
+  })
+  .refine((data) => Object.values(data).some((val) => val !== undefined), {
+    message: "At least one field must be provided for update.",
+  });
 
 export type UpdateAccountInput = z.infer<typeof updateAccountSchema>;
 

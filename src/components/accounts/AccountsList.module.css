@@ -68,16 +68,6 @@
   transform: translateY(-1px);
 }
 
-.clickableCard {
-  cursor: pointer;
-}
-
-.clickableCard:focus-visible {
-  outline: none;
-  border-color: #276749;
-  box-shadow: 0 0 0 3px #e2eee7;
-}
-
 .inactiveCard {
   opacity: 0.75;
   background-color: #f8f6f0;
@@ -196,6 +186,11 @@
   color: #1d4e38;
 }
 
+.editButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #e2eee7;
+}
+
 .deactivateButton {
   font-family: inherit;
   font-size: 0.8125rem;
@@ -213,5 +208,10 @@
 .deactivateButton:hover {
   background-color: #fcf0ee;
   border-color: #b55042;
+}
+
+.deactivateButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #f3c3be;
 }
 

@@ -33,16 +33,6 @@
   margin-bottom: 16px;
 }
 
-.successBanner {
-  background-color: #e2eee7;
-  border: 1px solid #c2e2d0;
-  color: #1d4e38;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.875rem;
-  margin-bottom: 16px;
-}
-
 .formGrid {
   display: grid;
   grid-template-columns: 1fr;

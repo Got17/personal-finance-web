@@ -26,6 +26,7 @@ export function DeactivateAccountModal({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        setServerError(null);
         onClose();
       }
     };

@@ -56,29 +56,12 @@ export function AccountsList({
       {accounts.map((account) => {
         const mark = TYPE_ICONS[account.type] || "A";
         const formattedType = TYPE_FORMATTED[account.type] || account.type;
-        const isClickable = Boolean(onEditClick);
 
         return (
           <div
             key={account.id}
-            className={`${styles.accountCard} ${!account.is_active ? styles.inactiveCard : ""} ${
-              isClickable ? styles.clickableCard : ""
-            }`}
+            className={`${styles.accountCard} ${!account.is_active ? styles.inactiveCard : ""}`}
             data-testid={`account-card-${account.id}`}
-            onClick={isClickable ? () => onEditClick!(account) : undefined}
-            onKeyDown={
-              isClickable
-                ? (e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      onEditClick!(account);
-                    }
-                  }
-                : undefined
-            }
-            tabIndex={isClickable ? 0 : undefined}
-            role={isClickable ? "button" : undefined}
-            aria-label={isClickable ? `Account ${account.name}` : undefined}
           >
             <div className={styles.cardHeader}>
               <div className={styles.markIcon} aria-hidden="true">
@@ -111,10 +94,7 @@ export function AccountsList({
                   <button
                     type="button"
                     className={styles.editButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEditClick(account);
-                    }}
+                    onClick={() => onEditClick(account)}
                     aria-label={`Edit ${account.name}`}
                   >
                     Edit
@@ -124,10 +104,7 @@ export function AccountsList({
                   <button
                     type="button"
                     className={styles.deactivateButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeactivateClick(account);
-                    }}
+                    onClick={() => onDeactivateClick(account)}
                     aria-label={`Deactivate ${account.name}`}
                   >
                     Deactivate

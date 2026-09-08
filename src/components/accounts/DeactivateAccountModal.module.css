@@ -149,6 +149,11 @@
   color: #1f2b24;
 }
 
+.closeButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #f3c3be;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

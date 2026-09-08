@@ -105,4 +105,42 @@ describe("DeactivateAccountModal", () => {
 
     expect(await screen.findByText("Caller does not own the account.")).toBeTruthy();
   });
+
+  it("clears serverError when pressing Escape key", async () => {
+    vi.mocked(accountsActions.deactivateAccountAction).mockResolvedValue({
+      success: false,
+      error: "Server error occurred.",
+    });
+
+    const onClose = vi.fn();
+
+    const { rerender } = render(
+      <DeactivateAccountModal
+        isOpen={true}
+        account={mockAccount}
+        onClose={onClose}
+        onAccountDeactivated={vi.fn()}
+      />
+    );
+
+    const confirmBtn = screen.getByRole("button", { name: /^Deactivate Account$/i });
+    fireEvent.click(confirmBtn);
+
+    expect(await screen.findByText("Server error occurred.")).toBeTruthy();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onClose).toHaveBeenCalled();
+
+    // Re-open modal to verify error is cleared
+    rerender(
+      <DeactivateAccountModal
+        isOpen={true}
+        account={mockAccount}
+        onClose={onClose}
+        onAccountDeactivated={vi.fn()}
+      />
+    );
+
+    expect(screen.queryByText("Server error occurred.")).toBeNull();
+  });
 });
