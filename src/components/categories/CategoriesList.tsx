@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { Category, CategoryType } from "@/lib/schemas/categories";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 import styles from "./CategoriesList.module.css";
 
 interface CategoriesListProps {
@@ -30,21 +33,12 @@ export function CategoriesList({ categories, onAddClick }: CategoriesListProps) 
 
   if (categories.length === 0) {
     return (
-      <div className={styles.emptyState}>
-        <h3 className={styles.emptyTitle}>No categories yet</h3>
-        <p className={styles.emptyDescription}>
-          Organize your income streams and spending by creating your first category.
-        </p>
-        {onAddClick && (
-          <button
-            type="button"
-            className={styles.emptyAddButton}
-            onClick={onAddClick}
-          >
-            + Add Category
-          </button>
-        )}
-      </div>
+      <EmptyState
+        title="No categories yet"
+        description="Organize your income streams and spending by creating your first category."
+        actionLabel={onAddClick ? "+ Add Category" : undefined}
+        onAction={onAddClick}
+      />
     );
   }
 
@@ -81,32 +75,24 @@ export function CategoriesList({ categories, onAddClick }: CategoriesListProps) 
       </div>
 
       {filteredCategories.length === 0 ? (
-        <div className={styles.emptyState}>
-          <h3 className={styles.emptyTitle}>
-            No {filter} categories found
-          </h3>
-          <p className={styles.emptyDescription}>
-            There are currently no {filter} categories created.
-          </p>
-        </div>
+        <EmptyState
+          title={`No ${filter} categories found`}
+          description={`There are currently no ${filter} categories created.`}
+        />
       ) : (
         <div className={styles.grid}>
           {filteredCategories.map((category) => (
-            <div key={category.id} className={styles.card}>
+            <Card key={category.id}>
               <div className={styles.categoryMain}>
                 <h4 className={styles.categoryName}>{category.name}</h4>
-                <span
-                  className={`${styles.typeBadge} ${
-                    category.type === "income" ? styles.incomeBadge : styles.expenseBadge
-                  }`}
-                >
+                <Badge variant={category.type === "income" ? "income" : "expense"}>
                   {category.type === "income" ? "Income" : "Expense"}
-                </span>
+                </Badge>
               </div>
               <span className={styles.statusBadge}>
                 {category.is_active ? "Active" : "Inactive"}
               </span>
-            </div>
+            </Card>
           ))}
         </div>
       )}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Category } from "@/lib/schemas/categories";
 import { CategoriesList } from "./CategoriesList";
 import { CreateCategoryModal } from "./CreateCategoryModal";
+import { Badge } from "@/components/ui/Badge";
 import styles from "./CategoriesView.module.css";
 
 interface CategoriesViewProps {
@@ -23,9 +24,9 @@ export function CategoriesView({ initialCategories }: CategoriesViewProps) {
       <div className={styles.headerRow}>
         <div className={styles.titleGroup}>
           <h2 className={styles.sectionTitle}>Your Categories</h2>
-          <span className={styles.categoryCount}>
+          <Badge variant="count">
             {categories.length} {categories.length === 1 ? "category" : "categories"}
-          </span>
+          </Badge>
         </div>
         <button
           type="button"

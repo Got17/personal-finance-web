@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition, useEffect, MouseEvent } from "react";
+import { useState, useTransition } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { deactivateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
+import { Modal } from "@/components/ui/Modal";
 import styles from "./DeactivateAccountModal.module.css";
 
 interface DeactivateAccountModalProps {
@@ -22,37 +23,11 @@ export function DeactivateAccountModal({
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (!isOpen || !account) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setServerError(null);
-        onClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen, account, onClose]);
-
-  if (!isOpen || !account) return null;
+  if (!account) return null;
 
   const handleClose = () => {
     setServerError(null);
     onClose();
-  };
-
-  const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
   };
 
   const handleDeactivate = () => {
@@ -72,64 +47,38 @@ export function DeactivateAccountModal({
   };
 
   return (
-    <div
-      className={styles.backdrop}
-      onClick={handleBackdropClick}
-      data-testid="deactivate-account-backdrop"
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Deactivate Account"
+      testId="deactivate-account-modal"
     >
-      <div
-        className={styles.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="deactivate-modal-title"
-        data-testid="deactivate-account-modal"
-      >
-        <div className={styles.dialogHeader}>
-          <div className={styles.warningIcon} aria-hidden="true">
-            ⚠
-          </div>
-          <button
-            type="button"
-            className={styles.closeButton}
-            onClick={handleClose}
-            aria-label="Close modal"
-            disabled={isPending}
-          >
-            ✕
-          </button>
-        </div>
+      <p className={styles.description}>
+        Are you sure you want to deactivate{" "}
+        <span className={styles.accountHighlight}>{account.name}</span>? The account will be marked
+        inactive, but its past transactions and history will remain available for reporting.
+      </p>
 
-        <div className={styles.titleGroup}>
-          <h2 id="deactivate-modal-title">Deactivate Account</h2>
-        </div>
+      {serverError && <div className={styles.errorBanner}>{serverError}</div>}
 
-        <p className={styles.description}>
-          Are you sure you want to deactivate{" "}
-          <span className={styles.accountHighlight}>{account.name}</span>? The account will be marked
-          inactive, but its past transactions and history will remain available for reporting.
-        </p>
-
-        {serverError && <div className={styles.errorBanner}>{serverError}</div>}
-
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.cancelButton}
-            onClick={handleClose}
-            disabled={isPending}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            className={styles.deactivateButton}
-            onClick={handleDeactivate}
-            disabled={isPending}
-          >
-            {isPending ? "Deactivating..." : "Deactivate Account"}
-          </button>
-        </div>
+      <div className={styles.actions}>
+        <button
+          type="button"
+          className={styles.cancelButton}
+          onClick={handleClose}
+          disabled={isPending}
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          className={styles.deactivateButton}
+          onClick={handleDeactivate}
+          disabled={isPending}
+        >
+          {isPending ? "Deactivating..." : "Deactivate Account"}
+        </button>
       </div>
-    </div>
+    </Modal>
   );
 }

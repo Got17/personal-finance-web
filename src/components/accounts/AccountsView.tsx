@@ -6,6 +6,7 @@ import { AccountsList } from "./AccountsList";
 import { CreateAccountModal } from "./CreateAccountModal";
 import { EditAccountModal } from "./EditAccountModal";
 import { DeactivateAccountModal } from "./DeactivateAccountModal";
+import { Badge } from "@/components/ui/Badge";
 import styles from "./AccountsView.module.css";
 
 interface AccountsViewProps {
@@ -40,9 +41,9 @@ export function AccountsView({ initialAccounts, defaultCurrency }: AccountsViewP
       <div className={styles.headerRow}>
         <div className={styles.titleGroup}>
           <h2 className={styles.sectionTitle}>Your Accounts</h2>
-          <span className={styles.accountCount}>
+          <Badge variant="count">
             {accounts.length} {accounts.length === 1 ? "account" : "accounts"}
-          </span>
+          </Badge>
         </div>
         <button
           type="button"
@@ -86,4 +87,3 @@ export function AccountsView({ initialAccounts, defaultCurrency }: AccountsViewP
     </div>
   );
 }
-

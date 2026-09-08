@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth-service";
 import { getCategories } from "@/lib/categories-service";
 import { redirect } from "next/navigation";
 import { CategoriesView } from "@/components/categories/CategoriesView";
+import { PageHeader } from "@/components/ui/PageHeader";
 import styles from "./page.module.css";
 
 export default async function CategoriesPage() {
@@ -22,13 +23,11 @@ export default async function CategoriesPage() {
 
   return (
     <div className={styles.pageContainer}>
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Workspace</p>
-        <h1 className={styles.title}>Categories</h1>
-        <p className={styles.subtitle}>
-          Create and view your income and expense categories to organize your personal finances.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Workspace"
+        title="Categories"
+        subtitle="Create and view your income and expense categories to organize your personal finances."
+      />
 
       {!categoriesResult.success && (
         <div className={styles.errorBanner}>
