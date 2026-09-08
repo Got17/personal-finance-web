@@ -35,6 +35,17 @@ describe("Navigation components", () => {
       expect(overviewLink.className).not.toContain("activeNavItem");
       expect(accountsLink.className).toContain("activeNavItem");
     });
+
+    it("highlights Categories when pathname is /categories", () => {
+      vi.mocked(usePathname).mockReturnValue("/categories");
+      render(<SidebarNav />);
+
+      const overviewLink = screen.getByRole("link", { name: /Overview/i });
+      const categoriesLink = screen.getByRole("link", { name: /Categories/i });
+
+      expect(overviewLink.className).not.toContain("activeNavItem");
+      expect(categoriesLink.className).toContain("activeNavItem");
+    });
   });
 
   describe("MobileNav", () => {

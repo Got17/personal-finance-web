@@ -1,4 +1,5 @@
 import { Account } from "@/lib/schemas/accounts";
+import { EmptyState } from "@/components/ui/EmptyState";
 import styles from "./AccountsList.module.css";
 
 interface AccountsListProps {
@@ -36,18 +37,12 @@ export function AccountsList({
 }: AccountsListProps) {
   if (accounts.length === 0) {
     return (
-      <div className={styles.emptyCard} data-testid="empty-accounts">
-        <h3 className={styles.emptyTitle}>No accounts created yet</h3>
-        <p className={styles.emptyDescription}>
-          Add your first bank account, savings account, or investment portfolio to start tracking
-          your finances.
-        </p>
-        {onAddClick && (
-          <button type="button" className={styles.emptyButton} onClick={onAddClick}>
-            + Add Account
-          </button>
-        )}
-      </div>
+      <EmptyState
+        title="No accounts created yet"
+        description="Add your first bank account, savings account, or investment portfolio to start tracking your finances."
+        actionLabel={onAddClick ? "+ Add Account" : undefined}
+        onAction={onAddClick}
+      />
     );
   }
 
@@ -118,4 +113,3 @@ export function AccountsList({
     </div>
   );
 }
-

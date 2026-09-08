@@ -16,6 +16,7 @@
   font-weight: 650;
   transition: background-color 160ms ease, color 160ms ease;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .navItem:hover {

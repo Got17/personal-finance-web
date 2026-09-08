@@ -111,7 +111,9 @@ export function CreateAccountForm({
 
       <div className={styles.formGrid}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-name">Account Name *</label>
+          <label htmlFor="account-name">
+            Account Name <span className={styles.requiredStar}>*</span>
+          </label>
           <input
             id="account-name"
             type="text"
@@ -126,7 +128,9 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-type">Account Type *</label>
+          <label htmlFor="account-type">
+            Account Type <span className={styles.requiredStar}>*</span>
+          </label>
           <select
             id="account-type"
             className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
@@ -144,7 +148,9 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-currency">Currency (ISO Code) *</label>
+          <label htmlFor="account-currency">
+            Currency (ISO Code) <span className={styles.requiredStar}>*</span>
+          </label>
           <input
             id="account-currency"
             type="text"

@@ -23,6 +23,13 @@ export const ERROR_MESSAGES = {
     INVALID_RESPONSE: "Invalid response from preferences server.",
     INVALID_CURRENCY: "Base currency must be a valid 3-letter currency code (e.g. USD, EUR).",
   },
+  CATEGORIES: {
+    CANNOT_CONNECT: "Unable to connect to categories server.",
+    INVALID_RESPONSE: "Invalid response from categories server.",
+    VALIDATION_FAILED: "Validation failed on categories server.",
+    INVALID_DETAILS: "Invalid category details provided.",
+    CREATE_FAILED: "Failed to create category. Please try again.",
+  },
   GENERAL: {
     SOMETHING_WENT_WRONG: "An unexpected error occurred. Please try again.",
   },

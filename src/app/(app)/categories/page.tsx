@@ -1,12 +1,12 @@
 import { getSessionToken } from "@/lib/session";
 import { getCurrentUser } from "@/lib/auth-service";
-import { getAccounts } from "@/lib/accounts-service";
+import { getCategories } from "@/lib/categories-service";
 import { redirect } from "next/navigation";
-import { AccountsView } from "@/components/accounts/AccountsView";
+import { CategoriesView } from "@/components/categories/CategoriesView";
 import { PageHeader } from "@/components/ui/PageHeader";
 import styles from "./page.module.css";
 
-export default async function AccountsPage() {
+export default async function CategoriesPage() {
   const token = await getSessionToken();
   if (!token) {
     redirect("/login");
@@ -19,25 +19,24 @@ export default async function AccountsPage() {
     return null;
   }
 
-  const accountsResult = await getAccounts(token);
+  const categoriesResult = await getCategories(token);
 
   return (
     <div className={styles.pageContainer}>
       <PageHeader
         eyebrow="Workspace"
-        title="Accounts"
-        subtitle="Create and view bank accounts, credit cards, and investments in one place."
+        title="Categories"
+        subtitle="Create and view your income and expense categories to organize your personal finances."
       />
 
-      {!accountsResult.success && (
+      {!categoriesResult.success && (
         <div className={styles.errorBanner}>
-          Failed to load accounts: {accountsResult.error}
+          Failed to load categories: {categoriesResult.error}
         </div>
       )}
 
-      <AccountsView
-        initialAccounts={accountsResult.success ? accountsResult.accounts : []}
-        defaultCurrency={userResult.user.base_currency || "USD"}
+      <CategoriesView
+        initialCategories={categoriesResult.success ? categoriesResult.categories : []}
       />
     </div>
   );
