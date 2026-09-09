@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createCategorySchema, updateCategorySchema } from "./categories";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 describe("createCategorySchema", () => {
   it("validates correct category input with default active state", () => {
@@ -99,7 +100,7 @@ describe("updateCategorySchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toBe(
-        "At least one field must be provided for update.",
+        ERROR_MESSAGES.CATEGORIES.AT_LEAST_ONE_FIELD_REQUIRED,
       );
     }
   });

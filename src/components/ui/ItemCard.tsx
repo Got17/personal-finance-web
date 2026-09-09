@@ -41,7 +41,7 @@ export function ItemCard({
       ? styles.incomeIcon
       : iconVariant === "expense"
       ? styles.expenseIcon
-      : styles.iconTile;
+      : "";
 
   return (
     <div
@@ -51,7 +51,7 @@ export function ItemCard({
       <div className={styles.cardHeader}>
         <div className={styles.headerLeft}>
           {icon && (
-            <div className={`${styles.iconTile} ${iconClass}`} aria-hidden="true">
+            <div className={`${styles.iconTile} ${iconClass}`.trim()} aria-hidden="true">
               {icon}
             </div>
           )}

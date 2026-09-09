@@ -104,4 +104,49 @@ describe("DeactivateModal", () => {
 
     expect(await screen.findByText("Authorization failed")).toBeTruthy();
   });
+
+  it("displays fallback error when success is true but item is missing", async () => {
+    const onConfirm = vi.fn().mockResolvedValue({
+      success: true,
+      item: undefined,
+    });
+    const onDeactivated = vi.fn();
+
+    render(
+      <DeactivateModal
+        isOpen={true}
+        item={mockItem}
+        entityName="Account"
+        onClose={vi.fn()}
+        onConfirm={onConfirm}
+        onDeactivated={onDeactivated}
+      />,
+    );
+
+    const confirmBtn = screen.getByRole("button", { name: "Deactivate Account" });
+    fireEvent.click(confirmBtn);
+
+    expect(await screen.findByText("Failed to deactivate account. Please try again.")).toBeTruthy();
+    expect(onDeactivated).not.toHaveBeenCalled();
+  });
+
+  it("handles thrown errors in onConfirm gracefully", async () => {
+    const onConfirm = vi.fn().mockRejectedValue(new Error("Network disconnect"));
+
+    render(
+      <DeactivateModal
+        isOpen={true}
+        item={mockItem}
+        entityName="Account"
+        onClose={vi.fn()}
+        onConfirm={onConfirm}
+        onDeactivated={vi.fn()}
+      />,
+    );
+
+    const confirmBtn = screen.getByRole("button", { name: "Deactivate Account" });
+    fireEvent.click(confirmBtn);
+
+    expect(await screen.findByText("Network disconnect")).toBeTruthy();
+  });
 });

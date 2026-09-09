@@ -41,19 +41,25 @@ export function DeactivateModal<T extends { id: string; name: string }>({
     setServerError(null);
 
     startTransition(async () => {
-      const result = await onConfirm(item.id);
+      try {
+        const result = await onConfirm(item.id);
 
-      if (!result.success) {
-        setServerError(
-          result.error || `Failed to deactivate ${entityName.toLowerCase()}. Please try again.`,
-        );
-        return;
-      }
+        if (!result.success || !result.item) {
+          setServerError(
+            result.error || `Failed to deactivate ${entityName.toLowerCase()}. Please try again.`,
+          );
+          return;
+        }
 
-      if (result.item) {
         onDeactivated(result.item);
+        handleClose();
+      } catch (err) {
+        setServerError(
+          err instanceof Error
+            ? err.message
+            : `Failed to deactivate ${entityName.toLowerCase()}. Please try again.`,
+        );
       }
-      handleClose();
     });
   };
 
