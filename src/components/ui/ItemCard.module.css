@@ -1,0 +1,100 @@
+.cardContainer {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(31, 43, 36, 0.04);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.cardContainer:hover {
+  border-color: #c2e2d0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(31, 43, 36, 0.06);
+}
+
+.inactiveCard {
+  opacity: 0.75;
+  background-color: #f8f6f0;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.iconTile {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: var(--forest-soft);
+  color: var(--forest-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.incomeIcon {
+  background-color: var(--forest-soft);
+  color: var(--forest-deep);
+}
+
+.expenseIcon {
+  background-color: #f8ece9;
+  color: var(--rose);
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-family: Georgia, serif;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+}
+
+.description {
+  font-size: 0.84375rem;
+  color: var(--ink-muted);
+  margin: 4px 0 12px 0;
+  line-height: 1.4;
+}
+
+.cardBody {
+  flex-grow: 1;
+}

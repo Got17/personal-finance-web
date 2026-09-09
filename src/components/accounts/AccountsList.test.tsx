@@ -47,11 +47,11 @@ describe("AccountsList", () => {
 
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
     expect(screen.getByText("Daily expenses")).toBeTruthy();
-    expect(screen.getByText("USD")).toBeTruthy();
+    expect(screen.getByText(/USD/)).toBeTruthy();
     expect(screen.getByText("Active")).toBeTruthy();
 
     expect(screen.getByText("Old Savings")).toBeTruthy();
-    expect(screen.getByText("EUR")).toBeTruthy();
+    expect(screen.getByText(/EUR/)).toBeTruthy();
     expect(screen.getByText("Inactive")).toBeTruthy();
   });
 

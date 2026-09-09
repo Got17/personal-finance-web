@@ -3,10 +3,8 @@
 import { useState, KeyboardEvent } from "react";
 import { Category, CategoryType } from "@/lib/schemas/categories";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { StatusBadge } from "@/components/ui/StatusBadge";
-import { CardActions } from "@/components/ui/CardActions";
+import { ItemCard } from "@/components/ui/ItemCard";
 import styles from "./CategoriesList.module.css";
 
 interface CategoriesListProps {
@@ -115,31 +113,24 @@ export function CategoriesList({
         ) : (
           <div className={styles.grid}>
             {filteredCategories.map((category) => (
-              <Card key={category.id}>
-                <div
-                  className={`${styles.categoryCard} ${!category.is_active ? styles.inactiveCard : ""}`}
-                  data-testid={`category-card-${category.id}`}
-                >
-                  <div className={styles.categoryMain}>
-                    <h4 className={styles.categoryName}>{category.name}</h4>
-                    <Badge variant={category.type === "income" ? "income" : "expense"}>
-                      {category.type === "income" ? "Income" : "Expense"}
-                    </Badge>
-                  </div>
-
-                  <div className={styles.cardFooter}>
-                    <StatusBadge isActive={category.is_active} />
-                  </div>
-
-                  <CardActions
-                    onEdit={onEditClick ? () => onEditClick(category) : undefined}
-                    onDeactivate={onDeactivateClick ? () => onDeactivateClick(category) : undefined}
-                    canDeactivate={category.is_active}
-                    editAriaLabel={`Edit ${category.name}`}
-                    deactivateAriaLabel={`Deactivate ${category.name}`}
-                  />
-                </div>
-              </Card>
+              <ItemCard
+                key={category.id}
+                id={category.id}
+                testId={`category-card-${category.id}`}
+                title={category.name}
+                icon={category.type === "income" ? "↑" : "↓"}
+                iconVariant={category.type === "income" ? "income" : "expense"}
+                badge={
+                  <Badge variant={category.type === "income" ? "income" : "expense"}>
+                    {category.type === "income" ? "Income" : "Expense"}
+                  </Badge>
+                }
+                isActive={category.is_active}
+                onEdit={onEditClick ? () => onEditClick(category) : undefined}
+                onDeactivate={onDeactivateClick ? () => onDeactivateClick(category) : undefined}
+                editAriaLabel={`Edit ${category.name}`}
+                deactivateAriaLabel={`Deactivate ${category.name}`}
+              />
             ))}
           </div>
         )}
