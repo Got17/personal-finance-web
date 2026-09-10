@@ -1,5 +1,10 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { getCategories, createCategory } from "./categories-service";
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deactivateCategory,
+} from "./categories-service";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 describe("categories-service", () => {
@@ -205,4 +210,212 @@ describe("categories-service", () => {
       }
     });
   });
+
+  describe("updateCategory", () => {
+    it("validates input before making network request", async () => {
+      global.fetch = vi.fn();
+
+      const result = await updateCategory("test-token", "cat-1", {});
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(
+          ERROR_MESSAGES.CATEGORIES.AT_LEAST_ONE_FIELD_REQUIRED,
+        );
+      }
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it("returns updated category on HTTP 200 response", async () => {
+      const mockUpdatedCategory = {
+        id: "cat-1",
+        user_id: "usr-1",
+        name: "Updated Salary",
+        type: "income" as const,
+        is_active: true,
+        created_at: "2026-09-08T00:00:00Z",
+        updated_at: "2026-09-08T01:00:00Z",
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          data: mockUpdatedCategory,
+          message: "Category updated successfully.",
+        }),
+      });
+
+      const result = await updateCategory("test-token", "cat-1", {
+        name: "Updated Salary",
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.category).toEqual(mockUpdatedCategory);
+      }
+      expect(global.fetch).toHaveBeenCalledWith(
+        "http://localhost:8080/v1/categories/cat-1",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test-token",
+          },
+          body: JSON.stringify({ name: "Updated Salary" }),
+        },
+      );
+    });
+
+    it("handles HTTP 403 forbidden response", async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        json: async () => ({
+          success: false,
+          error: "Forbidden",
+          message: "You do not have permission to perform this action on this category.",
+        }),
+      });
+
+      const result = await updateCategory("test-token", "cat-1", {
+        name: "Forbidden Update",
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(
+          "You do not have permission to perform this action on this category.",
+        );
+        expect(result.status).toBe(403);
+      }
+    });
+
+    it("handles HTTP 404 not found response", async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        json: async () => ({
+          success: false,
+          error: "Not Found",
+          message: "Category not found.",
+        }),
+      });
+
+      const result = await updateCategory("test-token", "non-existent", {
+        name: "Update",
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(ERROR_MESSAGES.CATEGORIES.NOT_FOUND);
+        expect(result.status).toBe(404);
+      }
+    });
+
+    it("handles network error gracefully", async () => {
+      global.fetch = vi.fn().mockRejectedValue(new Error("Fetch failure"));
+
+      const result = await updateCategory("test-token", "cat-1", {
+        name: "New Name",
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(ERROR_MESSAGES.CATEGORIES.CANNOT_CONNECT);
+      }
+    });
+  });
+
+  describe("deactivateCategory", () => {
+    it("returns deactivated category on HTTP 200 response", async () => {
+      const mockDeactivatedCategory = {
+        id: "cat-1",
+        user_id: "usr-1",
+        name: "Salary",
+        type: "income" as const,
+        is_active: false,
+        created_at: "2026-09-08T00:00:00Z",
+        updated_at: "2026-09-08T01:00:00Z",
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          data: mockDeactivatedCategory,
+          message: "Category deactivated successfully.",
+        }),
+      });
+
+      const result = await deactivateCategory("test-token", "cat-1");
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.category).toEqual(mockDeactivatedCategory);
+      }
+      expect(global.fetch).toHaveBeenCalledWith(
+        "http://localhost:8080/v1/categories/cat-1",
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer test-token",
+          },
+        },
+      );
+    });
+
+    it("handles HTTP 403 forbidden response", async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        json: async () => ({
+          success: false,
+          error: "Forbidden",
+          message: "Forbidden",
+        }),
+      });
+
+      const result = await deactivateCategory("test-token", "cat-other");
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.status).toBe(403);
+      }
+    });
+
+    it("handles HTTP 404 not found response", async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        json: async () => ({
+          success: false,
+          error: "Not Found",
+          message: "Category not found.",
+        }),
+      });
+
+      const result = await deactivateCategory("test-token", "non-existent");
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(ERROR_MESSAGES.CATEGORIES.NOT_FOUND);
+        expect(result.status).toBe(404);
+      }
+    });
+
+    it("handles network error gracefully", async () => {
+      global.fetch = vi.fn().mockRejectedValue(new Error("Fetch failure"));
+
+      const result = await deactivateCategory("test-token", "cat-1");
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(ERROR_MESSAGES.CATEGORIES.CANNOT_CONNECT);
+      }
+    });
+  });
 });
+

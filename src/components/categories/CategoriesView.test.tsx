@@ -42,4 +42,24 @@ describe("CategoriesView", () => {
 
     expect(screen.queryByTestId("create-category-modal")).toBeNull();
   });
+
+  it("opens EditCategoryModal when Edit button is clicked", () => {
+    render(<CategoriesView initialCategories={[mockInitialCategory]} />);
+
+    const editButton = screen.getByRole("button", { name: "Edit Salary" });
+    fireEvent.click(editButton);
+
+    expect(screen.getByTestId("edit-category-modal")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Edit Category" })).toBeTruthy();
+  });
+
+  it("opens DeactivateCategoryModal when Deactivate button is clicked", () => {
+    render(<CategoriesView initialCategories={[mockInitialCategory]} />);
+
+    const deactivateButton = screen.getByRole("button", { name: "Deactivate Salary" });
+    fireEvent.click(deactivateButton);
+
+    expect(screen.getByTestId("deactivate-category-modal")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Deactivate Category" })).toBeTruthy();
+  });
 });

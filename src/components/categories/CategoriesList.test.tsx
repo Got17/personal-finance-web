@@ -18,7 +18,7 @@ const mockCategories: Category[] = [
     user_id: "usr-1",
     name: "Groceries",
     type: "expense",
-    is_active: true,
+    is_active: false,
     created_at: "2026-09-08T00:00:00Z",
     updated_at: "2026-09-08T00:00:00Z",
   },
@@ -66,5 +66,47 @@ describe("CategoriesList", () => {
 
     expect(screen.queryByText("Salary")).toBeNull();
     expect(screen.getByText("Groceries")).toBeTruthy();
+  });
+
+  it("calls onEditClick when edit button is clicked", () => {
+    const onEditClick = vi.fn();
+    render(<CategoriesList categories={mockCategories} onEditClick={onEditClick} />);
+
+    const editBtn = screen.getByRole("button", { name: "Edit Salary" });
+    fireEvent.click(editBtn);
+
+    expect(onEditClick).toHaveBeenCalledWith(mockCategories[0]);
+  });
+
+  it("calls onDeactivateClick for active category and hides deactivate for inactive category", () => {
+    const onDeactivateClick = vi.fn();
+    render(
+      <CategoriesList
+        categories={mockCategories}
+        onDeactivateClick={onDeactivateClick}
+      />,
+    );
+
+    const deactivateBtn = screen.getByRole("button", { name: "Deactivate Salary" });
+    fireEvent.click(deactivateBtn);
+    expect(onDeactivateClick).toHaveBeenCalledWith(mockCategories[0]);
+
+    expect(screen.queryByRole("button", { name: "Deactivate Groceries" })).toBeNull();
+  });
+
+  it("navigates tabs and focuses active tab on arrow key press", () => {
+    render(<CategoriesList categories={mockCategories} />);
+
+    const tabList = screen.getByRole("tablist");
+    const allTab = screen.getByRole("tab", { name: "All (2)" });
+    const incomeTab = screen.getByRole("tab", { name: "Income (1)" });
+
+    allTab.focus();
+    expect(document.activeElement).toBe(allTab);
+
+    fireEvent.keyDown(tabList, { key: "ArrowRight" });
+
+    expect(incomeTab.getAttribute("aria-selected")).toBe("true");
+    expect(document.activeElement).toBe(incomeTab);
   });
 });

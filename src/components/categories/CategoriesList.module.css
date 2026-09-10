@@ -22,6 +22,7 @@
   border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
 }
 
 .filterTab:hover {
@@ -39,33 +40,15 @@
   border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
+  transition: background-color 160ms ease;
 }
 
 .activeFilterTab:hover {
-  background-color: #d4e5db;
+  background-color: var(--surface-muted);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
-}
-
-.categoryMain {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.categoryName {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ink);
-  margin: 0;
-}
-
-.statusBadge {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--ink-muted);
 }

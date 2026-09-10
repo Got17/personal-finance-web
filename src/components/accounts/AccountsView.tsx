@@ -6,7 +6,7 @@ import { AccountsList } from "./AccountsList";
 import { CreateAccountModal } from "./CreateAccountModal";
 import { EditAccountModal } from "./EditAccountModal";
 import { DeactivateAccountModal } from "./DeactivateAccountModal";
-import { Badge } from "@/components/ui/Badge";
+import { ViewHeader } from "@/components/ui/ViewHeader";
 import styles from "./AccountsView.module.css";
 
 interface AccountsViewProps {
@@ -38,22 +38,15 @@ export function AccountsView({ initialAccounts, defaultCurrency }: AccountsViewP
 
   return (
     <div className={styles.viewContainer}>
-      <div className={styles.headerRow}>
-        <div className={styles.titleGroup}>
-          <h2 className={styles.sectionTitle}>Your Accounts</h2>
-          <Badge variant="count">
-            {accounts.length} {accounts.length === 1 ? "account" : "accounts"}
-          </Badge>
-        </div>
-        <button
-          type="button"
-          className={styles.addButton}
-          onClick={() => setIsCreateModalOpen(true)}
-          aria-label="Add new account"
-        >
-          + Add Account
-        </button>
-      </div>
+      <ViewHeader
+        title="Your Accounts"
+        count={accounts.length}
+        unitSingular="account"
+        unitPlural="accounts"
+        actionLabel="+ Add Account"
+        onAction={() => setIsCreateModalOpen(true)}
+        actionAriaLabel="Add new account"
+      />
 
       <section aria-label="Accounts list">
         <AccountsList

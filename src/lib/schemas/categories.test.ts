@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createCategorySchema } from "./categories";
+import { createCategorySchema, updateCategorySchema } from "./categories";
+import { ERROR_MESSAGES } from "@/lib/constants/errors";
 
 describe("createCategorySchema", () => {
   it("validates correct category input with default active state", () => {
@@ -61,3 +62,71 @@ describe("createCategorySchema", () => {
     }
   });
 });
+
+describe("updateCategorySchema", () => {
+  it("validates full category update input", () => {
+    const result = updateCategorySchema.safeParse({
+      name: "Freelance Income",
+      type: "income",
+      is_active: false,
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual({
+        name: "Freelance Income",
+        type: "income",
+        is_active: false,
+      });
+    }
+  });
+
+  it("allows partial updates", () => {
+    const result = updateCategorySchema.safeParse({
+      name: "Rent & Housing",
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual({
+        name: "Rent & Housing",
+      });
+    }
+  });
+
+  it("rejects empty category update payload", () => {
+    const result = updateCategorySchema.safeParse({});
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe(
+        ERROR_MESSAGES.CATEGORIES.AT_LEAST_ONE_FIELD_REQUIRED,
+      );
+    }
+  });
+
+  it("rejects blank name in category update", () => {
+    const result = updateCategorySchema.safeParse({
+      name: "   ",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe("Category name is required.");
+    }
+  });
+
+  it("rejects invalid type in category update", () => {
+    const result = updateCategorySchema.safeParse({
+      type: "invalid-type",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe(
+        "Please select a valid category type.",
+      );
+    }
+  });
+});
+
