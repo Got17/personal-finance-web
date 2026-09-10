@@ -49,7 +49,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-describe("Phase 1 Foundation End-to-End Acceptance Test", () => {
+describe("Phase 1 Foundation contract-level integration tests (mocked /v1 API)", () => {
   const originalFetch = global.fetch;
 
   beforeEach(() => {

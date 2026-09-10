@@ -82,7 +82,8 @@ export function createMockApiHandler() {
     }
 
     if (path === "/v1/users/me" && method === "GET") {
-      return jsonResponse({ success: true, data: currentUser, message: "User info" }, 200);
+      const { password: _password, ...publicUser } = currentUser;
+      return jsonResponse({ success: true, data: publicUser, message: "User info" }, 200);
     }
 
     if (path === "/v1/users/me/preferences") {
