@@ -93,4 +93,20 @@ describe("CategoriesList", () => {
 
     expect(screen.queryByRole("button", { name: "Deactivate Groceries" })).toBeNull();
   });
+
+  it("navigates tabs and focuses active tab on arrow key press", () => {
+    render(<CategoriesList categories={mockCategories} />);
+
+    const tabList = screen.getByRole("tablist");
+    const allTab = screen.getByRole("tab", { name: "All (2)" });
+    const incomeTab = screen.getByRole("tab", { name: "Income (1)" });
+
+    allTab.focus();
+    expect(document.activeElement).toBe(allTab);
+
+    fireEvent.keyDown(tabList, { key: "ArrowRight" });
+
+    expect(incomeTab.getAttribute("aria-selected")).toBe("true");
+    expect(document.activeElement).toBe(incomeTab);
+  });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, KeyboardEvent } from "react";
+import { useState, useRef, KeyboardEvent } from "react";
 import { Category, CategoryType } from "@/lib/schemas/categories";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Badge } from "@/components/ui/Badge";
@@ -35,6 +35,7 @@ export function CategoriesList({
   onDeactivateClick,
 }: CategoriesListProps) {
   const [filter, setFilter] = useState<FilterType>("all");
+  const tabRefs = useRef<{ [key in FilterType]?: HTMLButtonElement | null }>({});
 
   const filteredCategories = categories.filter((cat) => {
     if (filter === "all") return true;
@@ -52,14 +53,26 @@ export function CategoriesList({
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const currentIndex = TABS.findIndex((tab) => tab.type === filter);
+    let nextIndex = -1;
+
     if (e.key === "ArrowRight") {
       e.preventDefault();
-      const nextIndex = (currentIndex + 1) % TABS.length;
-      setFilter(TABS[nextIndex].type);
+      nextIndex = (currentIndex + 1) % TABS.length;
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      const prevIndex = (currentIndex - 1 + TABS.length) % TABS.length;
-      setFilter(TABS[prevIndex].type);
+      nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      nextIndex = 0;
+    } else if (e.key === "End") {
+      e.preventDefault();
+      nextIndex = TABS.length - 1;
+    }
+
+    if (nextIndex !== -1) {
+      const nextType = TABS[nextIndex].type;
+      setFilter(nextType);
+      tabRefs.current[nextType]?.focus();
     }
   };
 
@@ -89,6 +102,9 @@ export function CategoriesList({
           return (
             <button
               key={tab.type}
+              ref={(el) => {
+                tabRefs.current[tab.type] = el;
+              }}
               type="button"
               role="tab"
               id={`tab-${tab.type}`}

@@ -102,7 +102,8 @@ describe("DeactivateModal", () => {
     const confirmBtn = screen.getByRole("button", { name: "Deactivate Account" });
     fireEvent.click(confirmBtn);
 
-    expect(await screen.findByText("Authorization failed")).toBeTruthy();
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("Authorization failed");
   });
 
   it("displays fallback error when success is true but item is missing", async () => {

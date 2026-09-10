@@ -80,7 +80,11 @@ export function DeactivateModal<T extends { id: string; name: string }>({
     >
       <p className={styles.description}>{description || defaultDescription}</p>
 
-      {serverError && <div className={styles.errorBanner}>{serverError}</div>}
+      {serverError && (
+        <div className={styles.errorBanner} role="alert">
+          {serverError}
+        </div>
+      )}
 
       <div className={styles.actions}>
         <button
