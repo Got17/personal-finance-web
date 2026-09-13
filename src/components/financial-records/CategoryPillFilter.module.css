@@ -1,0 +1,104 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 1.25rem 0 1.5rem 0;
+}
+
+.labelGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.pillsList {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background-color: var(--surface-muted);
+  color: var(--ink);
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  white-space: nowrap;
+}
+
+.pill:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(31, 43, 36, 0.08);
+}
+
+.allPillActive {
+  background-color: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+  box-shadow: 0 2px 6px rgba(31, 43, 36, 0.2);
+}
+
+.count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 2px;
+  opacity: 0.9;
+}
+
+.food {
+  background-color: #fdf2f0;
+  color: #b55042;
+  border-color: #f8d0cd;
+}
+
+.transport {
+  background-color: #f0f9ff;
+  color: #0284c7;
+  border-color: #bae6fd;
+}
+
+.invest {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+  border-color: #ddd6fe;
+}
+
+.groceries {
+  background-color: #fefce8;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.salary {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.utilities {
+  background-color: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+.activeCategoryPill {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+  font-weight: 700;
+}

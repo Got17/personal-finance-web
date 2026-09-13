@@ -1,1 +1,186 @@
-.view{display:grid;gap:1rem}.entry,.history{padding:1.35rem;background:var(--surface);border:1px solid var(--line);border-radius:1rem}.eyebrow{margin-bottom:.35rem;color:var(--forest);font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.entry h2,.history h2{font-family:Georgia,serif;font-size:1.35rem;font-weight:400}.grid,.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1.25rem 0}.grid label{display:grid;gap:.35rem;color:var(--ink);font-size:.75rem;font-weight:700}.grid label span{color:var(--ink-muted);font-weight:500}.grid input,.grid select,.filters input,.filters select{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--line);border-radius:.5rem;background:var(--canvas);color:var(--ink);font:inherit}.grid select,.filters select,.entry button{cursor:pointer}.grid input:focus,.grid select:focus,.filters input:focus,.filters select:focus{outline:2px solid var(--forest);outline-offset:2px}.entry button{padding:.7rem 1rem;border:0;border-radius:.55rem;background:var(--forest);color:#fff;font-weight:700;transition:background .16s ease}.entry button:hover:not(:disabled){background:var(--forest-deep)}.entry button:disabled{opacity:.6;cursor:not-allowed}.error{margin:.75rem 0;color:var(--rose);font-size:.8rem}.heading{display:flex;justify-content:space-between;align-items:start}.heading>span{color:var(--ink-muted);font-size:.75rem}.filters{grid-template-columns:repeat(5,1fr);margin-bottom:0}.list{margin-top:1rem}.list article{display:flex;justify-content:space-between;gap:1rem;padding:1rem 0;border-top:1px solid var(--line)}.list strong{font-size:.85rem}.list p,.list small{display:block;margin-top:.2rem;color:var(--ink-muted);font-size:.72rem}.list b{font-variant-numeric:tabular-nums;font-size:.85rem}.income{color:var(--forest)}.empty{padding:1rem 0;color:var(--ink-muted);font-size:.8rem}@media(max-width:760px){.grid,.filters{grid-template-columns:1fr 1fr}.filters input{min-width:0}}@media(max-width:460px){.grid,.filters{grid-template-columns:1fr}}
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mainCard {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  padding: 1.75rem 2rem;
+  box-shadow: 0 2px 10px rgba(31, 43, 36, 0.03);
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titleWithBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: Georgia, serif;
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.countBadge {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  background-color: var(--surface-muted);
+  color: var(--ink-muted);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+}
+
+.subtitle {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.addExpenseButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: none;
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.28);
+  transition: all 160ms ease;
+}
+
+.addExpenseButton:hover {
+  background: linear-gradient(135deg, #f56565 0%, #9b2c2c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(229, 62, 62, 0.38);
+}
+
+.addIncomeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: none;
+  background: linear-gradient(135deg, #276749 0%, #1d4e38 100%);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(39, 103, 73, 0.28);
+  transition: all 160ms ease;
+}
+
+.addIncomeButton:hover {
+  background: linear-gradient(135deg, #2f855a 0%, #173d2c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(39, 103, 73, 0.38);
+}
+
+.secondaryToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background-color: var(--canvas);
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.toolbarLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.toolbarSelect,
+.toolbarDate {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background-color: var(--surface);
+  color: var(--ink);
+  transition: border-color 160ms ease;
+}
+
+.toolbarSelect:focus,
+.toolbarDate:focus {
+  outline: none;
+  border-color: var(--forest);
+}
+
+.clearFiltersButton {
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px dashed var(--line);
+  background-color: transparent;
+  color: var(--rose);
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.clearFiltersButton:hover {
+  background-color: #fdf2f0;
+}
+
+@media (max-width: 768px) {
+  .mainCard {
+    padding: 1.25rem 1rem;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .addExpenseButton,
+  .addIncomeButton {
+    justify-content: center;
+  }
+}
