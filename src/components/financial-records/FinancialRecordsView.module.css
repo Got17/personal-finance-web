@@ -157,6 +157,7 @@
   flex-grow: 1;
 }
 
+.categorySelectWrapper,
 .accountSelectWrapper,
 .datePresetWrapper {
   position: relative;
@@ -165,6 +166,7 @@
   transition: transform 160ms ease;
 }
 
+.categorySelectWrapper:hover,
 .accountSelectWrapper:hover,
 .datePresetWrapper:hover {
   transform: translateY(-1px);
@@ -181,6 +183,7 @@
   transition: color 160ms ease;
 }
 
+.categorySelect,
 .accountSelect,
 .datePresetSelect {
   appearance: none;
@@ -197,6 +200,7 @@
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
+.categorySelect:hover,
 .accountSelect:hover,
 .datePresetSelect:hover {
   border-color: #a39c8c;
@@ -204,6 +208,7 @@
   box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
 }
 
+.categorySelect:focus,
 .accountSelect:focus,
 .datePresetSelect:focus {
   outline: none;
@@ -222,6 +227,8 @@
   transition: color 160ms ease;
 }
 
+.categorySelectWrapper:hover .selectIcon,
+.categorySelectWrapper:hover .selectChevron,
 .accountSelectWrapper:hover .selectIcon,
 .accountSelectWrapper:hover .selectChevron,
 .datePresetWrapper:hover .selectIcon,

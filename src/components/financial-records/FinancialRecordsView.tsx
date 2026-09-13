@@ -8,11 +8,12 @@ import {
   CalendarIcon,
   ChevronDownIcon,
   CloseIcon,
+  GeneralTagIcon,
   PlusIcon,
   WalletIcon,
+  getCategoryIcon,
 } from "./icons";
 import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
-import { CategoryPillFilter } from "./CategoryPillFilter";
 import { FinancialRecordsTable } from "./FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
 import styles from "./FinancialRecordsView.module.css";
@@ -66,6 +67,11 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
         (cat) => cat.is_active && (activeTab === "all" || cat.type === activeTab)
       ),
     [categories, activeTab]
+  );
+
+  const selectedCategory = useMemo(
+    () => relevantCategories.find((cat) => cat.id === selectedCategoryId),
+    [relevantCategories, selectedCategoryId]
   );
 
   // Tab-specific records to calculate per-category item counts
@@ -133,12 +139,14 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
   };
 
   const hasSecondaryFilters =
+    Boolean(selectedCategoryId) ||
     Boolean(selectedAccountId) ||
     datePreset !== "all" ||
     Boolean(startDate) ||
     Boolean(endDate);
 
   const clearSecondaryFilters = () => {
+    setSelectedCategoryId("");
     setSelectedAccountId("");
     setDatePreset("all");
     setStartDate("");
@@ -203,16 +211,29 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
           </button>
         </header>
 
-        <CategoryPillFilter
-          categories={relevantCategories}
-          categoryCounts={categoryCounts}
-          selectedCategoryId={selectedCategoryId}
-          totalCount={totalItemsForTab}
-          onSelectCategory={setSelectedCategoryId}
-        />
-
         <div className={styles.secondaryToolbar} aria-label="Secondary filters">
           <div className={styles.filterControls}>
+            <div className={styles.categorySelectWrapper}>
+              <span className={styles.selectIcon}>
+                {selectedCategory ? getCategoryIcon(selectedCategory.name) : <GeneralTagIcon />}
+              </span>
+              <select
+                aria-label="Filter by category"
+                className={styles.categorySelect}
+                value={selectedCategoryId}
+                onChange={(e) => setSelectedCategoryId(e.target.value)}
+              >
+                <option value="">All categories ({totalItemsForTab})</option>
+                {relevantCategories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name} ({categoryCounts[cat.id] || 0})
+                  </option>
+                ))}
+              </select>
+              <span className={styles.selectChevron}>
+                <ChevronDownIcon />
+              </span>
+            </div>
             <div className={styles.accountSelectWrapper}>
               <span className={styles.selectIcon}>
                 <WalletIcon />

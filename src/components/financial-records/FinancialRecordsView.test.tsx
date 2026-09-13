@@ -134,7 +134,7 @@ describe("FinancialRecordsView", () => {
     expect(screen.queryByText("Supermarket run")).toBeNull();
   });
 
-  it("filters transactions when category pill is selected", () => {
+  it("filters transactions when category is selected from dropdown", () => {
     render(
       <FinancialRecordsView
         initialRecords={[initialExpense]}
@@ -146,14 +146,16 @@ describe("FinancialRecordsView", () => {
     // Switch to Expenses tab
     fireEvent.click(screen.getByRole("tab", { name: /expenses/i }));
 
+    const categorySelect = screen.getByRole("combobox", { name: /filter by category/i });
+    expect(categorySelect).toBeTruthy();
+
     // Transportation has 0 records, Groceries has 1 record
-    const transportPill = screen.getByRole("button", { name: /transportation/i });
-    fireEvent.click(transportPill);
+    fireEvent.change(categorySelect, { target: { value: "expense-2" } });
 
     expect(screen.getByText("No transactions match these filters.")).toBeTruthy();
 
-    const allPill = screen.getByRole("button", { name: /^all/i });
-    fireEvent.click(allPill);
+    // Reset to All categories
+    fireEvent.change(categorySelect, { target: { value: "" } });
 
     expect(screen.getByText("Supermarket run")).toBeTruthy();
   });
@@ -273,6 +275,26 @@ describe("FinancialRecordsView", () => {
 
     const accountSelect = screen.getByRole("combobox", { name: /filter by account/i });
     fireEvent.change(accountSelect, { target: { value: "account-2" } });
+
+    expect(screen.getByText("No transactions match these filters.")).toBeTruthy();
+
+    const clearBtn = screen.getByRole("button", { name: /clear filters/i });
+    fireEvent.click(clearBtn);
+
+    expect(screen.getByText("Supermarket run")).toBeTruthy();
+  });
+
+  it("filters by category and resets with clear filters", () => {
+    render(
+      <FinancialRecordsView
+        initialRecords={[initialExpense]}
+        accounts={accounts}
+        categories={categories}
+      />
+    );
+
+    const categorySelect = screen.getByRole("combobox", { name: /filter by category/i });
+    fireEvent.change(categorySelect, { target: { value: "expense-2" } });
 
     expect(screen.getByText("No transactions match these filters.")).toBeTruthy();
 
