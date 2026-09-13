@@ -101,7 +101,7 @@ describe("FinancialRecordsView", () => {
 
     expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
     expect(screen.getByText("Supermarket run")).toBeTruthy();
-    expect(screen.getByText("$42.68")).toBeTruthy();
+    expect(screen.getByText("-$42.68")).toBeTruthy();
   });
 
   it("switches to Income tab when clicked", () => {
@@ -191,6 +191,6 @@ describe("FinancialRecordsView", () => {
     });
 
     expect(screen.getByText("Gas fillup")).toBeTruthy();
-    expect(screen.getByText("$25.00")).toBeTruthy();
+    expect(screen.getByText("-$25.00")).toBeTruthy();
   });
 });

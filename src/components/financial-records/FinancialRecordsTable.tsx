@@ -21,7 +21,7 @@ function formatMoney(amountMinor: number, currency: string, isIncome: boolean): 
     maximumFractionDigits: 2,
   }).format(amountMinor / 100);
 
-  return isIncome ? `+${formatted}` : formatted;
+  return isIncome ? `+${formatted}` : `-${formatted}`;
 }
 
 export function FinancialRecordsTable({
