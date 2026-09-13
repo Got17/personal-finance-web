@@ -2,12 +2,20 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FinancialRecordsView } from "./FinancialRecordsView";
 
-const { createFinancialRecordAction } = vi.hoisted(() => ({
+const {
+  createFinancialRecordAction,
+  updateFinancialRecordAction,
+  archiveFinancialRecordAction,
+} = vi.hoisted(() => ({
   createFinancialRecordAction: vi.fn(),
+  updateFinancialRecordAction: vi.fn(),
+  archiveFinancialRecordAction: vi.fn(),
 }));
 
 vi.mock("@/app/actions/financial-records", () => ({
   createFinancialRecordAction,
+  updateFinancialRecordAction,
+  archiveFinancialRecordAction,
 }));
 
 const accounts = [
@@ -86,6 +94,8 @@ const initialIncome = {
 describe("FinancialRecordsView", () => {
   beforeEach(() => {
     createFinancialRecordAction.mockReset();
+    updateFinancialRecordAction.mockReset();
+    archiveFinancialRecordAction.mockReset();
   });
 
   afterEach(cleanup);
@@ -307,5 +317,83 @@ describe("FinancialRecordsView", () => {
     fireEvent.click(clearBtn);
 
     expect(screen.getByText("Supermarket run")).toBeTruthy();
+  });
+
+  it("opens edit modal when edit button is clicked and updates transaction", async () => {
+    updateFinancialRecordAction.mockResolvedValue({
+      success: true,
+      record: {
+        ...initialExpense,
+        note: "Organic market",
+        amount_minor: 5000,
+      },
+    });
+
+    render(
+      <FinancialRecordsView
+        initialRecords={[initialExpense]}
+        accounts={accounts}
+        categories={categories}
+      />,
+    );
+
+    const editButton = screen.getByRole("button", { name: "Edit Supermarket run" });
+    fireEvent.click(editButton);
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Edit Transaction" })).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText(/description/i), {
+      target: { value: "Organic market" },
+    });
+    fireEvent.change(screen.getByLabelText(/^amount/i), {
+      target: { value: "50.00" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /save changes/i }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    expect(screen.getByText("Organic market")).toBeTruthy();
+    expect(screen.getByText("-$50.00")).toBeTruthy();
+  });
+
+  it("opens delete modal when delete button is clicked and removes transaction on confirmation", async () => {
+    archiveFinancialRecordAction.mockResolvedValue({
+      success: true,
+      record: {
+        ...initialExpense,
+        is_active: false,
+      },
+    });
+
+    render(
+      <FinancialRecordsView
+        initialRecords={[initialExpense, initialIncome]}
+        accounts={accounts}
+        categories={categories}
+      />,
+    );
+
+    expect(screen.getByText("2 items")).toBeTruthy();
+
+    const deleteButton = screen.getByRole("button", { name: "Delete Supermarket run" });
+    fireEvent.click(deleteButton);
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Delete Transaction" })).toBeTruthy();
+
+    const dialog = screen.getByRole("dialog");
+    const confirmDeleteBtn = within(dialog).getByRole("button", { name: /^delete$/i });
+    fireEvent.click(confirmDeleteBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    expect(screen.queryByText("Supermarket run")).toBeNull();
+    expect(screen.getByText("1 items")).toBeTruthy();
   });
 });

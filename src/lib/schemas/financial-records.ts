@@ -38,6 +38,21 @@ export const createFinancialRecordSchema = z.object({
 
 export type CreateFinancialRecordInput = z.infer<typeof createFinancialRecordSchema>;
 
+export const updateFinancialRecordSchema = z.object({
+  kind: z.enum(FINANCIAL_RECORD_KINDS, { message: "Please select income or expense." }).optional(),
+  account_id: z.string().trim().min(1, { message: "Please select an account." }).optional(),
+  category_id: z.string().trim().min(1, { message: "Please select a category." }).optional(),
+  amount_minor: z.number().int().positive({ message: "Amount must be greater than zero." }).optional(),
+  currency: currencySchema.optional(),
+  date: z.string().datetime({ message: "Please enter a valid date." }).optional(),
+  note: z.preprocess(
+    (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+    z.string().trim().max(1000, { message: "Note must be 1,000 characters or fewer." }).optional(),
+  ),
+});
+
+export type UpdateFinancialRecordInput = z.infer<typeof updateFinancialRecordSchema>;
+
 export const financialRecordFiltersSchema = z.object({
   start_date: z.string().date().optional(),
   end_date: z.string().date().optional(),

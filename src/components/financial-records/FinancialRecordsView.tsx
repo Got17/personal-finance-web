@@ -15,6 +15,8 @@ import {
 import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
 import { FinancialRecordsTable } from "./FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
+import { EditFinancialRecordModal } from "./EditFinancialRecordModal";
+import { DeleteFinancialRecordModal } from "./DeleteFinancialRecordModal";
 import { FilterDropdown, FilterDropdownOption } from "./FilterDropdown";
 import styles from "./FinancialRecordsView.module.css";
 
@@ -48,6 +50,8 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const [editingRecord, setEditingRecord] = useState<FinancialRecord | null>(null);
+  const [deletingRecord, setDeletingRecord] = useState<FinancialRecord | null>(null);
 
   // Sub-tab record counts
   const allCount = records.length;
@@ -148,6 +152,16 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
 
   const handleRecordCreated = (newRecord: FinancialRecord) => {
     setRecords((current) => [newRecord, ...current]);
+  };
+
+  const handleRecordUpdated = (updatedRecord: FinancialRecord) => {
+    setRecords((current) =>
+      current.map((item) => (item.id === updatedRecord.id ? updatedRecord : item)),
+    );
+  };
+
+  const handleRecordDeleted = (deletedRecord: FinancialRecord) => {
+    setRecords((current) => current.filter((item) => item.id !== deletedRecord.id));
   };
 
   const handleDatePresetChange = (preset: DatePreset) => {
@@ -321,6 +335,8 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
           records={visibleRecords}
           accounts={accounts}
           categories={categories}
+          onEdit={(record) => setEditingRecord(record)}
+          onDelete={(record) => setDeletingRecord(record)}
         />
       </div>
 
@@ -332,6 +348,24 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
         accounts={accounts}
         categories={categories}
         onRecordCreated={handleRecordCreated}
+      />
+
+      <EditFinancialRecordModal
+        isOpen={editingRecord !== null}
+        record={editingRecord}
+        accounts={accounts}
+        categories={categories}
+        onClose={() => setEditingRecord(null)}
+        onRecordUpdated={handleRecordUpdated}
+      />
+
+      <DeleteFinancialRecordModal
+        isOpen={deletingRecord !== null}
+        record={deletingRecord}
+        accounts={accounts}
+        categories={categories}
+        onClose={() => setDeletingRecord(null)}
+        onRecordDeleted={handleRecordDeleted}
       />
     </div>
   );
