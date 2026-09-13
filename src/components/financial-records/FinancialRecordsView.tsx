@@ -120,7 +120,7 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
             onClick={() => setIsCreateModalOpen(true)}
           >
             <PlusIcon />
-            <span>+ {actionButtonText}</span>
+            <span>{actionButtonText}</span>
           </button>
         </header>
 

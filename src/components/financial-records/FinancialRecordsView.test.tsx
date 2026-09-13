@@ -170,7 +170,7 @@ describe("FinancialRecordsView", () => {
     );
 
     // Open modal
-    const addExpenseBtn = screen.getByRole("button", { name: /\+ add expense/i });
+    const addExpenseBtn = screen.getByRole("button", { name: /^add expense$/i });
     fireEvent.click(addExpenseBtn);
 
     expect(screen.getByRole("dialog")).toBeTruthy();
