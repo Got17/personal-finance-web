@@ -96,6 +96,8 @@ describe("FinancialRecordsView", () => {
     createFinancialRecordAction.mockReset();
     updateFinancialRecordAction.mockReset();
     archiveFinancialRecordAction.mockReset();
+    window.history.replaceState(null, "", "/transactions");
+    localStorage.clear();
   });
 
   afterEach(cleanup);
@@ -395,5 +397,61 @@ describe("FinancialRecordsView", () => {
 
     expect(screen.queryByText("Supermarket run")).toBeNull();
     expect(screen.getByText("1 items")).toBeTruthy();
+  });
+
+  it("respects initialTab prop and activates Expenses tab directly", () => {
+    render(
+      <FinancialRecordsView
+        initialTab="expense"
+        initialRecords={[initialExpense, initialIncome]}
+        accounts={accounts}
+        categories={categories}
+      />
+    );
+
+    expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
+    expect(screen.getByText("Supermarket run")).toBeTruthy();
+    expect(screen.queryByText("Monthly Paycheck")).toBeNull();
+  });
+
+  it("saves tab to localStorage and updates URL query string on tab change", () => {
+    const replaceStateSpy = vi.spyOn(window.history, "replaceState");
+    const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
+
+    render(
+      <FinancialRecordsView
+        initialRecords={[initialExpense, initialIncome]}
+        accounts={accounts}
+        categories={categories}
+      />
+    );
+
+    const expenseTab = screen.getByRole("tab", { name: /expenses/i });
+    fireEvent.click(expenseTab);
+
+    expect(setItemSpy).toHaveBeenCalledWith("pf_transactions_active_tab", "expense");
+    expect(replaceStateSpy).toHaveBeenCalled();
+  });
+
+  it("restores active tab from localStorage if no initialTab was specified", async () => {
+    vi.spyOn(Storage.prototype, "getItem").mockReturnValue("income");
+
+    render(
+      <FinancialRecordsView
+        initialRecords={[initialExpense, initialIncome]}
+        accounts={accounts}
+        categories={categories}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
+    });
+    expect(screen.getByRole("heading", { name: "Income Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
+    expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
+    expect(screen.queryByText("Supermarket run")).toBeNull();
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
@@ -20,30 +20,47 @@ import { DeleteFinancialRecordModal } from "./DeleteFinancialRecordModal";
 import { FilterDropdown, FilterDropdownOption } from "./FilterDropdown";
 import styles from "./FinancialRecordsView.module.css";
 
-export type DatePreset =
-  | "all"
-  | "this-month"
-  | "last-month"
-  | "last-30-days"
-  | "this-year"
-  | "custom";
+export type DatePreset = "all" | "this-month" | "last-month" | "last-30-days" | "this-year" | "custom";
+
+const TAB_STORAGE_KEY = "pf_transactions_active_tab";
 
 function formatDateIso(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function getInitialTab(initialTab?: TransactionTab): TransactionTab {
+  if (initialTab && (initialTab === "expense" || initialTab === "income")) return initialTab;
+  if (typeof window !== "undefined") {
+    try {
+      const urlTab = new URLSearchParams(window.location.search).get("tab") as TransactionTab | null;
+      if (urlTab === "expense" || urlTab === "income") return urlTab;
+      const saved = localStorage.getItem(TAB_STORAGE_KEY) as TransactionTab | null;
+      if (saved === "expense" || saved === "income") return saved;
+    } catch {
+      // Ignore
+    }
+  }
+  return "all";
 }
 
 interface Props {
+  initialTab?: TransactionTab;
   initialRecords: FinancialRecord[];
   accounts: Account[];
   categories: Category[];
 }
 
-export function FinancialRecordsView({ initialRecords, accounts, categories }: Props) {
+export function FinancialRecordsView({
+  initialTab,
+  initialRecords,
+  accounts,
+  categories,
+}: Props) {
   const [records, setRecords] = useState<FinancialRecord[]>(initialRecords);
-  const [activeTab, setActiveTab] = useState<TransactionTab>("all");
+  const [activeTab, setActiveTab] = useState<TransactionTab>(() => getInitialTab(initialTab));
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
   const [datePreset, setDatePreset] = useState<DatePreset>("all");
@@ -145,51 +162,74 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
     });
   }, [records, activeTab, selectedCategoryId, selectedAccountId, startDate, endDate]);
 
+  // Synchronize active tab to URL if different from current query parameter
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    const currentTabParam = url.searchParams.get("tab");
+    if (activeTab === "all" && currentTabParam) {
+      url.searchParams.delete("tab");
+      window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+    } else if (activeTab !== "all" && currentTabParam !== activeTab) {
+      url.searchParams.set("tab", activeTab);
+      window.history.replaceState(null, "", url.pathname + url.search);
+    }
+  }, [activeTab]);
+
+  // Sync state if user clicks browser Back / Forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab") as TransactionTab | null;
+      if (tabParam === "expense" || tabParam === "income" || tabParam === "all") {
+        setActiveTab(tabParam);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   const handleTabChange = (newTab: TransactionTab) => {
     setActiveTab(newTab);
     setSelectedCategoryId("");
+    try {
+      localStorage.setItem(TAB_STORAGE_KEY, newTab);
+    } catch {
+      // Ignore storage errors
+    }
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (newTab === "all") {
+        url.searchParams.delete("tab");
+      } else {
+        url.searchParams.set("tab", newTab);
+      }
+      window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+    }
   };
 
-  const handleRecordCreated = (newRecord: FinancialRecord) => {
-    setRecords((current) => [newRecord, ...current]);
-  };
-
-  const handleRecordUpdated = (updatedRecord: FinancialRecord) => {
-    setRecords((current) =>
-      current.map((item) => (item.id === updatedRecord.id ? updatedRecord : item)),
-    );
-  };
-
-  const handleRecordDeleted = (deletedRecord: FinancialRecord) => {
-    setRecords((current) => current.filter((item) => item.id !== deletedRecord.id));
-  };
+  const handleRecordCreated = (newRecord: FinancialRecord) => setRecords((c) => [newRecord, ...c]);
+  const handleRecordUpdated = (upd: FinancialRecord) => setRecords((c) => c.map((i) => (i.id === upd.id ? upd : i)));
+  const handleRecordDeleted = (del: FinancialRecord) => setRecords((c) => c.filter((i) => i.id !== del.id));
 
   const handleDatePresetChange = (preset: DatePreset) => {
     setDatePreset(preset);
     const now = new Date();
-
     if (preset === "all") {
       setStartDate("");
       setEndDate("");
     } else if (preset === "this-month") {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1);
-      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      setStartDate(formatDateIso(start));
-      setEndDate(formatDateIso(end));
+      setStartDate(formatDateIso(new Date(now.getFullYear(), now.getMonth(), 1)));
+      setEndDate(formatDateIso(new Date(now.getFullYear(), now.getMonth() + 1, 0)));
     } else if (preset === "last-month") {
-      const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      const end = new Date(now.getFullYear(), now.getMonth(), 0);
-      setStartDate(formatDateIso(start));
-      setEndDate(formatDateIso(end));
+      setStartDate(formatDateIso(new Date(now.getFullYear(), now.getMonth() - 1, 1)));
+      setEndDate(formatDateIso(new Date(now.getFullYear(), now.getMonth(), 0)));
     } else if (preset === "last-30-days") {
-      const start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      setStartDate(formatDateIso(start));
+      setStartDate(formatDateIso(new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)));
       setEndDate(formatDateIso(now));
     } else if (preset === "this-year") {
-      const start = new Date(now.getFullYear(), 0, 1);
-      const end = new Date(now.getFullYear(), 11, 31);
-      setStartDate(formatDateIso(start));
-      setEndDate(formatDateIso(end));
+      setStartDate(formatDateIso(new Date(now.getFullYear(), 0, 1)));
+      setEndDate(formatDateIso(new Date(now.getFullYear(), 11, 31)));
     }
   };
 
@@ -209,25 +249,11 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
   };
 
   const title =
-    activeTab === "all"
-      ? "Transactions Management"
-      : activeTab === "expense"
-      ? "Expenses Management"
-      : "Income Management";
-
+    activeTab === "all" ? "Transactions Management" : activeTab === "expense" ? "Expenses Management" : "Income Management";
   const actionButtonText =
-    activeTab === "all"
-      ? "Add Transaction"
-      : activeTab === "expense"
-      ? "Add Expense"
-      : "Add Income";
-
+    activeTab === "all" ? "Add Transaction" : activeTab === "expense" ? "Add Expense" : "Add Income";
   const buttonStyle =
-    activeTab === "all"
-      ? styles.addTransactionButton
-      : activeTab === "expense"
-      ? styles.addExpenseButton
-      : styles.addIncomeButton;
+    activeTab === "all" ? styles.addTransactionButton : activeTab === "expense" ? styles.addExpenseButton : styles.addIncomeButton;
 
   return (
     <div className={styles.container}>
