@@ -6,7 +6,6 @@ import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
 import {
   CalendarIcon,
-  ChevronDownIcon,
   CloseIcon,
   GeneralTagIcon,
   PlusIcon,
@@ -16,6 +15,7 @@ import {
 import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
 import { FinancialRecordsTable } from "./FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
+import { FilterDropdown, FilterDropdownOption } from "./FilterDropdown";
 import styles from "./FinancialRecordsView.module.css";
 
 export type DatePreset =
@@ -87,6 +87,47 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
     }
     return counts;
   }, [tabRecords]);
+
+  const totalItemsForTab = tabRecords.length;
+
+  const dateOptions: FilterDropdownOption[] = [
+    { value: "all", label: "All dates", icon: <CalendarIcon /> },
+    { value: "this-month", label: "This month", icon: <CalendarIcon /> },
+    { value: "last-month", label: "Last month", icon: <CalendarIcon /> },
+    { value: "last-30-days", label: "Last 30 days", icon: <CalendarIcon /> },
+    { value: "this-year", label: "This year", icon: <CalendarIcon /> },
+    { value: "custom", label: "Custom range...", icon: <CalendarIcon /> },
+  ];
+
+  const accountOptions: FilterDropdownOption[] = useMemo(
+    () => [
+      { value: "", label: "All accounts", icon: <WalletIcon /> },
+      ...accounts.map((acc) => ({
+        value: acc.id,
+        label: acc.name,
+        icon: <WalletIcon />,
+      })),
+    ],
+    [accounts]
+  );
+
+  const categoryOptions: FilterDropdownOption[] = useMemo(
+    () => [
+      {
+        value: "",
+        label: "All categories",
+        count: totalItemsForTab,
+        icon: <GeneralTagIcon />,
+      },
+      ...relevantCategories.map((cat) => ({
+        value: cat.id,
+        label: cat.name,
+        count: categoryCounts[cat.id] || 0,
+        icon: getCategoryIcon(cat.name),
+      })),
+    ],
+    [relevantCategories, totalItemsForTab, categoryCounts]
+  );
 
   // Filter visible records based on category, account, and date range
   const visibleRecords = useMemo(() => {
@@ -174,8 +215,6 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
       ? styles.addExpenseButton
       : styles.addIncomeButton;
 
-  const totalItemsForTab = tabRecords.length;
-
   return (
     <div className={styles.container}>
       <TransactionSubTabs
@@ -213,70 +252,14 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
 
         <div className={styles.secondaryToolbar} aria-label="Secondary filters">
           <div className={styles.filterControls}>
-            <div className={styles.categorySelectWrapper}>
-              <span className={styles.selectIcon}>
-                {selectedCategory ? getCategoryIcon(selectedCategory.name) : <GeneralTagIcon />}
-              </span>
-              <select
-                aria-label="Filter by category"
-                className={styles.categorySelect}
-                value={selectedCategoryId}
-                onChange={(e) => setSelectedCategoryId(e.target.value)}
-              >
-                <option value="">All categories ({totalItemsForTab})</option>
-                {relevantCategories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name} ({categoryCounts[cat.id] || 0})
-                  </option>
-                ))}
-              </select>
-              <span className={styles.selectChevron}>
-                <ChevronDownIcon />
-              </span>
-            </div>
-            <div className={styles.accountSelectWrapper}>
-              <span className={styles.selectIcon}>
-                <WalletIcon />
-              </span>
-              <select
-                aria-label="Filter by account"
-                className={styles.accountSelect}
-                value={selectedAccountId}
-                onChange={(e) => setSelectedAccountId(e.target.value)}
-              >
-                <option value="">All accounts</option>
-                {accounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name}
-                  </option>
-                ))}
-              </select>
-              <span className={styles.selectChevron}>
-                <ChevronDownIcon />
-              </span>
-            </div>
-
-            <div className={styles.datePresetWrapper}>
-              <span className={styles.selectIcon}>
-                <CalendarIcon />
-              </span>
-              <select
-                aria-label="Filter by date range"
-                className={styles.datePresetSelect}
-                value={datePreset}
-                onChange={(e) => handleDatePresetChange(e.target.value as DatePreset)}
-              >
-                <option value="all">All dates</option>
-                <option value="this-month">This month</option>
-                <option value="last-month">Last month</option>
-                <option value="last-30-days">Last 30 days</option>
-                <option value="this-year">This year</option>
-                <option value="custom">Custom range...</option>
-              </select>
-              <span className={styles.selectChevron}>
-                <ChevronDownIcon />
-              </span>
-            </div>
+            <FilterDropdown
+              id="filter-date"
+              label="Filter by date range"
+              value={datePreset}
+              options={dateOptions}
+              onChange={(val) => handleDatePresetChange(val as DatePreset)}
+              defaultIcon={<CalendarIcon />}
+            />
 
             {datePreset === "custom" && (
               <div className={styles.customDateRange}>
@@ -299,6 +282,27 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
                 />
               </div>
             )}
+
+            <FilterDropdown
+              id="filter-account"
+              label="Filter by account"
+              value={selectedAccountId}
+              options={accountOptions}
+              onChange={setSelectedAccountId}
+              defaultIcon={<WalletIcon />}
+            />
+
+            <FilterDropdown
+              id="filter-category"
+              label="Filter by category"
+              value={selectedCategoryId}
+              options={categoryOptions}
+              onChange={setSelectedCategoryId}
+              defaultIcon={<GeneralTagIcon />}
+              activeIcon={
+                selectedCategory ? getCategoryIcon(selectedCategory.name) : undefined
+              }
+            />
 
             {hasSecondaryFilters && (
               <button

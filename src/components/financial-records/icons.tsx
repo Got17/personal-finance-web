@@ -141,6 +141,25 @@ export function CloseIcon({ className }: { className?: string }) {
   );
 }
 
+export function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 export function WalletIcon({ className }: { className?: string }) {
   return (
     <svg

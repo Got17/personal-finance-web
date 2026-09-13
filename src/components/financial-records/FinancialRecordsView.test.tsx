@@ -150,12 +150,14 @@ describe("FinancialRecordsView", () => {
     expect(categorySelect).toBeTruthy();
 
     // Transportation has 0 records, Groceries has 1 record
-    fireEvent.change(categorySelect, { target: { value: "expense-2" } });
+    fireEvent.click(categorySelect);
+    fireEvent.click(screen.getByRole("option", { name: /transportation/i }));
 
     expect(screen.getByText("No transactions match these filters.")).toBeTruthy();
 
     // Reset to All categories
-    fireEvent.change(categorySelect, { target: { value: "" } });
+    fireEvent.click(categorySelect);
+    fireEvent.click(screen.getByRole("option", { name: /all categories/i }));
 
     expect(screen.getByText("Supermarket run")).toBeTruthy();
   });
@@ -229,7 +231,8 @@ describe("FinancialRecordsView", () => {
 
     // Selecting custom reveals From and To inputs
     expect(screen.queryByLabelText(/start date/i)).toBeNull();
-    fireEvent.change(dateSelect, { target: { value: "custom" } });
+    fireEvent.click(dateSelect);
+    fireEvent.click(screen.getByRole("option", { name: /custom range/i }));
     expect(screen.getByLabelText(/start date/i)).toBeTruthy();
     expect(screen.getByLabelText(/end date/i)).toBeTruthy();
 
@@ -274,7 +277,8 @@ describe("FinancialRecordsView", () => {
     );
 
     const accountSelect = screen.getByRole("combobox", { name: /filter by account/i });
-    fireEvent.change(accountSelect, { target: { value: "account-2" } });
+    fireEvent.click(accountSelect);
+    fireEvent.click(screen.getByRole("option", { name: /savings/i }));
 
     expect(screen.getByText("No transactions match these filters.")).toBeTruthy();
 
@@ -294,7 +298,8 @@ describe("FinancialRecordsView", () => {
     );
 
     const categorySelect = screen.getByRole("combobox", { name: /filter by category/i });
-    fireEvent.change(categorySelect, { target: { value: "expense-2" } });
+    fireEvent.click(categorySelect);
+    fireEvent.click(screen.getByRole("option", { name: /transportation/i }));
 
     expect(screen.getByText("No transactions match these filters.")).toBeTruthy();
 
