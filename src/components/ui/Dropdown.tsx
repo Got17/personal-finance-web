@@ -49,12 +49,22 @@ export function Dropdown({
   const id = customId || generatedId;
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+  const [openUpward, setOpenUpward] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const nativeSelectRef = useRef<HTMLSelectElement>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
+
+  const checkPlacement = useCallback(() => {
+    if (triggerRef.current && typeof window !== "undefined") {
+      const rect = triggerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      setOpenUpward(spaceBelow < 250 && spaceAbove > spaceBelow);
+    }
+  }, []);
 
   // Close when clicking outside
   useEffect(() => {
@@ -89,6 +99,7 @@ export function Dropdown({
       if (e.key === "ArrowDown") {
         e.preventDefault();
         if (!isOpen) {
+          checkPlacement();
           setIsOpen(true);
           setHighlightedIndex(0);
         } else {
@@ -100,6 +111,7 @@ export function Dropdown({
       if (e.key === "ArrowUp") {
         e.preventDefault();
         if (!isOpen) {
+          checkPlacement();
           setIsOpen(true);
           setHighlightedIndex(options.length - 1);
         } else {
@@ -120,7 +132,7 @@ export function Dropdown({
         }
       }
     },
-    [disabled, isOpen, highlightedIndex, options, onChange]
+    [disabled, isOpen, highlightedIndex, options, onChange, checkPlacement]
   );
 
   const handleSelect = (optionValue: string) => {
@@ -142,8 +154,8 @@ export function Dropdown({
 
   const isPill = variant === "pill";
   const containerClass = isPill
-    ? `${styles.dropdownContainer} ${className}`.trim()
-    : `${styles.dropdownContainerFullWidth} ${className}`.trim();
+    ? `${styles.dropdownContainer} ${isOpen ? styles.dropdownContainerOpen : ""} ${className}`.trim()
+    : `${styles.dropdownContainerFullWidth} ${isOpen ? styles.dropdownContainerOpen : ""} ${className}`.trim();
 
   const triggerClass = isPill
     ? `${styles.triggerPill} ${isOpen ? styles.triggerPillActive : ""}`
@@ -151,7 +163,9 @@ export function Dropdown({
         hasError ? styles.triggerFormError : ""
       }`;
 
-  const menuClass = isPill ? styles.dropdownMenu : styles.dropdownMenuFullWidth;
+  const menuClass = isPill
+    ? `${styles.dropdownMenu} ${openUpward ? styles.dropdownMenuUpward : ""}`
+    : `${styles.dropdownMenuFullWidth} ${openUpward ? styles.dropdownMenuUpward : ""}`;
 
   return (
     <div
@@ -202,6 +216,9 @@ export function Dropdown({
         className={triggerClass}
         onClick={() => {
           if (disabled) return;
+          if (!isOpen) {
+            checkPlacement();
+          }
           setIsOpen((prev) => !prev);
           const currentIndex = options.findIndex((o) => o.value === value);
           setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);

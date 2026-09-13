@@ -10,7 +10,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 24px 16px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(31, 43, 36, 0.2) transparent;
   animation: fadeIn 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -21,10 +24,10 @@
   box-shadow: 0 20px 48px rgba(31, 43, 36, 0.18);
   width: 100%;
   max-width: 560px;
-  max-height: 90vh;
-  overflow-y: auto;
+  margin: auto;
   padding: 28px;
   position: relative;
+  overflow: visible;
   animation: scaleUp 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
