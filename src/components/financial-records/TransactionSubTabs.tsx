@@ -1,9 +1,11 @@
-import { FinancialRecordKind } from "@/lib/schemas/financial-records";
 import styles from "./TransactionSubTabs.module.css";
 
+export type TransactionTab = "all" | "expense" | "income";
+
 interface TransactionSubTabsProps {
-  activeTab: FinancialRecordKind;
-  onTabChange: (tab: FinancialRecordKind) => void;
+  activeTab: TransactionTab;
+  onTabChange: (tab: TransactionTab) => void;
+  allCount: number;
   expenseCount: number;
   incomeCount: number;
 }
@@ -11,11 +13,26 @@ interface TransactionSubTabsProps {
 export function TransactionSubTabs({
   activeTab,
   onTabChange,
+  allCount,
   expenseCount,
   incomeCount,
 }: TransactionSubTabsProps) {
   return (
     <div className={styles.tabContainer} role="tablist" aria-label="Transaction type sub-tabs">
+      <button
+        type="button"
+        role="tab"
+        id="tab-all"
+        aria-selected={activeTab === "all"}
+        aria-controls="tabpanel-all"
+        tabIndex={activeTab === "all" ? 0 : -1}
+        className={`${styles.tabButton} ${activeTab === "all" ? `${styles.activeTab} ${styles.allActive}` : ""}`}
+        onClick={() => onTabChange("all")}
+      >
+        <span>All</span>
+        <span className={styles.tabBadge}>{allCount}</span>
+      </button>
+
       <button
         type="button"
         role="tab"

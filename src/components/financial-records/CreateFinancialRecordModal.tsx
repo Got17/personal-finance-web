@@ -11,7 +11,8 @@ import styles from "./CreateFinancialRecordModal.module.css";
 interface CreateFinancialRecordModalProps {
   isOpen: boolean;
   onClose: () => void;
-  kind: FinancialRecordKind;
+  defaultKind?: FinancialRecordKind;
+  allowKindSelection?: boolean;
   accounts: Account[];
   categories: Category[];
   onRecordCreated: (record: FinancialRecord) => void;
@@ -20,11 +21,13 @@ interface CreateFinancialRecordModalProps {
 export function CreateFinancialRecordModal({
   isOpen,
   onClose,
-  kind,
+  defaultKind = "expense",
+  allowKindSelection = false,
   accounts,
   categories,
   onRecordCreated,
 }: CreateFinancialRecordModalProps) {
+  const [kind, setKind] = useState<FinancialRecordKind>(defaultKind);
   const isExpense = kind === "expense";
   const activeAccounts = accounts.filter((account) => account.is_active);
   const matchingCategories = categories.filter(
@@ -38,7 +41,6 @@ export function CreateFinancialRecordModal({
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -73,8 +75,15 @@ export function CreateFinancialRecordModal({
     });
   };
 
-  const title = isExpense ? "Add New Expense" : "Add New Income";
-  const description = isExpense
+  const title = allowKindSelection
+    ? "Add New Transaction"
+    : isExpense
+    ? "Add New Expense"
+    : "Add New Income";
+
+  const description = allowKindSelection
+    ? "Record an income or expense transaction with an account and category."
+    : isExpense
     ? "Record an expense with an account, category, and date."
     : "Record an income stream into your selected account.";
 
@@ -86,10 +95,36 @@ export function CreateFinancialRecordModal({
       description={description}
       testId="create-financial-record-modal"
     >
-      <form onSubmit={handleSubmit} className={styles.form} noValidate>
+      <form
+        key={`${isOpen}-${defaultKind}`}
+        onSubmit={handleSubmit}
+        className={styles.form}
+        noValidate
+      >
         {error && (
           <div role="alert" className={styles.errorBanner}>
             {error}
+          </div>
+        )}
+
+        {allowKindSelection && (
+          <div className={styles.fieldGroup}>
+            <label htmlFor="record-type" className={styles.label}>
+              Type
+            </label>
+            <select
+              id="record-type"
+              className={styles.select}
+              value={kind}
+              onChange={(e) => {
+                setKind(e.target.value as FinancialRecordKind);
+                setCategoryId("");
+              }}
+              disabled={isPending}
+            >
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
           </div>
         )}
 
@@ -201,7 +236,7 @@ export function CreateFinancialRecordModal({
             className={isExpense ? styles.submitButtonExpense : styles.submitButtonIncome}
             disabled={isPending}
           >
-            {isPending ? "Saving…" : isExpense ? "+ Add Expense" : "+ Add Income"}
+            {isPending ? "Saving…" : isExpense ? "Add Expense" : "Add Income"}
           </button>
         </div>
       </form>

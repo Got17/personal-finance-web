@@ -54,6 +54,11 @@
   color: var(--forest-deep);
 }
 
+.allActive .tabBadge {
+  background-color: rgba(31, 43, 36, 0.1);
+  color: var(--ink);
+}
+
 .expenseActive .tabBadge {
   background-color: #fdf2f0;
   color: var(--rose);

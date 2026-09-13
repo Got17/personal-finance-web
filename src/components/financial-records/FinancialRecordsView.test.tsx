@@ -90,7 +90,7 @@ describe("FinancialRecordsView", () => {
 
   afterEach(cleanup);
 
-  it("renders sub-tabs for Expenses and Income and shows initial data", () => {
+  it("renders sub-tabs with All active by default and shows all initial data", () => {
     render(
       <FinancialRecordsView
         initialRecords={[initialExpense, initialIncome]}
@@ -99,12 +99,16 @@ describe("FinancialRecordsView", () => {
       />
     );
 
-    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: /^all/i, selected: true })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Transactions Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^add transaction$/i })).toBeTruthy();
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.getByText("-$42.68")).toBeTruthy();
+    expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
+    expect(screen.getByText("+$3,500.00")).toBeTruthy();
   });
 
-  it("switches to Income tab when clicked", () => {
+  it("switches to Expenses and Income tabs when clicked", () => {
     render(
       <FinancialRecordsView
         initialRecords={[initialExpense, initialIncome]}
@@ -113,12 +117,21 @@ describe("FinancialRecordsView", () => {
       />
     );
 
+    // Switch to Expenses
+    const expenseTab = screen.getByRole("tab", { name: /expenses/i });
+    fireEvent.click(expenseTab);
+    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
+    expect(screen.getByText("Supermarket run")).toBeTruthy();
+    expect(screen.queryByText("Monthly Paycheck")).toBeNull();
+
+    // Switch to Income
     const incomeTab = screen.getByRole("tab", { name: /income/i });
     fireEvent.click(incomeTab);
-
     expect(screen.getByRole("heading", { name: "Income Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
-    expect(screen.getByText("+$3,500.00")).toBeTruthy();
+    expect(screen.queryByText("Supermarket run")).toBeNull();
   });
 
   it("filters transactions when category pill is selected", () => {
@@ -129,6 +142,9 @@ describe("FinancialRecordsView", () => {
         categories={categories}
       />
     );
+
+    // Switch to Expenses tab
+    fireEvent.click(screen.getByRole("tab", { name: /expenses/i }));
 
     // Transportation has 0 records, Groceries has 1 record
     const transportPill = screen.getByRole("button", { name: /transportation/i });
@@ -142,7 +158,7 @@ describe("FinancialRecordsView", () => {
     expect(screen.getByText("Supermarket run")).toBeTruthy();
   });
 
-  it("opens modal, shows validation, and adds an expense", async () => {
+  it("opens modal from Expenses tab, shows validation, and adds an expense", async () => {
     createFinancialRecordAction.mockResolvedValue({
       success: true,
       record: {
@@ -169,6 +185,9 @@ describe("FinancialRecordsView", () => {
       />
     );
 
+    // Switch to Expenses tab
+    fireEvent.click(screen.getByRole("tab", { name: /expenses/i }));
+
     // Open modal
     const addExpenseBtn = screen.getByRole("button", { name: /^add expense$/i });
     fireEvent.click(addExpenseBtn);
@@ -176,7 +195,7 @@ describe("FinancialRecordsView", () => {
     expect(screen.getByRole("dialog")).toBeTruthy();
 
     const dialog = screen.getByRole("dialog");
-    const submitBtn = within(dialog).getByRole("button", { name: /\+ add expense/i });
+    const submitBtn = within(dialog).getByRole("button", { name: /add expense/i });
     fireEvent.click(submitBtn);
 
     expect(screen.getByRole("alert").textContent).toContain("enter an amount greater than zero");

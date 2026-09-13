@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
-import { FinancialRecord, FinancialRecordKind } from "@/lib/schemas/financial-records";
+import { FinancialRecord } from "@/lib/schemas/financial-records";
 import { PlusIcon } from "./icons";
-import { TransactionSubTabs } from "./TransactionSubTabs";
+import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
 import { CategoryPillFilter } from "./CategoryPillFilter";
 import { FinancialRecordsTable } from "./FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
@@ -19,16 +19,15 @@ interface Props {
 
 export function FinancialRecordsView({ initialRecords, accounts, categories }: Props) {
   const [records, setRecords] = useState<FinancialRecord[]>(initialRecords);
-  const [activeTab, setActiveTab] = useState<FinancialRecordKind>("expense");
+  const [activeTab, setActiveTab] = useState<TransactionTab>("all");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
 
-  const isExpense = activeTab === "expense";
-
   // Sub-tab record counts
+  const allCount = records.length;
   const expenseCount = useMemo(
     () => records.filter((r) => r.kind === "expense").length,
     [records]
@@ -38,15 +37,18 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
     [records]
   );
 
-  // Filter categories matching the active sub-tab
+  // Filter categories matching the active sub-tab (or all active categories if on 'all')
   const relevantCategories = useMemo(
-    () => categories.filter((cat) => cat.is_active && cat.type === activeTab),
+    () =>
+      categories.filter(
+        (cat) => cat.is_active && (activeTab === "all" || cat.type === activeTab)
+      ),
     [categories, activeTab]
   );
 
   // Tab-specific records to calculate per-category item counts
   const tabRecords = useMemo(
-    () => records.filter((r) => r.kind === activeTab),
+    () => (activeTab === "all" ? records : records.filter((r) => r.kind === activeTab)),
     [records, activeTab]
   );
 
@@ -61,7 +63,7 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
   // Filter visible records based on category, account, and date range
   const visibleRecords = useMemo(() => {
     return records.filter((record) => {
-      if (record.kind !== activeTab) return false;
+      if (activeTab !== "all" && record.kind !== activeTab) return false;
       if (selectedCategoryId && record.category_id !== selectedCategoryId) return false;
       if (selectedAccountId && record.account_id !== selectedAccountId) return false;
       if (startDate && record.date.slice(0, 10) < startDate) return false;
@@ -70,7 +72,7 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
     });
   }, [records, activeTab, selectedCategoryId, selectedAccountId, startDate, endDate]);
 
-  const handleTabChange = (newTab: FinancialRecordKind) => {
+  const handleTabChange = (newTab: TransactionTab) => {
     setActiveTab(newTab);
     setSelectedCategoryId("");
   };
@@ -86,8 +88,27 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
     setEndDate("");
   };
 
-  const title = isExpense ? "Expenses Management" : "Income Management";
-  const actionButtonText = isExpense ? "Add Expense" : "Add Income";
+  const title =
+    activeTab === "all"
+      ? "Transactions Management"
+      : activeTab === "expense"
+      ? "Expenses Management"
+      : "Income Management";
+
+  const actionButtonText =
+    activeTab === "all"
+      ? "Add Transaction"
+      : activeTab === "expense"
+      ? "Add Expense"
+      : "Add Income";
+
+  const buttonStyle =
+    activeTab === "all"
+      ? styles.addTransactionButton
+      : activeTab === "expense"
+      ? styles.addExpenseButton
+      : styles.addIncomeButton;
+
   const totalItemsForTab = tabRecords.length;
 
   return (
@@ -95,6 +116,7 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
       <TransactionSubTabs
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        allCount={allCount}
         expenseCount={expenseCount}
         incomeCount={incomeCount}
       />
@@ -116,7 +138,7 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
 
           <button
             type="button"
-            className={isExpense ? styles.addExpenseButton : styles.addIncomeButton}
+            className={buttonStyle}
             onClick={() => setIsCreateModalOpen(true)}
           >
             <PlusIcon />
@@ -186,7 +208,8 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
       <CreateFinancialRecordModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        kind={activeTab}
+        defaultKind={activeTab === "income" ? "income" : "expense"}
+        allowKindSelection={activeTab === "all"}
         accounts={accounts}
         categories={categories}
         onRecordCreated={handleRecordCreated}
