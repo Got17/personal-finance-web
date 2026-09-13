@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75rem;
 }
 
 .mainCard {
@@ -141,57 +141,164 @@
 .secondaryToolbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 10px 14px;
-  background-color: var(--canvas);
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  padding: 10px 0;
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+  border-top: 1px solid #eee8dc;
+  border-bottom: 1px solid #eee8dc;
 }
 
-.toolbarLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
+.toolbarLabelGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--ink-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
-.toolbarSelect,
-.toolbarDate {
+.filterControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.accountSelectWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.selectIcon {
+  position: absolute;
+  left: 12px;
+  pointer-events: none;
+  color: var(--ink-muted);
+  display: inline-flex;
+  align-items: center;
+}
+
+.accountSelect {
+  appearance: none;
+  -webkit-appearance: none;
   font-family: inherit;
   font-size: 0.8125rem;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  background-color: var(--surface);
+  font-weight: 600;
   color: var(--ink);
-  transition: border-color 160ms ease;
+  background-color: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  padding: 6px 32px 6px 34px;
+  cursor: pointer;
+  transition: all 160ms ease;
 }
 
-.toolbarSelect:focus,
-.toolbarDate:focus {
+.accountSelect:hover {
+  border-color: #a39c8c;
+  background-color: #f0ebe1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
+}
+
+.accountSelect:focus {
   outline: none;
   border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-soft);
+}
+
+.selectChevron {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: var(--ink-muted);
+  display: inline-flex;
+  align-items: center;
+}
+
+.dateRangeCapsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  padding: 5px 14px;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  transition: all 160ms ease;
+}
+
+.dateRangeCapsule:hover {
+  border-color: #a39c8c;
+  box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
+}
+
+.dateRangeCapsule:focus-within {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-soft);
+}
+
+.dateIcon {
+  color: var(--ink-muted);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dateLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+
+.dateInput {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.dateDivider {
+  color: var(--line);
+  font-weight: 700;
+  padding: 0 2px;
 }
 
 .clearFiltersButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: inherit;
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px dashed var(--line);
-  background-color: transparent;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1px solid #f8d0cd;
+  background-color: #fdf2f0;
   color: var(--rose);
   cursor: pointer;
-  transition: background-color 160ms ease;
+  transition: all 160ms ease;
 }
 
 .clearFiltersButton:hover {
-  background-color: #fdf2f0;
+  background-color: #fce4e1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(181, 80, 66, 0.15);
 }
 
 @media (max-width: 768px) {

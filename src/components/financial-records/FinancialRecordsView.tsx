@@ -4,7 +4,14 @@ import { useMemo, useState } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
-import { PlusIcon } from "./icons";
+import {
+  CalendarIcon,
+  ChevronDownIcon,
+  CloseIcon,
+  FilterFunnelIcon,
+  PlusIcon,
+  WalletIcon,
+} from "./icons";
 import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
 import { CategoryPillFilter } from "./CategoryPillFilter";
 import { FinancialRecordsTable } from "./FinancialRecordsTable";
@@ -155,47 +162,68 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
         />
 
         <div className={styles.secondaryToolbar} aria-label="Secondary filters">
-          <span className={styles.toolbarLabel}>Filter by:</span>
+          <div className={styles.toolbarLabelGroup}>
+            <FilterFunnelIcon />
+            <span>Filter by:</span>
+          </div>
 
-          <select
-            aria-label="Filter by account"
-            className={styles.toolbarSelect}
-            value={selectedAccountId}
-            onChange={(e) => setSelectedAccountId(e.target.value)}
-          >
-            <option value="">All accounts</option>
-            {accounts.map((acc) => (
-              <option key={acc.id} value={acc.id}>
-                {acc.name}
-              </option>
-            ))}
-          </select>
+          <div className={styles.filterControls}>
+            <div className={styles.accountSelectWrapper}>
+              <span className={styles.selectIcon}>
+                <WalletIcon />
+              </span>
+              <select
+                aria-label="Filter by account"
+                className={styles.accountSelect}
+                value={selectedAccountId}
+                onChange={(e) => setSelectedAccountId(e.target.value)}
+              >
+                <option value="">All accounts</option>
+                {accounts.map((acc) => (
+                  <option key={acc.id} value={acc.id}>
+                    {acc.name}
+                  </option>
+                ))}
+              </select>
+              <span className={styles.selectChevron}>
+                <ChevronDownIcon />
+              </span>
+            </div>
 
-          <input
-            type="date"
-            aria-label="Start date"
-            className={styles.toolbarDate}
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
+            <div className={styles.dateRangeCapsule}>
+              <span className={styles.dateIcon}>
+                <CalendarIcon />
+              </span>
+              <span className={styles.dateLabel}>From</span>
+              <input
+                type="date"
+                aria-label="Start date"
+                className={styles.dateInput}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+              <span className={styles.dateDivider}>–</span>
+              <span className={styles.dateLabel}>To</span>
+              <input
+                type="date"
+                aria-label="End date"
+                className={styles.dateInput}
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
 
-          <input
-            type="date"
-            aria-label="End date"
-            className={styles.toolbarDate}
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
-
-          {hasSecondaryFilters && (
-            <button
-              type="button"
-              className={styles.clearFiltersButton}
-              onClick={clearSecondaryFilters}
-            >
-              Clear filters
-            </button>
-          )}
+            {hasSecondaryFilters && (
+              <button
+                type="button"
+                className={styles.clearFiltersButton}
+                onClick={clearSecondaryFilters}
+              >
+                <CloseIcon />
+                <span>Clear filters</span>
+              </button>
+            )}
+          </div>
         </div>
 
         <FinancialRecordsTable
