@@ -113,11 +113,12 @@ describe("FinancialRecordsView", () => {
 
     expect(screen.getByRole("tab", { name: /^all/i, selected: true })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Transactions Management" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add transaction$/i })).toBeTruthy();
+    const table = screen.getByRole("table");
     expect(screen.getByText("Supermarket run")).toBeTruthy();
-    expect(screen.getByText("-$42.68")).toBeTruthy();
+    expect(within(table).getByText("-$42.68")).toBeTruthy();
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
-    expect(screen.getByText("+$3,500.00")).toBeTruthy();
+    expect(within(table).getByText("+$3,500.00")).toBeTruthy();
+    expect(screen.getByTestId("summary-cards-all")).toBeTruthy();
   });
 
   it("switches to Expenses and Income tabs when clicked", () => {
@@ -226,7 +227,7 @@ describe("FinancialRecordsView", () => {
     });
 
     expect(screen.getByText("Gas fillup")).toBeTruthy();
-    expect(screen.getByText("-$25.00")).toBeTruthy();
+    expect(within(screen.getByRole("table")).getByText("-$25.00")).toBeTruthy();
   });
 
   it("filters by date preset and allows custom date range selection", () => {
@@ -359,7 +360,7 @@ describe("FinancialRecordsView", () => {
     });
 
     expect(screen.getByText("Organic market")).toBeTruthy();
-    expect(screen.getByText("-$50.00")).toBeTruthy();
+    expect(within(screen.getByRole("table")).getByText("-$50.00")).toBeTruthy();
   });
 
   it("opens delete modal when delete button is clicked and removes transaction on confirmation", async () => {

@@ -3,6 +3,7 @@ import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
 import { CalendarIcon, EditPencilIcon, TrashIcon } from "./icons";
 import { CategoryBadge } from "./CategoryBadge";
+import { CategoryAvatar } from "./CategoryAvatar";
 import styles from "./FinancialRecordsTable.module.css";
 
 interface FinancialRecordsTableProps {
@@ -77,13 +78,16 @@ export function FinancialRecordsTable({
                   </div>
                 </td>
                 <td>
-                  <div className={styles.descContainer}>
-                    {record.note ? (
-                      <span className={styles.description}>{record.note}</span>
-                    ) : (
-                      <span className={styles.noDescription}>No description</span>
-                    )}
-                    <span className={styles.accountMeta}>{accountName}</span>
+                  <div className={styles.descCell}>
+                    <CategoryAvatar categoryName={categoryName} />
+                    <div className={styles.descContainer}>
+                      {record.note ? (
+                        <span className={styles.description}>{record.note}</span>
+                      ) : (
+                        <span className={styles.categoryFallbackTitle}>{categoryName}</span>
+                      )}
+                      <span className={styles.accountMeta}>{accountName}</span>
+                    </div>
                   </div>
                 </td>
                 <td>

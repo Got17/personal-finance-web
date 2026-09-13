@@ -26,6 +26,9 @@ export function getCategoryThemeClass(name: string): string {
   if (normalized.includes("utilit") || normalized.includes("bill") || normalized.includes("electric") || normalized.includes("water") || normalized.includes("internet")) {
     return styles.utilities;
   }
+  if (normalized.includes("entertain") || normalized.includes("movie") || normalized.includes("game") || normalized.includes("leisure")) {
+    return styles.entertainment;
+  }
   return styles.default;
 }
 

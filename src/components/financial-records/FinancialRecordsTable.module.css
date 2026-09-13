@@ -65,13 +65,27 @@
   color: var(--forest);
 }
 
+.descCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .descContainer {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-width: 0;
 }
 
 .description {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.categoryFallbackTitle {
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--ink);

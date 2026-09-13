@@ -18,18 +18,13 @@ import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
 import { EditFinancialRecordModal } from "./EditFinancialRecordModal";
 import { DeleteFinancialRecordModal } from "./DeleteFinancialRecordModal";
 import { FilterDropdown, FilterDropdownOption } from "./FilterDropdown";
+import { CashFlowSummaryCards } from "./CashFlowSummaryCards";
+import { DatePreset, getDateRangeForPreset } from "./date-filter-utils";
 import styles from "./FinancialRecordsView.module.css";
 
-export type DatePreset = "all" | "this-month" | "last-month" | "last-30-days" | "this-year" | "custom";
+export type { DatePreset } from "./date-filter-utils";
 
 const TAB_STORAGE_KEY = "pf_transactions_active_tab";
-
-function formatDateIso(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
 
 function getInitialTab(initialTab?: TransactionTab): TransactionTab {
   if (initialTab && (initialTab === "expense" || initialTab === "income")) return initialTab;
@@ -214,23 +209,9 @@ export function FinancialRecordsView({
 
   const handleDatePresetChange = (preset: DatePreset) => {
     setDatePreset(preset);
-    const now = new Date();
-    if (preset === "all") {
-      setStartDate("");
-      setEndDate("");
-    } else if (preset === "this-month") {
-      setStartDate(formatDateIso(new Date(now.getFullYear(), now.getMonth(), 1)));
-      setEndDate(formatDateIso(new Date(now.getFullYear(), now.getMonth() + 1, 0)));
-    } else if (preset === "last-month") {
-      setStartDate(formatDateIso(new Date(now.getFullYear(), now.getMonth() - 1, 1)));
-      setEndDate(formatDateIso(new Date(now.getFullYear(), now.getMonth(), 0)));
-    } else if (preset === "last-30-days") {
-      setStartDate(formatDateIso(new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)));
-      setEndDate(formatDateIso(now));
-    } else if (preset === "this-year") {
-      setStartDate(formatDateIso(new Date(now.getFullYear(), 0, 1)));
-      setEndDate(formatDateIso(new Date(now.getFullYear(), 11, 31)));
-    }
+    const range = getDateRangeForPreset(preset);
+    setStartDate(range.startDate);
+    setEndDate(range.endDate);
   };
 
   const hasSecondaryFilters =
@@ -287,6 +268,12 @@ export function FinancialRecordsView({
             {actionButtonText}
           </ActionButton>
         </header>
+
+        <CashFlowSummaryCards
+          records={visibleRecords}
+          categories={categories}
+          activeTab={activeTab}
+        />
 
         <div className={styles.secondaryToolbar} aria-label="Secondary filters">
           <div className={styles.filterControls}>
