@@ -17,6 +17,21 @@ import { FinancialRecordsTable } from "./FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
 import styles from "./FinancialRecordsView.module.css";
 
+export type DatePreset =
+  | "all"
+  | "this-month"
+  | "last-month"
+  | "last-30-days"
+  | "this-year"
+  | "custom";
+
+function formatDateIso(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 interface Props {
   initialRecords: FinancialRecord[];
   accounts: Account[];
@@ -28,6 +43,7 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
   const [activeTab, setActiveTab] = useState<TransactionTab>("all");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
+  const [datePreset, setDatePreset] = useState<DatePreset>("all");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
@@ -87,9 +103,44 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
     setRecords((current) => [newRecord, ...current]);
   };
 
-  const hasSecondaryFilters = selectedAccountId || startDate || endDate;
+  const handleDatePresetChange = (preset: DatePreset) => {
+    setDatePreset(preset);
+    const now = new Date();
+
+    if (preset === "all") {
+      setStartDate("");
+      setEndDate("");
+    } else if (preset === "this-month") {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      setStartDate(formatDateIso(start));
+      setEndDate(formatDateIso(end));
+    } else if (preset === "last-month") {
+      const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const end = new Date(now.getFullYear(), now.getMonth(), 0);
+      setStartDate(formatDateIso(start));
+      setEndDate(formatDateIso(end));
+    } else if (preset === "last-30-days") {
+      const start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      setStartDate(formatDateIso(start));
+      setEndDate(formatDateIso(now));
+    } else if (preset === "this-year") {
+      const start = new Date(now.getFullYear(), 0, 1);
+      const end = new Date(now.getFullYear(), 11, 31);
+      setStartDate(formatDateIso(start));
+      setEndDate(formatDateIso(end));
+    }
+  };
+
+  const hasSecondaryFilters =
+    Boolean(selectedAccountId) ||
+    datePreset !== "all" ||
+    Boolean(startDate) ||
+    Boolean(endDate);
+
   const clearSecondaryFilters = () => {
     setSelectedAccountId("");
+    setDatePreset("all");
     setStartDate("");
     setEndDate("");
   };
@@ -184,28 +235,49 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
               </span>
             </div>
 
-            <div className={styles.dateRangeCapsule}>
-              <span className={styles.dateIcon}>
+            <div className={styles.datePresetWrapper}>
+              <span className={styles.selectIcon}>
                 <CalendarIcon />
               </span>
-              <span className={styles.dateLabel}>From</span>
-              <input
-                type="date"
-                aria-label="Start date"
-                className={styles.dateInput}
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-              <span className={styles.dateDivider}>–</span>
-              <span className={styles.dateLabel}>To</span>
-              <input
-                type="date"
-                aria-label="End date"
-                className={styles.dateInput}
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
+              <select
+                aria-label="Filter by date range"
+                className={styles.datePresetSelect}
+                value={datePreset}
+                onChange={(e) => handleDatePresetChange(e.target.value as DatePreset)}
+              >
+                <option value="all">All dates</option>
+                <option value="this-month">This month</option>
+                <option value="last-month">Last month</option>
+                <option value="last-30-days">Last 30 days</option>
+                <option value="this-year">This year</option>
+                <option value="custom">Custom range...</option>
+              </select>
+              <span className={styles.selectChevron}>
+                <ChevronDownIcon />
+              </span>
             </div>
+
+            {datePreset === "custom" && (
+              <div className={styles.customDateRange}>
+                <span className={styles.customDateLabel}>From</span>
+                <input
+                  type="date"
+                  aria-label="Start date"
+                  className={styles.customDateInput}
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <span className={styles.dateDivider}>–</span>
+                <span className={styles.customDateLabel}>To</span>
+                <input
+                  type="date"
+                  aria-label="End date"
+                  className={styles.customDateInput}
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+            )}
 
             {hasSecondaryFilters && (
               <button

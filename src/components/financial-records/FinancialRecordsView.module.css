@@ -144,11 +144,9 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 10px 0;
+  padding: 4px 0;
   margin-top: 0.25rem;
   margin-bottom: 0.75rem;
-  border-top: 1px solid #eee8dc;
-  border-bottom: 1px solid #eee8dc;
 }
 
 .filterControls {
@@ -159,14 +157,16 @@
   flex-grow: 1;
 }
 
-.accountSelectWrapper {
+.accountSelectWrapper,
+.datePresetWrapper {
   position: relative;
   display: inline-flex;
   align-items: center;
   transition: transform 160ms ease;
 }
 
-.accountSelectWrapper:hover {
+.accountSelectWrapper:hover,
+.datePresetWrapper:hover {
   transform: translateY(-1px);
 }
 
@@ -181,7 +181,8 @@
   transition: color 160ms ease;
 }
 
-.accountSelect {
+.accountSelect,
+.datePresetSelect {
   appearance: none;
   -webkit-appearance: none;
   font-family: inherit;
@@ -196,13 +197,15 @@
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
-.accountSelect:hover {
+.accountSelect:hover,
+.datePresetSelect:hover {
   border-color: #a39c8c;
   background-color: #f0ebe1;
   box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
 }
 
-.accountSelect:focus {
+.accountSelect:focus,
+.datePresetSelect:focus {
   outline: none;
   border-color: var(--forest);
   box-shadow: 0 0 0 3px var(--forest-soft);
@@ -220,49 +223,56 @@
 }
 
 .accountSelectWrapper:hover .selectIcon,
-.accountSelectWrapper:hover .selectChevron {
+.accountSelectWrapper:hover .selectChevron,
+.datePresetWrapper:hover .selectIcon,
+.datePresetWrapper:hover .selectChevron {
   color: var(--ink);
 }
 
-.dateRangeCapsule {
+.customDateRange {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background-color: var(--canvas);
   border: 1px solid var(--line);
   border-radius: 9999px;
-  padding: 5px 14px;
+  padding: 4px 12px;
   font-size: 0.8125rem;
   color: var(--ink);
+  animation: customDateFadeIn 160ms ease;
   transition: all 160ms ease;
 }
 
-.dateRangeCapsule:hover {
+@keyframes customDateFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.customDateRange:hover {
   border-color: #a39c8c;
   box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
 }
 
-.dateRangeCapsule:focus-within {
+.customDateRange:focus-within {
   border-color: var(--forest);
   box-shadow: 0 0 0 3px var(--forest-soft);
 }
 
-.dateIcon {
-  color: var(--ink-muted);
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-}
-
-.dateLabel {
-  font-size: 0.7rem;
+.customDateLabel {
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--ink-muted);
 }
 
-.dateInput {
+.customDateInput {
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
