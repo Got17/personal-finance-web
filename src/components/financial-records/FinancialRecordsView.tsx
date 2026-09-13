@@ -8,10 +8,10 @@ import {
   CalendarIcon,
   CloseIcon,
   GeneralTagIcon,
-  PlusIcon,
   WalletIcon,
   getCategoryIcon,
 } from "./icons";
+import { ActionButton } from "@/components/ui/ActionButton";
 import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
 import { FinancialRecordsTable } from "./FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
@@ -252,8 +252,8 @@ export function FinancialRecordsView({
     activeTab === "all" ? "Transactions Management" : activeTab === "expense" ? "Expenses Management" : "Income Management";
   const actionButtonText =
     activeTab === "all" ? "Add Transaction" : activeTab === "expense" ? "Add Expense" : "Add Income";
-  const buttonStyle =
-    activeTab === "all" ? styles.addTransactionButton : activeTab === "expense" ? styles.addExpenseButton : styles.addIncomeButton;
+  const actionVariant =
+    activeTab === "all" ? "transaction" : activeTab === "expense" ? "expense" : "forest";
 
   return (
     <div className={styles.container}>
@@ -280,14 +280,12 @@ export function FinancialRecordsView({
             <p className={styles.subtitle}>Filter by all categories or edit transactions</p>
           </div>
 
-          <button
-            type="button"
-            className={buttonStyle}
+          <ActionButton
+            variant={actionVariant}
             onClick={() => setIsCreateModalOpen(true)}
           >
-            <PlusIcon />
-            <span>{actionButtonText}</span>
-          </button>
+            {actionButtonText}
+          </ActionButton>
         </header>
 
         <div className={styles.secondaryToolbar} aria-label="Secondary filters">

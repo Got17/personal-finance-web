@@ -42,7 +42,7 @@ export function CategoriesView({ initialCategories }: CategoriesViewProps) {
         count={categories.length}
         unitSingular="category"
         unitPlural="categories"
-        actionLabel="+ Add Category"
+        actionLabel="Add Category"
         onAction={() => setIsCreateModalOpen(true)}
         actionAriaLabel="Add new category"
       />

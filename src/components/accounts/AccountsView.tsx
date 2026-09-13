@@ -43,7 +43,7 @@ export function AccountsView({ initialAccounts, defaultCurrency }: AccountsViewP
         count={accounts.length}
         unitSingular="account"
         unitPlural="accounts"
-        actionLabel="+ Add Account"
+        actionLabel="Add Account"
         onAction={() => setIsCreateModalOpen(true)}
         actionAriaLabel="Add new account"
       />
