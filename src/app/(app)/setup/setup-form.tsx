@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { updateBaseCurrencyAction } from "@/app/actions/preferences";
 import { SUPPORTED_CURRENCIES } from "@/lib/constants/currencies";
+import { Dropdown } from "@/components/ui/Dropdown";
 import styles from "./page.module.css";
 
 export interface SetupFormProps {
@@ -59,20 +60,17 @@ export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
         <label htmlFor="baseCurrency" className={styles.label}>
           Select base currency
         </label>
-        <select
+        <Dropdown
           id="baseCurrency"
           name="baseCurrency"
           value={selectedCurrency}
-          onChange={(e) => setSelectedCurrency(e.target.value)}
-          className={styles.select}
+          onChange={setSelectedCurrency}
+          options={availableCurrencies.map((currency) => ({
+            value: currency.code,
+            label: currency.name,
+          }))}
           disabled={isSubmitting}
-        >
-          {availableCurrencies.map((currency) => (
-            <option key={currency.code} value={currency.code}>
-              {currency.name}
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
       <button

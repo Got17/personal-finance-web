@@ -9,6 +9,7 @@ import {
 } from "@/lib/schemas/categories";
 import { createCategoryAction } from "@/app/actions/categories";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
+import { Dropdown } from "@/components/ui/Dropdown";
 import styles from "./CreateCategoryForm.module.css";
 
 interface CreateCategoryFormProps {
@@ -113,19 +114,17 @@ export function CreateCategoryForm({
           <label htmlFor="category-type">
             Category Type <span className={styles.requiredStar}>*</span>
           </label>
-          <select
+          <Dropdown
             id="category-type"
-            className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
             value={type}
-            onChange={(e) => setType(e.target.value as CategoryType)}
+            options={CATEGORY_TYPES.map((t) => ({
+              value: t,
+              label: CATEGORY_TYPE_LABELS[t],
+            }))}
+            onChange={(val) => setType(val as CategoryType)}
             disabled={isPending}
-          >
-            {CATEGORY_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {CATEGORY_TYPE_LABELS[t]}
-              </option>
-            ))}
-          </select>
+            hasError={Boolean(fieldErrors.type)}
+          />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
 

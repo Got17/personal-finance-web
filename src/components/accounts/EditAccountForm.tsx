@@ -9,6 +9,7 @@ import {
 } from "@/lib/schemas/accounts";
 import { updateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
+import { Dropdown } from "@/components/ui/Dropdown";
 import styles from "./EditAccountForm.module.css";
 
 interface EditAccountFormProps {
@@ -123,19 +124,17 @@ export function EditAccountForm({
           <label htmlFor="edit-account-type">
             Account Type <span className={styles.requiredStar}>*</span>
           </label>
-          <select
+          <Dropdown
             id="edit-account-type"
-            className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
             value={type}
-            onChange={(e) => setType(e.target.value as AccountType)}
+            options={ACCOUNT_TYPES.map((t) => ({
+              value: t,
+              label: ACCOUNT_TYPE_LABELS[t],
+            }))}
+            onChange={(val) => setType(val as AccountType)}
             disabled={isPending}
-          >
-            {ACCOUNT_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {ACCOUNT_TYPE_LABELS[t]}
-              </option>
-            ))}
-          </select>
+            hasError={Boolean(fieldErrors.type)}
+          />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
 

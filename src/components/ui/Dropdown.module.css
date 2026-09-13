@@ -3,7 +3,28 @@
   display: inline-flex;
 }
 
-.triggerButton {
+.dropdownContainerFullWidth {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.hiddenSelect {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Pill variant */
+.triggerPill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -20,23 +41,77 @@
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.triggerButton:hover {
+.triggerPill:hover:not(:disabled) {
   border-color: #a39c8c;
   background-color: #f0ebe1;
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
 }
 
-.triggerButton:focus {
+.triggerPill:focus:not(:disabled),
+.triggerPillActive:not(:disabled) {
   outline: none;
   border-color: var(--forest);
   box-shadow: 0 0 0 3px var(--forest-soft);
 }
 
-.triggerButtonActive {
+.triggerPill:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Form field variant */
+.triggerForm {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--ink);
+  background-color: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 0.625rem;
+  padding: 9px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.triggerForm:hover:not(:disabled) {
+  border-color: #a39c8c;
+  background-color: #f0ebe1;
+}
+
+.triggerForm:focus:not(:disabled),
+.triggerFormActive:not(:disabled) {
+  outline: none;
   border-color: var(--forest);
   box-shadow: 0 0 0 3px var(--forest-soft);
-  background-color: #f0ebe1;
+}
+
+.triggerForm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--surface-muted);
+}
+
+.triggerFormError {
+  border-color: var(--rose) !important;
+}
+
+.triggerFormError:focus {
+  box-shadow: 0 0 0 3px rgba(181, 80, 66, 0.2) !important;
+}
+
+/* Internal elements */
+.triggerContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-grow: 1;
 }
 
 .triggerIcon {
@@ -47,15 +122,21 @@
   transition: color 160ms ease;
 }
 
-.triggerButton:hover .triggerIcon,
-.triggerButtonActive .triggerIcon {
+.triggerPill:hover .triggerIcon,
+.triggerPillActive .triggerIcon,
+.triggerForm:hover .triggerIcon,
+.triggerFormActive .triggerIcon {
   color: var(--ink);
 }
 
 .triggerLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.triggerLabelPlaceholder {
+  color: var(--ink-muted);
 }
 
 .chevron {
@@ -71,17 +152,19 @@
   color: var(--forest);
 }
 
-.triggerButton:hover .chevron {
+.triggerPill:hover .chevron,
+.triggerForm:hover .chevron {
   color: var(--ink);
 }
 
+/* Floating Dropdown Menu */
 .dropdownMenu {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
   min-width: 190px;
   max-width: 320px;
-  max-height: 280px;
+  max-height: 260px;
   overflow-y: auto;
   background-color: var(--surface);
   border: 1px solid var(--line);
@@ -90,7 +173,26 @@
   margin: 0;
   list-style: none;
   box-shadow: 0 10px 25px -4px rgba(31, 43, 36, 0.12), 0 4px 8px -2px rgba(31, 43, 36, 0.06);
-  z-index: 50;
+  z-index: 100;
+  animation: menuFadeIn 140ms ease;
+}
+
+.dropdownMenuFullWidth {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  min-width: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  box-shadow: 0 10px 25px -4px rgba(31, 43, 36, 0.12), 0 4px 8px -2px rgba(31, 43, 36, 0.06);
+  z-index: 100;
   animation: menuFadeIn 140ms ease;
 }
 
@@ -140,6 +242,12 @@
   cursor: pointer;
   user-select: none;
   transition: background-color 120ms ease, color 120ms ease;
+}
+
+.optionDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .optionLeft {

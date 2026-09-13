@@ -6,6 +6,8 @@ import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord, FinancialRecordKind } from "@/lib/schemas/financial-records";
 import { updateFinancialRecordAction } from "@/app/actions/financial-records";
+import { Dropdown } from "@/components/ui/Dropdown";
+import { getCategoryIcon } from "./icons";
 import styles from "./EditFinancialRecordModal.module.css";
 
 interface EditFinancialRecordModalProps {
@@ -146,16 +148,16 @@ function EditFinancialRecordFormModal({
           <label htmlFor="edit-record-type" className={styles.label}>
             Type
           </label>
-          <select
+          <Dropdown
             id="edit-record-type"
-            className={styles.select}
             value={kind}
-            onChange={(e) => handleKindChange(e.target.value as FinancialRecordKind)}
+            options={[
+              { value: "expense", label: "Expense" },
+              { value: "income", label: "Income" },
+            ]}
+            onChange={(val) => handleKindChange(val as FinancialRecordKind)}
             disabled={isPending}
-          >
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-          </select>
+          />
         </div>
 
         <div className={styles.row}>
@@ -163,42 +165,37 @@ function EditFinancialRecordFormModal({
             <label htmlFor="edit-record-account" className={styles.label}>
               Account
             </label>
-            <select
+            <Dropdown
               id="edit-record-account"
-              className={styles.select}
               value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
+              placeholder="Select account"
+              options={availableAccounts.map((acc) => ({
+                value: acc.id,
+                label: `${acc.name} (${acc.currency})`,
+              }))}
+              onChange={setAccountId}
               disabled={isPending}
               required
-            >
-              <option value="">Select account</option>
-              {availableAccounts.map((acc) => (
-                <option key={acc.id} value={acc.id}>
-                  {acc.name} ({acc.currency})
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className={styles.fieldGroup}>
             <label htmlFor="edit-record-category" className={styles.label}>
               Category
             </label>
-            <select
+            <Dropdown
               id="edit-record-category"
-              className={styles.select}
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              placeholder={`Select ${kind} category`}
+              options={availableCategories.map((cat) => ({
+                value: cat.id,
+                label: cat.name,
+                icon: getCategoryIcon(cat.name),
+              }))}
+              onChange={setCategoryId}
               disabled={isPending}
               required
-            >
-              <option value="">Select {kind} category</option>
-              {availableCategories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
 
