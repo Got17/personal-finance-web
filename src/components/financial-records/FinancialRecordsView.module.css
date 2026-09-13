@@ -151,18 +151,6 @@
   border-bottom: 1px solid #eee8dc;
 }
 
-.toolbarLabelGroup {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--ink-muted);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-
 .filterControls {
   display: flex;
   align-items: center;
@@ -175,15 +163,22 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  transition: transform 160ms ease;
+}
+
+.accountSelectWrapper:hover {
+  transform: translateY(-1px);
 }
 
 .selectIcon {
   position: absolute;
   left: 12px;
+  z-index: 2;
   pointer-events: none;
   color: var(--ink-muted);
   display: inline-flex;
   align-items: center;
+  transition: color 160ms ease;
 }
 
 .accountSelect {
@@ -198,13 +193,12 @@
   border-radius: 9999px;
   padding: 6px 32px 6px 34px;
   cursor: pointer;
-  transition: all 160ms ease;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
 .accountSelect:hover {
   border-color: #a39c8c;
   background-color: #f0ebe1;
-  transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
 }
 
@@ -217,10 +211,17 @@
 .selectChevron {
   position: absolute;
   right: 12px;
+  z-index: 2;
   pointer-events: none;
   color: var(--ink-muted);
   display: inline-flex;
   align-items: center;
+  transition: color 160ms ease;
+}
+
+.accountSelectWrapper:hover .selectIcon,
+.accountSelectWrapper:hover .selectChevron {
+  color: var(--ink);
 }
 
 .dateRangeCapsule {

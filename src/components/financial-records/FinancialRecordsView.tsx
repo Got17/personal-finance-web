@@ -8,7 +8,6 @@ import {
   CalendarIcon,
   ChevronDownIcon,
   CloseIcon,
-  FilterFunnelIcon,
   PlusIcon,
   WalletIcon,
 } from "./icons";
@@ -162,11 +161,6 @@ export function FinancialRecordsView({ initialRecords, accounts, categories }: P
         />
 
         <div className={styles.secondaryToolbar} aria-label="Secondary filters">
-          <div className={styles.toolbarLabelGroup}>
-            <FilterFunnelIcon />
-            <span>Filter by:</span>
-          </div>
-
           <div className={styles.filterControls}>
             <div className={styles.accountSelectWrapper}>
               <span className={styles.selectIcon}>
