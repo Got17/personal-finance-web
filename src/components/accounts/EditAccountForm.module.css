@@ -86,10 +86,12 @@
   cursor: pointer;
 }
 
-.input:hover:not(:disabled):not(:focus),
-.select:hover:not(:disabled):not(:focus) {
-  border-color: #a39c8c;
-  background-color: #faf8f3;
+@media (hover: hover) and (pointer: fine) {
+  .input:hover:not(:disabled):not(:focus),
+  .select:hover:not(:disabled):not(:focus) {
+    border-color: #a39c8c;
+    background-color: #faf8f3;
+  }
 }
 
 .input:focus,
@@ -147,9 +149,15 @@
   transition: background-color 160ms ease, color 160ms ease;
 }
 
-.cancelButton:hover {
-  background-color: #eee9df;
-  color: #1f2b24;
+@media (hover: hover) and (pointer: fine) {
+  .cancelButton:hover {
+    background-color: #eee9df;
+    color: #1f2b24;
+  }
+}
+
+.cancelButton:active {
+  transform: scale(0.97);
 }
 
 .submitButton {
@@ -165,8 +173,14 @@
   transition: background-color 160ms ease, transform 160ms ease;
 }
 
-.submitButton:hover {
-  background-color: #1d4e38;
+@media (hover: hover) and (pointer: fine) {
+  .submitButton:hover {
+    background-color: #1d4e38;
+  }
+}
+
+.submitButton:active {
+  transform: scale(0.97);
 }
 
 .submitButton:disabled,

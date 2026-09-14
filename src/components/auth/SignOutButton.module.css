@@ -12,9 +12,15 @@
   transition: background-color 0.2s;
 }
 
-.button:hover:not(:disabled) {
-  background: var(--surface-muted);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .button:hover:not(:disabled) {
+    background: var(--surface-muted);
+    color: var(--ink);
+  }
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .button:disabled {

@@ -23,11 +23,13 @@
   box-shadow: 0 4px 12px rgba(39, 103, 73, 0.28);
 }
 
-.buttonForest:hover:not(:disabled),
-.buttonTransaction:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2f855a 0%, #173d2c 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(39, 103, 73, 0.38);
+@media (hover: hover) and (pointer: fine) {
+  .buttonForest:hover:not(:disabled),
+  .buttonTransaction:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2f855a 0%, #173d2c 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(39, 103, 73, 0.38);
+  }
 }
 
 .buttonForest:focus-visible,
@@ -41,15 +43,21 @@
   box-shadow: 0 4px 12px rgba(229, 62, 62, 0.28);
 }
 
-.buttonExpense:hover:not(:disabled) {
-  background: linear-gradient(135deg, #f56565 0%, #9b2c2c 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(229, 62, 62, 0.38);
+@media (hover: hover) and (pointer: fine) {
+  .buttonExpense:hover:not(:disabled) {
+    background: linear-gradient(135deg, #f56565 0%, #9b2c2c 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(229, 62, 62, 0.38);
+  }
 }
 
 .buttonExpense:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px #fed7d7, 0 6px 16px rgba(229, 62, 62, 0.38);
+}
+
+.actionButton:active:not(:disabled) {
+  transform: scale(0.94);
 }
 
 .actionButton:disabled {

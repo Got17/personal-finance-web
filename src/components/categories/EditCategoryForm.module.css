@@ -52,10 +52,12 @@
   cursor: pointer;
 }
 
-.input:hover:not(:disabled):not(:focus),
-.select:hover:not(:disabled):not(:focus) {
-  border-color: var(--ink-muted);
-  background-color: var(--surface);
+@media (hover: hover) and (pointer: fine) {
+  .input:hover:not(:disabled):not(:focus),
+  .select:hover:not(:disabled):not(:focus) {
+    border-color: var(--ink-muted);
+    background-color: var(--surface);
+  }
 }
 
 .input:focus,
@@ -124,9 +126,15 @@
   transition: background-color 160ms ease, color 160ms ease;
 }
 
-.cancelButton:hover:not(:disabled) {
-  background-color: var(--surface-muted);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .cancelButton:hover:not(:disabled) {
+    background-color: var(--surface-muted);
+    color: var(--ink);
+  }
+}
+
+.cancelButton:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .submitButton {
@@ -139,11 +147,17 @@
   border-radius: 8px;
   padding: 10px 20px;
   cursor: pointer;
-  transition: background-color 160ms ease;
+  transition: background-color 160ms ease, transform 160ms ease;
 }
 
-.submitButton:hover:not(:disabled) {
-  background-color: var(--forest-deep);
+@media (hover: hover) and (pointer: fine) {
+  .submitButton:hover:not(:disabled) {
+    background-color: var(--forest-deep);
+  }
+}
+
+.submitButton:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .submitButton:disabled {

@@ -66,9 +66,11 @@
   transition: all 160ms ease;
 }
 
-.searchInput:hover {
-  border-color: #a39c8c;
-  box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
+@media (hover: hover) and (pointer: fine) {
+  .searchInput:hover {
+    border-color: #a39c8c;
+    box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
+  }
 }
 
 .searchInput:focus {
@@ -102,15 +104,21 @@
   transition: all 160ms ease;
 }
 
-.clearFiltersButton:hover {
-  background-color: #fce4e1;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(181, 80, 66, 0.15);
+@media (hover: hover) and (pointer: fine) {
+  .clearFiltersButton:hover {
+    background-color: #fce4e1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(181, 80, 66, 0.15);
+  }
+}
+
+.clearFiltersButton:active {
+  transform: scale(0.96);
 }
 
 @media (max-width: 768px) {
   .mainCard {
-    padding: 1.25rem 0.875rem;
+    padding: 1.125rem 0.625rem;
   }
 
   .toolbar {

@@ -67,9 +67,15 @@
   line-height: 1;
 }
 
-.closeButton:hover {
-  background-color: var(--surface-muted);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .closeButton:hover {
+    background-color: var(--surface-muted);
+    color: var(--ink);
+  }
+}
+
+.closeButton:active {
+  transform: scale(0.94);
 }
 
 .closeButton:focus-visible {

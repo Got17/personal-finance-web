@@ -43,9 +43,15 @@
   transition: background-color 160ms ease, color 160ms ease;
 }
 
-.cancelButton:hover:not(:disabled) {
-  background-color: var(--surface-muted);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .cancelButton:hover:not(:disabled) {
+    background-color: var(--surface-muted);
+    color: var(--ink);
+  }
+}
+
+.cancelButton:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .deleteButton {
@@ -62,10 +68,16 @@
   transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
-.deleteButton:hover:not(:disabled) {
-  background-color: #9c3f33;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(181, 80, 66, 0.35);
+@media (hover: hover) and (pointer: fine) {
+  .deleteButton:hover:not(:disabled) {
+    background-color: #9c3f33;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(181, 80, 66, 0.35);
+  }
+}
+
+.deleteButton:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .deleteButton:disabled,

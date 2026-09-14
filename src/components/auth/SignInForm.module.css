@@ -33,9 +33,11 @@
   color: #9da49b;
 }
 
-.input:hover:not(:disabled):not(:focus) {
-  border-color: #a39c8c;
-  background-color: #faf8f3;
+@media (hover: hover) and (pointer: fine) {
+  .input:hover:not(:disabled):not(:focus) {
+    border-color: #a39c8c;
+    background-color: #faf8f3;
+  }
 }
 
 .input:focus {
@@ -71,9 +73,15 @@
   transition: color 0.16s ease, background-color 0.16s ease;
 }
 
-.toggleButton:hover {
-  color: var(--ink);
-  background-color: var(--forest-soft);
+@media (hover: hover) and (pointer: fine) {
+  .toggleButton:hover {
+    color: var(--ink);
+    background-color: var(--forest-soft);
+  }
+}
+
+.toggleButton:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
 .toggleButton:focus-visible {
@@ -100,10 +108,17 @@
   font-size: 0.85rem;
   font-weight: 800;
   cursor: pointer;
+  transition: background-color 0.16s ease, transform 0.16s ease;
 }
 
-.submitButton:hover:not(:disabled) {
-  background: var(--forest-deep);
+@media (hover: hover) and (pointer: fine) {
+  .submitButton:hover:not(:disabled) {
+    background: var(--forest-deep);
+  }
+}
+
+.submitButton:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .submitButton:disabled {

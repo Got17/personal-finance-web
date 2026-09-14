@@ -19,45 +19,27 @@
   box-sizing: border-box;
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(31, 43, 36, 0.05);
-}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(31, 43, 36, 0.05);
+  }
 
-.cardInflow {
-  background: linear-gradient(135deg, #f2fbf6 0%, #fffdf8 100%);
-  border-color: #bbf7d0;
-}
+  .cardInflow:hover {
+    border-color: #86efac;
+  }
 
-.cardInflow:hover {
-  border-color: #86efac;
-}
+  .cardOutflow:hover {
+    border-color: #fda4af;
+  }
 
-.cardOutflow {
-  background: linear-gradient(135deg, #fdf4f2 0%, #fffdf8 100%);
-  border-color: #fecdd3;
-}
+  .cardNeutral:hover {
+    border-color: #c9c3b4;
+  }
 
-.cardOutflow:hover {
-  border-color: #fda4af;
-}
-
-.cardNeutral {
-  background-color: var(--surface);
-  border-color: var(--line);
-}
-
-.cardNeutral:hover {
-  border-color: #c9c3b4;
-}
-
-.cardHighlight {
-  background: linear-gradient(135deg, #f0f9ff 0%, #fffdf8 100%);
-  border-color: #bae6fd;
-}
-
-.cardHighlight:hover {
-  border-color: #7dd3fc;
+  .cardHighlight:hover {
+    border-color: #7dd3fc;
+  }
 }
 
 .cardHeader {

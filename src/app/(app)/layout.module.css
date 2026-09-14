@@ -56,7 +56,9 @@
   transition: background-color 160ms ease, color 160ms ease;
 }
 
-.navItem:hover { background: var(--surface-muted); color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .navItem:hover { background: var(--surface-muted); color: var(--ink); }
+}
 .activeNavItem { background: var(--forest-soft); color: var(--forest-deep); }
 .navMark { width: 1.5rem; color: currentColor; font-size: 0.625rem; font-variant-numeric: tabular-nums; opacity: 0.65; }
 

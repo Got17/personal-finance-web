@@ -1,4 +1,4 @@
-﻿.avatar {
+.avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -10,13 +10,28 @@
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
-.avatar:hover {
-  transform: scale(1.06);
+@media (hover: hover) and (pointer: fine) {
+  .avatar:hover {
+    transform: scale(1.06);
+  }
 }
 
 .avatar svg {
   width: 18px;
   height: 18px;
+}
+
+@media (max-width: 768px) {
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .avatar svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .checking {

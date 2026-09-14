@@ -37,8 +37,10 @@
   transition: background-color 160ms ease;
 }
 
-.row:hover {
-  background-color: rgba(39, 103, 73, 0.03);
+@media (hover: hover) and (pointer: fine) {
+  .row:hover {
+    background-color: rgba(39, 103, 73, 0.03);
+  }
 }
 
 .table td {
@@ -145,10 +147,16 @@
   transition: all 160ms ease;
 }
 
-.actionButton:hover {
-  background-color: var(--surface-muted);
-  color: var(--ink);
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .actionButton:hover {
+    background-color: var(--surface-muted);
+    color: var(--ink);
+    transform: scale(1.08);
+  }
+}
+
+.actionButton:active {
+  transform: scale(0.92);
 }
 
 .emptyState {
@@ -159,4 +167,52 @@
   background-color: rgba(238, 233, 223, 0.2);
   border-radius: 12px;
   margin: 1.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .table {
+    min-width: 520px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 8px;
+  }
+
+  .table th {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    padding: 8px 8px;
+  }
+
+  .table th.actionsHeader,
+  .actionsCell {
+    width: 68px;
+  }
+
+  .descCell {
+    gap: 8px;
+  }
+
+  .description,
+  .categoryFallbackTitle {
+    font-size: 0.875rem;
+  }
+
+  .accountMeta {
+    font-size: 0.6875rem;
+  }
+
+  .amount {
+    font-size: 0.875rem;
+  }
+
+  .actionsGroup {
+    gap: 4px;
+  }
+
+  .actionButton {
+    width: 28px;
+    height: 28px;
+  }
 }

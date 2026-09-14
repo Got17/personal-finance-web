@@ -91,8 +91,14 @@
   transition: background-color 160ms ease;
 }
 
-.cancelButton:hover:not(:disabled) {
-  background-color: var(--surface-muted);
+@media (hover: hover) and (pointer: fine) {
+  .cancelButton:hover:not(:disabled) {
+    background-color: var(--surface-muted);
+  }
+}
+
+.cancelButton:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .submitButtonExpense {
@@ -108,10 +114,16 @@
   transition: all 160ms ease;
 }
 
-.submitButtonExpense:hover:not(:disabled) {
-  background-color: #9c3f33;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(181, 80, 66, 0.35);
+@media (hover: hover) and (pointer: fine) {
+  .submitButtonExpense:hover:not(:disabled) {
+    background-color: #9c3f33;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(181, 80, 66, 0.35);
+  }
+}
+
+.submitButtonExpense:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .submitButtonIncome {
@@ -127,10 +139,16 @@
   transition: all 160ms ease;
 }
 
-.submitButtonIncome:hover:not(:disabled) {
-  background-color: var(--forest-deep);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(29, 78, 56, 0.35);
+@media (hover: hover) and (pointer: fine) {
+  .submitButtonIncome:hover:not(:disabled) {
+    background-color: var(--forest-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29, 78, 56, 0.35);
+  }
+}
+
+.submitButtonIncome:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .submitButtonExpense:disabled,

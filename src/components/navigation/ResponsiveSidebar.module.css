@@ -121,9 +121,15 @@
     transition: all 160ms ease;
   }
 
-  .hamburgerButton:hover {
-    background: var(--surface-muted);
-    border-color: #a39c8c;
+  @media (hover: hover) and (pointer: fine) {
+    .hamburgerButton:hover {
+      background: var(--surface-muted);
+      border-color: #a39c8c;
+    }
+  }
+
+  .hamburgerButton:active {
+    transform: scale(0.94);
   }
 
   .mobileBrand {
@@ -204,8 +210,14 @@
     transition: all 160ms ease;
   }
 
-  .closeButton:hover {
-    background: var(--surface-muted);
-    color: var(--ink);
+  @media (hover: hover) and (pointer: fine) {
+    .closeButton:hover {
+      background: var(--surface-muted);
+      color: var(--ink);
+    }
+  }
+
+  .closeButton:active {
+    transform: scale(0.94);
   }
 }

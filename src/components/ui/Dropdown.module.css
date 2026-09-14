@@ -45,11 +45,17 @@
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.triggerPill:hover:not(:disabled) {
-  border-color: #a39c8c;
-  background-color: #f0ebe1;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
+@media (hover: hover) and (pointer: fine) {
+  .triggerPill:hover:not(:disabled) {
+    border-color: #a39c8c;
+    background-color: #f0ebe1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
+  }
+}
+
+.triggerPill:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 .triggerPill:focus:not(:disabled),
@@ -83,9 +89,15 @@
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
-.triggerForm:hover:not(:disabled) {
-  border-color: #a39c8c;
-  background-color: #f0ebe1;
+@media (hover: hover) and (pointer: fine) {
+  .triggerForm:hover:not(:disabled) {
+    border-color: #a39c8c;
+    background-color: #f0ebe1;
+  }
+}
+
+.triggerForm:active:not(:disabled) {
+  transform: scale(0.99);
 }
 
 .triggerForm:focus:not(:disabled),
@@ -126,11 +138,16 @@
   transition: color 160ms ease;
 }
 
-.triggerPill:hover .triggerIcon,
 .triggerPillActive .triggerIcon,
-.triggerForm:hover .triggerIcon,
 .triggerFormActive .triggerIcon {
   color: var(--ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .triggerPill:hover .triggerIcon,
+  .triggerForm:hover .triggerIcon {
+    color: var(--ink);
+  }
 }
 
 .triggerLabel {
@@ -156,9 +173,11 @@
   color: var(--forest);
 }
 
-.triggerPill:hover .chevron,
-.triggerForm:hover .chevron {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .triggerPill:hover .chevron,
+  .triggerForm:hover .chevron {
+    color: var(--ink);
+  }
 }
 
 /* Floating Dropdown Menu */
@@ -217,9 +236,11 @@
   border-radius: 9999px;
 }
 
-.dropdownMenu::-webkit-scrollbar-thumb:hover,
-.dropdownMenuFullWidth::-webkit-scrollbar-thumb:hover {
-  background-color: #a39c8c;
+@media (hover: hover) and (pointer: fine) {
+  .dropdownMenu::-webkit-scrollbar-thumb:hover,
+  .dropdownMenuFullWidth::-webkit-scrollbar-thumb:hover {
+    background-color: #a39c8c;
+  }
 }
 
 .dropdownMenuUpward {
@@ -265,9 +286,20 @@
   transition: background-color 120ms ease, color 120ms ease;
 }
 
-.option:hover,
 .optionHighlighted:not(.optionSelected) {
   background-color: #f2f7f4;
+  color: #1d4e38;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .option:hover {
+    background-color: #f2f7f4;
+    color: #1d4e38;
+  }
+}
+
+.option:active:not(.optionSelected):not(.optionDisabled) {
+  background-color: #e2eee7;
   color: #1d4e38;
 }
 
