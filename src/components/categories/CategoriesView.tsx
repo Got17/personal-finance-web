@@ -1,23 +1,171 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Category } from "@/lib/schemas/categories";
+import { ActionButton } from "@/components/ui/ActionButton";
+import { FilterDropdown, FilterDropdownOption } from "@/components/financial-records/FilterDropdown";
+import { CheckIcon, CloseIcon } from "@/components/financial-records/icons";
+import { CategorySubTabs, CategoryTab } from "./CategorySubTabs";
+import { CategorySummaryCards } from "./CategorySummaryCards";
+import { CategoriesTable } from "./CategoriesTable";
 import { CategoriesList } from "./CategoriesList";
 import { CreateCategoryModal } from "./CreateCategoryModal";
 import { EditCategoryModal } from "./EditCategoryModal";
 import { DeactivateCategoryModal } from "./DeactivateCategoryModal";
-import { ViewHeader } from "@/components/ui/ViewHeader";
 import styles from "./CategoriesView.module.css";
+
+const TAB_STORAGE_KEY = "pf_categories_active_tab";
+
+function getInitialTab(initialTab?: CategoryTab): CategoryTab {
+  if (initialTab && (initialTab === "expense" || initialTab === "income")) return initialTab;
+  if (typeof window !== "undefined") {
+    try {
+      const urlTab = new URLSearchParams(window.location.search).get("tab") as CategoryTab | null;
+      if (urlTab === "expense" || urlTab === "income") return urlTab;
+      const saved = localStorage.getItem(TAB_STORAGE_KEY) as CategoryTab | null;
+      if (saved === "expense" || saved === "income") return saved;
+    } catch {
+      // Ignore storage errors
+    }
+  }
+  return "all";
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+
+function TableIcon() {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="18" height="18" x="3" y="3" rx="2" />
+      <path d="M3 9h18" />
+      <path d="M3 15h18" />
+      <path d="M12 9v12" />
+    </svg>
+  );
+}
+
+function GridIcon() {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="7" height="7" x="3" y="3" rx="1" />
+      <rect width="7" height="7" x="14" y="3" rx="1" />
+      <rect width="7" height="7" x="14" y="14" rx="1" />
+      <rect width="7" height="7" x="3" y="14" rx="1" />
+    </svg>
+  );
+}
 
 interface CategoriesViewProps {
   initialCategories: Category[];
+  initialTab?: CategoryTab;
 }
 
-export function CategoriesView({ initialCategories }: CategoriesViewProps) {
+export function CategoriesView({
+  initialCategories,
+  initialTab,
+}: CategoriesViewProps) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [activeTab, setActiveTab] = useState<CategoryTab>(() => getInitialTab(initialTab));
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deactivatingCategory, setDeactivatingCategory] = useState<Category | null>(null);
+
+  // Sub-tab counts
+  const allCount = categories.length;
+  const expenseCount = useMemo(
+    () => categories.filter((c) => c.type === "expense").length,
+    [categories]
+  );
+  const incomeCount = useMemo(
+    () => categories.filter((c) => c.type === "income").length,
+    [categories]
+  );
+
+  // Sync active tab to URL
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    const currentTabParam = url.searchParams.get("tab");
+    if (activeTab === "all" && currentTabParam) {
+      url.searchParams.delete("tab");
+      window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+    } else if (activeTab !== "all" && currentTabParam !== activeTab) {
+      url.searchParams.set("tab", activeTab);
+      window.history.replaceState(null, "", url.pathname + url.search);
+    }
+  }, [activeTab]);
+
+  // Sync popstate for browser Back/Forward
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab") as CategoryTab | null;
+      if (tabParam === "expense" || tabParam === "income" || tabParam === "all") {
+        setActiveTab(tabParam);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const handleTabChange = (newTab: CategoryTab) => {
+    setActiveTab(newTab);
+    try {
+      localStorage.setItem(TAB_STORAGE_KEY, newTab);
+    } catch {
+      // Ignore
+    }
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (newTab === "all") {
+        url.searchParams.delete("tab");
+      } else {
+        url.searchParams.set("tab", newTab);
+      }
+      window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
+    }
+  };
 
   const handleCategoryCreated = (newCategory: Category) => {
     setCategories((prev) => [newCategory, ...prev]);
@@ -25,39 +173,189 @@ export function CategoriesView({ initialCategories }: CategoriesViewProps) {
 
   const handleCategoryUpdated = (updatedCategory: Category) => {
     setCategories((prev) =>
-      prev.map((cat) => (cat.id === updatedCategory.id ? updatedCategory : cat)),
+      prev.map((cat) => (cat.id === updatedCategory.id ? updatedCategory : cat))
     );
   };
 
   const handleCategoryDeactivated = (deactivatedCategory: Category) => {
     setCategories((prev) =>
-      prev.map((cat) => (cat.id === deactivatedCategory.id ? deactivatedCategory : cat)),
+      prev.map((cat) => (cat.id === deactivatedCategory.id ? deactivatedCategory : cat))
     );
   };
 
+  const clearFilters = () => {
+    setStatusFilter("all");
+    setSearchQuery("");
+  };
+
+  // Filtered categories
+  const visibleCategories = useMemo(() => {
+    return categories.filter((cat) => {
+      if (activeTab !== "all" && cat.type !== activeTab) return false;
+      if (statusFilter === "active" && !cat.is_active) return false;
+      if (statusFilter === "inactive" && cat.is_active) return false;
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        return cat.name.toLowerCase().includes(query);
+      }
+      return true;
+    });
+  }, [categories, activeTab, statusFilter, searchQuery]);
+
+  const hasSecondaryFilters = statusFilter !== "all" || searchQuery.trim() !== "";
+
+  const title =
+    activeTab === "all"
+      ? "Categories Management"
+      : activeTab === "expense"
+      ? "Expenses Management"
+      : "Income Management";
+
+  const actionButtonText =
+    activeTab === "all"
+      ? "Add Category"
+      : activeTab === "expense"
+      ? "Add Expense Category"
+      : "Add Income Category";
+
+  const actionVariant =
+    activeTab === "all" ? "transaction" : activeTab === "expense" ? "expense" : "forest";
+
+  const statusOptions: FilterDropdownOption[] = [
+    { value: "all", label: "All statuses", icon: <CheckIcon /> },
+    { value: "active", label: "Active only", icon: <CheckIcon /> },
+    { value: "inactive", label: "Inactive only", icon: <CloseIcon /> },
+  ];
+
   return (
-    <div className={styles.viewContainer}>
-      <ViewHeader
-        title="Your Categories"
-        count={categories.length}
-        unitSingular="category"
-        unitPlural="categories"
-        actionLabel="Add Category"
-        onAction={() => setIsCreateModalOpen(true)}
-        actionAriaLabel="Add new category"
+    <div className={styles.container}>
+      <CategorySubTabs
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        allCount={allCount}
+        expenseCount={expenseCount}
+        incomeCount={incomeCount}
       />
 
-      <section aria-label="Categories list">
-        <CategoriesList
-          categories={categories}
-          onAddClick={() => setIsCreateModalOpen(true)}
-          onEditClick={(cat) => setEditingCategory(cat)}
-          onDeactivateClick={(cat) => setDeactivatingCategory(cat)}
-        />
-      </section>
+      <div
+        className={styles.mainCard}
+        role="tabpanel"
+        id={`tabpanel-${activeTab}`}
+        aria-labelledby={`tab-${activeTab}`}
+      >
+        <header className={styles.headerRow}>
+          <div className={styles.titleArea}>
+            <div className={styles.titleWithBadge}>
+              <h2 className={styles.title}>{title}</h2>
+              <span className={styles.countBadge}>
+                {visibleCategories.length}{" "}
+                {visibleCategories.length === 1 ? "category" : "categories"}
+              </span>
+            </div>
+            <p className={styles.subtitle}>Filter by status or edit categories</p>
+          </div>
+
+          <ActionButton
+            className={styles.headerActionButton}
+            variant={actionVariant}
+            onClick={() => setIsCreateModalOpen(true)}
+            aria-label="Add new category"
+          >
+            {actionButtonText}
+          </ActionButton>
+        </header>
+
+        <CategorySummaryCards categories={categories} activeTab={activeTab} />
+
+        <div className={styles.secondaryToolbar} aria-label="Secondary filters">
+          <div className={styles.filterControls}>
+            <div className={styles.searchContainer}>
+              <span className={styles.searchIcon} aria-hidden="true">
+                <SearchIcon />
+              </span>
+              <input
+                type="text"
+                placeholder="Search categories..."
+                aria-label="Search categories by name"
+                className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            <FilterDropdown
+              id="filter-category-status"
+              label="Filter by status"
+              value={statusFilter}
+              options={statusOptions}
+              onChange={setStatusFilter}
+              defaultIcon={<CheckIcon />}
+            />
+
+            {hasSecondaryFilters && (
+              <button
+                type="button"
+                className={styles.clearFiltersButton}
+                onClick={clearFilters}
+              >
+                <CloseIcon />
+                <span>Clear filters</span>
+              </button>
+            )}
+          </div>
+
+          <div
+            className={styles.viewModeToggle}
+            role="group"
+            aria-label="Category display view mode"
+          >
+            <button
+              type="button"
+              className={`${styles.toggleButton} ${
+                viewMode === "table" ? styles.activeToggle : ""
+              }`}
+              onClick={() => setViewMode("table")}
+              aria-label="Table view"
+              aria-pressed={viewMode === "table"}
+            >
+              <TableIcon />
+              <span>Table</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.toggleButton} ${
+                viewMode === "cards" ? styles.activeToggle : ""
+              }`}
+              onClick={() => setViewMode("cards")}
+              aria-label="Cards view"
+              aria-pressed={viewMode === "cards"}
+            >
+              <GridIcon />
+              <span>Cards</span>
+            </button>
+          </div>
+        </div>
+
+        {viewMode === "table" ? (
+          <CategoriesTable
+            categories={visibleCategories}
+            onEdit={(cat) => setEditingCategory(cat)}
+            onDeactivate={(cat) => setDeactivatingCategory(cat)}
+          />
+        ) : (
+          <CategoriesList
+            categories={visibleCategories}
+            hideFilterBar
+            onAddClick={() => setIsCreateModalOpen(true)}
+            onEditClick={(cat) => setEditingCategory(cat)}
+            onDeactivateClick={(cat) => setDeactivatingCategory(cat)}
+          />
+        )}
+      </div>
 
       <CreateCategoryModal
         isOpen={isCreateModalOpen}
+        defaultType={activeTab === "income" ? "income" : "expense"}
         onClose={() => setIsCreateModalOpen(false)}
         onCategoryCreated={handleCategoryCreated}
       />

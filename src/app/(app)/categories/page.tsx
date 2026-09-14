@@ -3,10 +3,15 @@ import { getCurrentUser } from "@/lib/auth-service";
 import { getCategories } from "@/lib/categories-service";
 import { redirect } from "next/navigation";
 import { CategoriesView } from "@/components/categories/CategoriesView";
+import { CategoryTab } from "@/components/categories/CategorySubTabs";
 import { PageHeader } from "@/components/ui/PageHeader";
 import styles from "./page.module.css";
 
-export default async function CategoriesPage() {
+interface PageProps {
+  searchParams?: Promise<{ tab?: string }>;
+}
+
+export default async function CategoriesPage({ searchParams }: PageProps = {}) {
   const token = await getSessionToken();
   if (!token) {
     redirect("/login");
@@ -19,23 +24,29 @@ export default async function CategoriesPage() {
     return null;
   }
 
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const tabParam = resolvedSearchParams?.tab;
+  const initialTab: CategoryTab =
+    tabParam === "expense" || tabParam === "income" ? tabParam : "all";
+
   const categoriesResult = await getCategories(token);
 
   return (
     <div className={styles.pageContainer}>
       <PageHeader
-        eyebrow="Workspace"
+        eyebrow="Structure"
         title="Categories"
         subtitle="Create and view your income and expense categories to organize your personal finances."
       />
 
       {!categoriesResult.success && (
-        <div className={styles.errorBanner}>
+        <div className={styles.errorBanner} role="alert">
           Failed to load categories: {categoriesResult.error}
         </div>
       )}
 
       <CategoriesView
+        initialTab={initialTab}
         initialCategories={categoriesResult.success ? categoriesResult.categories : []}
       />
     </div>

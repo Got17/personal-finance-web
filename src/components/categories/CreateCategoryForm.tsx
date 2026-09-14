@@ -16,6 +16,7 @@ interface CreateCategoryFormProps {
   onCategoryCreated?: (category: Category) => void;
   onCancel?: () => void;
   hideHeader?: boolean;
+  defaultType?: CategoryType;
 }
 
 const CATEGORY_TYPE_LABELS: Record<CategoryType, string> = {
@@ -27,9 +28,10 @@ export function CreateCategoryForm({
   onCategoryCreated,
   onCancel,
   hideHeader = true,
+  defaultType = "income",
 }: CreateCategoryFormProps) {
   const [name, setName] = useState("");
-  const [type, setType] = useState<CategoryType>("income");
+  const [type, setType] = useState<CategoryType>(defaultType);
   const [isActive, setIsActive] = useState(true);
 
   const [fieldErrors, setFieldErrors] = useState<{

@@ -100,4 +100,30 @@ describe("CategoriesPage", () => {
       screen.getByText("Failed to load categories: Unable to connect to categories server."),
     ).toBeTruthy();
   });
+
+  it("resolves searchParams with tab parameter and passes to CategoriesView", async () => {
+    vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+    vi.mocked(authService.getCurrentUser).mockResolvedValue({
+      success: true,
+      status: 200,
+      user: {
+        id: "usr-1",
+        email: "alex@example.com",
+        base_currency: "USD",
+        created_at: "2026-09-07T00:00:00Z",
+        updated_at: "2026-09-07T00:00:00Z",
+      },
+    });
+    vi.mocked(categoriesService.getCategories).mockResolvedValue({
+      success: true,
+      categories: [mockCategory],
+    });
+
+    const pageComponent = await CategoriesPage({
+      searchParams: Promise.resolve({ tab: "expense" }),
+    });
+    render(pageComponent);
+
+    expect(screen.getByRole("tab", { name: /expenses/i, selected: true })).toBeTruthy();
+  });
 });

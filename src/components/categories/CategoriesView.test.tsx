@@ -1,4 +1,4 @@
-import { describe, expect, it, afterEach } from "vitest";
+import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { CategoriesView } from "./CategoriesView";
 import { Category } from "@/lib/schemas/categories";
@@ -13,7 +13,22 @@ const mockInitialCategory: Category = {
   updated_at: "2026-09-08T00:00:00Z",
 };
 
+const mockExpenseCategory: Category = {
+  id: "cat-2",
+  user_id: "usr-1",
+  name: "Groceries",
+  type: "expense",
+  is_active: true,
+  created_at: "2026-09-08T00:00:00Z",
+  updated_at: "2026-09-08T00:00:00Z",
+};
+
 describe("CategoriesView", () => {
+  beforeEach(() => {
+    window.history.replaceState(null, "", "/categories");
+    localStorage.clear();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -21,7 +36,7 @@ describe("CategoriesView", () => {
   it("renders initial categories list and Add button with modal closed", () => {
     render(<CategoriesView initialCategories={[mockInitialCategory]} />);
 
-    expect(screen.getByText("Your Categories")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Categories Management" })).toBeTruthy();
     expect(screen.getByText("1 category")).toBeTruthy();
     expect(screen.getByText("Salary")).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new category/i })).toBeTruthy();
@@ -61,5 +76,74 @@ describe("CategoriesView", () => {
 
     expect(screen.getByTestId("deactivate-category-modal")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Deactivate Category" })).toBeTruthy();
+  });
+
+  it("switches sub-tabs and dynamically updates title and action button text", () => {
+    render(
+      <CategoriesView
+        initialCategories={[mockInitialCategory, mockExpenseCategory]}
+      />
+    );
+
+    // Initial state: All
+    expect(screen.getByRole("heading", { name: "Categories Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Category");
+
+    // Click Expenses tab
+    const expensesTab = screen.getByRole("tab", { name: /expenses/i });
+    fireEvent.click(expensesTab);
+
+    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Expense Category");
+    expect(screen.getByText("Groceries")).toBeTruthy();
+    expect(screen.queryByText("Salary")).toBeNull();
+
+    // Click Income tab
+    const incomeTab = screen.getByRole("tab", { name: /income/i });
+    fireEvent.click(incomeTab);
+
+    expect(screen.getByRole("heading", { name: "Income Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Income Category");
+    expect(screen.getByText("Salary")).toBeTruthy();
+    expect(screen.queryByText("Groceries")).toBeNull();
+  });
+
+  it("filters categories via search input and allows clearing filters", () => {
+    render(
+      <CategoriesView
+        initialCategories={[mockInitialCategory, mockExpenseCategory]}
+      />
+    );
+
+    const searchInput = screen.getByPlaceholderText("Search categories...");
+    fireEvent.change(searchInput, { target: { value: "groc" } });
+
+    expect(screen.getByText("Groceries")).toBeTruthy();
+    expect(screen.queryByText("Salary")).toBeNull();
+
+    const clearButton = screen.getByRole("button", { name: /clear filters/i });
+    fireEvent.click(clearButton);
+
+    expect(screen.getByText("Groceries")).toBeTruthy();
+    expect(screen.getByText("Salary")).toBeTruthy();
+  });
+
+  it("toggles between Table view and Cards view", () => {
+    render(
+      <CategoriesView
+        initialCategories={[mockInitialCategory, mockExpenseCategory]}
+      />
+    );
+
+    // Default view: Table
+    expect(screen.getByRole("table", { name: "Categories table" })).toBeTruthy();
+
+    // Click Cards view
+    const cardsToggle = screen.getByRole("button", { name: "Cards view" });
+    fireEvent.click(cardsToggle);
+
+    expect(screen.queryByRole("table", { name: "Categories table" })).toBeNull();
+    expect(screen.getByTestId("category-card-cat-1")).toBeTruthy();
+    expect(screen.getByTestId("category-card-cat-2")).toBeTruthy();
   });
 });

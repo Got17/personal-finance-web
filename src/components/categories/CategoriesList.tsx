@@ -5,6 +5,7 @@ import { Category, CategoryType } from "@/lib/schemas/categories";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Badge } from "@/components/ui/Badge";
 import { ItemCard } from "@/components/ui/ItemCard";
+import { getCategoryIcon } from "@/components/financial-records/icons";
 import styles from "./CategoriesList.module.css";
 
 interface CategoriesListProps {
@@ -12,6 +13,7 @@ interface CategoriesListProps {
   onAddClick?: () => void;
   onEditClick?: (category: Category) => void;
   onDeactivateClick?: (category: Category) => void;
+  hideFilterBar?: boolean;
 }
 
 type FilterType = "all" | CategoryType;
@@ -33,14 +35,17 @@ export function CategoriesList({
   onAddClick,
   onEditClick,
   onDeactivateClick,
+  hideFilterBar = false,
 }: CategoriesListProps) {
   const [filter, setFilter] = useState<FilterType>("all");
   const tabRefs = useRef<{ [key in FilterType]?: HTMLButtonElement | null }>({});
 
-  const filteredCategories = categories.filter((cat) => {
-    if (filter === "all") return true;
-    return cat.type === filter;
-  });
+  const filteredCategories = hideFilterBar
+    ? categories
+    : categories.filter((cat) => {
+        if (filter === "all") return true;
+        return cat.type === filter;
+      });
 
   const { incomeCount, expenseCount } = categories.reduce(
     (acc, cat) => {
@@ -89,38 +94,44 @@ export function CategoriesList({
 
   return (
     <div className={styles.listContainer}>
-      <div
-        className={styles.filterBar}
-        role="tablist"
-        aria-label="Category type filter"
-        onKeyDown={handleKeyDown}
-      >
-        {TABS.map((tab) => {
-          const isSelected = filter === tab.type;
-          const count = getTabCount(tab.type, categories.length, incomeCount, expenseCount);
-          const tabLabel = `${tab.label} (${count})`;
-          return (
-            <button
-              key={tab.type}
-              ref={(el) => {
-                tabRefs.current[tab.type] = el;
-              }}
-              type="button"
-              role="tab"
-              id={`tab-${tab.type}`}
-              aria-selected={isSelected}
-              aria-controls="category-tab-panel"
-              tabIndex={isSelected ? 0 : -1}
-              className={isSelected ? styles.activeFilterTab : styles.filterTab}
-              onClick={() => setFilter(tab.type)}
-            >
-              {tabLabel}
-            </button>
-          );
-        })}
-      </div>
+      {!hideFilterBar && (
+        <div
+          className={styles.filterBar}
+          role="tablist"
+          aria-label="Category type filter"
+          onKeyDown={handleKeyDown}
+        >
+          {TABS.map((tab) => {
+            const isSelected = filter === tab.type;
+            const count = getTabCount(tab.type, categories.length, incomeCount, expenseCount);
+            const tabLabel = `${tab.label} (${count})`;
+            return (
+              <button
+                key={tab.type}
+                ref={(el) => {
+                  tabRefs.current[tab.type] = el;
+                }}
+                type="button"
+                role="tab"
+                id={`tab-${tab.type}`}
+                aria-selected={isSelected}
+                aria-controls="category-tab-panel"
+                tabIndex={isSelected ? 0 : -1}
+                className={isSelected ? styles.activeFilterTab : styles.filterTab}
+                onClick={() => setFilter(tab.type)}
+              >
+                {tabLabel}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-      <div id="category-tab-panel" role="tabpanel" aria-labelledby={`tab-${filter}`}>
+      <div
+        id="category-tab-panel"
+        role={hideFilterBar ? undefined : "tabpanel"}
+        aria-labelledby={hideFilterBar ? undefined : `tab-${filter}`}
+      >
         {filteredCategories.length === 0 ? (
           <EmptyState
             title={`No ${filter} categories found`}
@@ -134,7 +145,7 @@ export function CategoriesList({
                 id={category.id}
                 testId={`category-card-${category.id}`}
                 title={category.name}
-                icon={category.type === "income" ? "↑" : "↓"}
+                icon={getCategoryIcon(category.name)}
                 iconVariant={category.type === "income" ? "income" : "expense"}
                 badge={
                   <Badge variant={category.type === "income" ? "income" : "expense"}>
