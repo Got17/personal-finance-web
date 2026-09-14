@@ -20,4 +20,21 @@
   margin: 0;
 }
 
+.headerActionButton {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .headerRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .headerActionButton {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+}
+
 

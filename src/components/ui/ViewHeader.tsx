@@ -34,6 +34,7 @@ export function ViewHeader({
       </div>
       {actionLabel && onAction && (
         <ActionButton
+          className={styles.headerActionButton}
           variant={actionVariant}
           onClick={onAction}
           aria-label={actionAriaLabel || actionLabel}
