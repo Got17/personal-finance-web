@@ -10,7 +10,7 @@ import {
 import { updateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import { Dropdown } from "@/components/ui/Dropdown";
-import styles from "./EditAccountForm.module.css";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface EditAccountFormProps {
   account: Account;
@@ -92,19 +92,19 @@ export function EditAccountForm({
   };
 
   return (
-    <form className={hideHeader ? undefined : styles.formCard} onSubmit={handleSubmit} noValidate>
+    <form className={hideHeader ? styles.form : styles.formCard} onSubmit={handleSubmit} noValidate>
       {!hideHeader && (
         <div className={styles.formHeader}>
           <h3>Edit Account</h3>
-          <p>Update mutable details for {account.name}.</p>
+          <p>Update account details and preferences.</p>
         </div>
       )}
 
       {serverError && <div className={styles.errorBanner}>{serverError}</div>}
 
-      <div className={styles.formGrid}>
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-name">
+          <label className={styles.label} htmlFor="edit-account-name">
             Account Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -121,7 +121,7 @@ export function EditAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-type">
+          <label className={styles.label} htmlFor="edit-account-type">
             Account Type <span className={styles.requiredStar}>*</span>
           </label>
           <Dropdown
@@ -137,9 +137,11 @@ export function EditAccountForm({
           />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
+      </div>
 
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-currency">
+          <label className={styles.label} htmlFor="edit-account-currency">
             Currency (ISO Code) <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -159,7 +161,7 @@ export function EditAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-description">Description (Optional)</label>
+          <label className={styles.label} htmlFor="edit-account-description">Description (Optional)</label>
           <input
             id="edit-account-description"
             type="text"
@@ -170,20 +172,20 @@ export function EditAccountForm({
             disabled={isPending}
           />
         </div>
+      </div>
 
-        <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="edit-account-is-active">
-            <input
-              id="edit-account-is-active"
-              type="checkbox"
-              className={styles.checkbox}
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              disabled={isPending}
-            />
-            Active Account
-          </label>
-        </div>
+      <div className={styles.fieldGroup}>
+        <label className={styles.checkboxLabel} htmlFor="edit-account-is-active">
+          <input
+            id="edit-account-is-active"
+            type="checkbox"
+            className={styles.checkbox}
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            disabled={isPending}
+          />
+          Active Account
+        </label>
       </div>
 
       <div className={styles.actions}>
@@ -197,7 +199,11 @@ export function EditAccountForm({
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={isPending}>
+        <button
+          type="submit"
+          className={type === "credit_card" || type === "loan" ? styles.submitButtonExpense : styles.submitButtonIncome}
+          disabled={isPending}
+        >
           {isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>

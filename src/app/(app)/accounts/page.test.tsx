@@ -77,6 +77,33 @@ describe("AccountsPage", () => {
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
   });
 
+  it("passes resolved initialTab from searchParams to AccountsView", async () => {
+    vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+    vi.mocked(authService.getCurrentUser).mockResolvedValue({
+      success: true,
+      status: 200,
+      user: {
+        id: "usr-1",
+        email: "alex@example.com",
+        base_currency: "USD",
+        created_at: "2026-09-07T00:00:00Z",
+        updated_at: "2026-09-07T00:00:00Z",
+      },
+    });
+    vi.mocked(accountsService.getAccounts).mockResolvedValue({
+      success: true,
+      accounts: [mockAccount],
+    });
+
+    const pageComponent = await AccountsPage({
+      searchParams: Promise.resolve({ tab: "banking" }),
+    });
+    render(pageComponent);
+
+    expect(screen.getByRole("tab", { name: /Banking/i, selected: true })).toBeTruthy();
+    expect(screen.getByText("Add Bank Account")).toBeTruthy();
+  });
+
   it("displays error banner when fetching accounts fails", async () => {
     vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
     vi.mocked(authService.getCurrentUser).mockResolvedValue({

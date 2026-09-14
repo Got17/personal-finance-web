@@ -10,10 +10,11 @@ import {
 import { createAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import { Dropdown } from "@/components/ui/Dropdown";
-import styles from "./CreateAccountForm.module.css";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface CreateAccountFormProps {
   defaultCurrency?: string;
+  defaultType?: AccountType;
   onAccountCreated?: (account: Account) => void;
   onCancel?: () => void;
   hideHeader?: boolean;
@@ -31,12 +32,13 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
 
 export function CreateAccountForm({
   defaultCurrency = "USD",
+  defaultType = "checking",
   onAccountCreated,
   onCancel,
   hideHeader = true,
 }: CreateAccountFormProps) {
   const [name, setName] = useState("");
-  const [type, setType] = useState<AccountType>("checking");
+  const [type, setType] = useState<AccountType>(defaultType);
   const [currency, setCurrency] = useState(defaultCurrency);
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
@@ -99,7 +101,7 @@ export function CreateAccountForm({
   };
 
   return (
-    <form className={hideHeader ? undefined : styles.formCard} onSubmit={handleSubmit} noValidate>
+    <form className={hideHeader ? styles.form : styles.formCard} onSubmit={handleSubmit} noValidate>
       {!hideHeader && (
         <div className={styles.formHeader}>
           <h3>Add New Account</h3>
@@ -110,9 +112,9 @@ export function CreateAccountForm({
       {serverError && <div className={styles.errorBanner}>{serverError}</div>}
       {successMessage && <div className={styles.successBanner}>{successMessage}</div>}
 
-      <div className={styles.formGrid}>
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-name">
+          <label className={styles.label} htmlFor="account-name">
             Account Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -129,7 +131,7 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-type">
+          <label className={styles.label} htmlFor="account-type">
             Account Type <span className={styles.requiredStar}>*</span>
           </label>
           <Dropdown
@@ -145,9 +147,11 @@ export function CreateAccountForm({
           />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
+      </div>
 
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-currency">
+          <label className={styles.label} htmlFor="account-currency">
             Currency (ISO Code) <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -167,7 +171,7 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-description">Description (Optional)</label>
+          <label className={styles.label} htmlFor="account-description">Description (Optional)</label>
           <input
             id="account-description"
             type="text"
@@ -178,20 +182,20 @@ export function CreateAccountForm({
             disabled={isPending}
           />
         </div>
+      </div>
 
-        <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="account-is-active">
-            <input
-              id="account-is-active"
-              type="checkbox"
-              className={styles.checkbox}
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              disabled={isPending}
-            />
-            Active Account
-          </label>
-        </div>
+      <div className={styles.fieldGroup}>
+        <label className={styles.checkboxLabel} htmlFor="account-is-active">
+          <input
+            id="account-is-active"
+            type="checkbox"
+            className={styles.checkbox}
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            disabled={isPending}
+          />
+          Active Account
+        </label>
       </div>
 
       <div className={styles.actions}>
@@ -205,7 +209,11 @@ export function CreateAccountForm({
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={isPending}>
+        <button
+          type="submit"
+          className={type === "credit_card" || type === "loan" ? styles.submitButtonExpense : styles.submitButtonIncome}
+          disabled={isPending}
+        >
           {isPending ? "Creating..." : "+ Add Account"}
         </button>
       </div>

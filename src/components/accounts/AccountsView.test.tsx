@@ -1,9 +1,9 @@
-import { describe, expect, it, afterEach } from "vitest";
+import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { AccountsView } from "./AccountsView";
 import { Account } from "@/lib/schemas/accounts";
 
-const mockInitialAccount: Account = {
+const mockChecking: Account = {
   id: "acc-1",
   user_id: "usr-1",
   name: "Everyday Checking",
@@ -15,19 +15,53 @@ const mockInitialAccount: Account = {
   updated_at: "2026-09-07T00:00:00Z",
 };
 
+const mockCredit: Account = {
+  id: "acc-2",
+  user_id: "usr-1",
+  name: "Sapphire Preferred",
+  type: "credit_card",
+  currency: "USD",
+  description: "Travel card",
+  is_active: false,
+  created_at: "2026-09-07T00:00:00Z",
+  updated_at: "2026-09-07T00:00:00Z",
+};
+
+const mockInvestment: Account = {
+  id: "acc-3",
+  user_id: "usr-1",
+  name: "Vanguard Brokerage",
+  type: "investment",
+  currency: "USD",
+  description: "Index funds",
+  is_active: true,
+  created_at: "2026-09-07T00:00:00Z",
+  updated_at: "2026-09-07T00:00:00Z",
+};
+
+const mockAccounts = [mockChecking, mockCredit, mockInvestment];
+
 describe("AccountsView", () => {
+  beforeEach(() => {
+    window.history.replaceState(null, "", "/accounts");
+    localStorage.clear();
+  });
+
   afterEach(() => {
     cleanup();
   });
 
-  it("renders initial accounts list and Add button with modal closed", () => {
-    render(<AccountsView initialAccounts={[mockInitialAccount]} defaultCurrency="USD" />);
+  it("renders PageHeader with Accounts title and Add Account action button, plus table rows", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
 
-    expect(screen.getByText("Your Accounts")).toBeTruthy();
-    expect(screen.getByText("1 account")).toBeTruthy();
-    expect(screen.getByText("Everyday Checking")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Accounts" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new account/i })).toBeTruthy();
-    expect(screen.queryByTestId("create-account-modal")).toBeNull();
+    expect(screen.getByText("Add Account")).toBeTruthy();
+
+    expect(screen.getByText("Everyday Checking")).toBeTruthy();
+    expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
+    expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
+    expect(screen.getByText("3 accounts")).toBeTruthy();
   });
 
   it("opens pop-up modal when Add button is clicked and closes on close button click", () => {
@@ -45,8 +79,8 @@ describe("AccountsView", () => {
     expect(screen.queryByTestId("create-account-modal")).toBeNull();
   });
 
-  it("opens Edit modal when Edit button on card is clicked", () => {
-    render(<AccountsView initialAccounts={[mockInitialAccount]} defaultCurrency="USD" />);
+  it("opens Edit modal when Edit button in table is clicked", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
 
     const editBtn = screen.getByRole("button", { name: "Edit Everyday Checking" });
     fireEvent.click(editBtn);
@@ -55,8 +89,8 @@ describe("AccountsView", () => {
     expect(screen.getByRole("heading", { name: "Edit Account" })).toBeTruthy();
   });
 
-  it("opens Deactivate modal when Deactivate button on card is clicked", () => {
-    render(<AccountsView initialAccounts={[mockInitialAccount]} defaultCurrency="USD" />);
+  it("opens Deactivate modal when Deactivate button in table is clicked", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
 
     const deactivateBtn = screen.getByRole("button", { name: "Deactivate Everyday Checking" });
     fireEvent.click(deactivateBtn);
@@ -64,5 +98,72 @@ describe("AccountsView", () => {
     expect(screen.getByTestId("deactivate-account-modal")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Deactivate Account" })).toBeTruthy();
   });
+
+  it("filters accounts by sub-tab and updates action button label", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
+
+    // Switch to Banking tab
+    const bankingTab = screen.getByRole("tab", { name: /Banking/i });
+    fireEvent.click(bankingTab);
+
+    expect(screen.getByText("Add Bank Account")).toBeTruthy();
+    expect(screen.getByText("Everyday Checking")).toBeTruthy();
+    expect(screen.queryByText("Sapphire Preferred")).toBeNull();
+    expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
+
+    // Switch to Credit & Loans tab
+    const creditTab = screen.getByRole("tab", { name: /Credit & Loans/i });
+    fireEvent.click(creditTab);
+
+    expect(screen.getByText("Add Credit Account")).toBeTruthy();
+    expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
+    expect(screen.queryByText("Everyday Checking")).toBeNull();
+    expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
+
+    // Switch to Investments tab
+    const investmentTab = screen.getByRole("tab", { name: /Investments/i });
+    fireEvent.click(investmentTab);
+
+    expect(screen.getByText("Add Investment Account")).toBeTruthy();
+    expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
+    expect(screen.queryByText("Everyday Checking")).toBeNull();
+    expect(screen.queryByText("Sapphire Preferred")).toBeNull();
+  });
+
+  it("filters accounts by search query and allows clearing filters", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
+
+    const searchInput = screen.getByPlaceholderText("Search accounts...");
+    fireEvent.change(searchInput, { target: { value: "Vanguard" } });
+
+    expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
+    expect(screen.queryByText("Everyday Checking")).toBeNull();
+    expect(screen.queryByText("Sapphire Preferred")).toBeNull();
+    expect(screen.getByText("1 account")).toBeTruthy();
+
+    const clearButton = screen.getByRole("button", { name: /Clear filters/i });
+    fireEvent.click(clearButton);
+
+    expect(screen.getByText("Everyday Checking")).toBeTruthy();
+    expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
+    expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
+    expect(screen.getByText("3 accounts")).toBeTruthy();
+  });
+
+  it("filters accounts by status dropdown", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
+
+    const statusDropdown = screen.getByRole("combobox", { name: /Filter by status/i });
+    fireEvent.click(statusDropdown);
+
+    const activeOnly = screen.getByRole("option", { name: "Active only" });
+    fireEvent.click(activeOnly);
+
+    expect(screen.getByText("Everyday Checking")).toBeTruthy();
+    expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
+    expect(screen.queryByText("Sapphire Preferred")).toBeNull();
+    expect(screen.getByText("2 accounts")).toBeTruthy();
+  });
 });
+
 
