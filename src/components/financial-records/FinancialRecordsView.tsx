@@ -12,6 +12,7 @@ import {
   getCategoryIcon,
 } from "./icons";
 import { ActionButton } from "@/components/ui/ActionButton";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
 import { FinancialRecordsTable } from "./FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
@@ -229,8 +230,6 @@ export function FinancialRecordsView({
     setEndDate("");
   };
 
-  const title =
-    activeTab === "all" ? "Transactions Management" : activeTab === "expense" ? "Expenses Management" : "Income Management";
   const actionButtonText =
     activeTab === "all" ? "Add Transaction" : activeTab === "expense" ? "Add Expense" : "Add Income";
   const actionVariant =
@@ -238,12 +237,18 @@ export function FinancialRecordsView({
 
   return (
     <div className={styles.container}>
-      <TransactionSubTabs
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        allCount={allCount}
-        expenseCount={expenseCount}
-        incomeCount={incomeCount}
+      <PageHeader
+        eyebrow="Cash flow"
+        title="Transactions"
+        subtitle="Record income and spending in the currency it happened."
+        action={
+          <ActionButton
+            variant={actionVariant}
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            {actionButtonText}
+          </ActionButton>
+        }
       />
 
       <div
@@ -252,32 +257,24 @@ export function FinancialRecordsView({
         id={`tabpanel-${activeTab}`}
         aria-labelledby={`tab-${activeTab}`}
       >
-        <header className={styles.headerRow}>
-          <div className={styles.titleArea}>
-            <div className={styles.titleWithBadge}>
-              <h2 className={styles.title}>{title}</h2>
-              <span className={styles.countBadge}>{totalItemsForTab} items</span>
-            </div>
-            <p className={styles.subtitle}>Filter by all categories or edit transactions</p>
-          </div>
-
-          <ActionButton
-            className={styles.headerActionButton}
-            variant={actionVariant}
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            {actionButtonText}
-          </ActionButton>
-        </header>
-
         <CashFlowSummaryCards
           records={visibleRecords}
           categories={categories}
           activeTab={activeTab}
         />
 
-        <div className={styles.secondaryToolbar} aria-label="Secondary filters">
-          <div className={styles.filterControls}>
+        <div className={styles.toolbar} aria-label="Transaction filters">
+          <div className={styles.primaryFilters}>
+            <TransactionSubTabs
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              allCount={allCount}
+              expenseCount={expenseCount}
+              incomeCount={incomeCount}
+            />
+          </div>
+
+          <div className={styles.secondaryFilters}>
             <FilterDropdown
               id="filter-date"
               label="Filter by date range"
@@ -340,6 +337,8 @@ export function FinancialRecordsView({
                 <span>Clear filters</span>
               </button>
             )}
+
+            <span className={styles.countBadge}>{totalItemsForTab} items</span>
           </div>
         </div>
 

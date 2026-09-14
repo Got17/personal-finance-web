@@ -123,7 +123,7 @@ describe("TransactionsPage", () => {
     render(pageComponent!);
 
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
   });
 
   it("displays error message when services fail", async () => {

@@ -33,22 +33,23 @@ export default async function CategoriesPage({ searchParams }: PageProps = {}) {
 
   return (
     <div className={styles.pageContainer}>
-      <PageHeader
-        eyebrow="Structure"
-        title="Categories"
-        subtitle="Create and view your income and expense categories to organize your personal finances."
-      />
-
-      {!categoriesResult.success && (
-        <div className={styles.errorBanner} role="alert">
-          Failed to load categories: {categoriesResult.error}
-        </div>
+      {!categoriesResult.success ? (
+        <>
+          <PageHeader
+            eyebrow="Structure"
+            title="Categories"
+            subtitle="Create and view your income and expense categories to organize your personal finances."
+          />
+          <div className={styles.errorBanner} role="alert">
+            Failed to load categories: {categoriesResult.error}
+          </div>
+        </>
+      ) : (
+        <CategoriesView
+          initialTab={initialTab}
+          initialCategories={categoriesResult.categories}
+        />
       )}
-
-      <CategoriesView
-        initialTab={initialTab}
-        initialCategories={categoriesResult.success ? categoriesResult.categories : []}
-      />
     </div>
   );
 }

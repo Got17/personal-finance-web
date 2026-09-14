@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Category } from "@/lib/schemas/categories";
 import { ActionButton } from "@/components/ui/ActionButton";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { FilterDropdown, FilterDropdownOption } from "@/components/ui/FilterDropdown";
 import { CheckIcon, CloseIcon } from "@/components/financial-records/icons";
 import { CategorySubTabs, CategoryTab } from "./CategorySubTabs";
@@ -160,13 +161,6 @@ export function CategoriesView({
 
   const hasSecondaryFilters = statusFilter !== "all" || searchQuery.trim() !== "";
 
-  const title =
-    activeTab === "all"
-      ? "Categories Management"
-      : activeTab === "expense"
-      ? "Expenses Management"
-      : "Income Management";
-
   const actionButtonText =
     activeTab === "all"
       ? "Add Category"
@@ -185,12 +179,19 @@ export function CategoriesView({
 
   return (
     <div className={styles.container}>
-      <CategorySubTabs
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        allCount={allCount}
-        expenseCount={expenseCount}
-        incomeCount={incomeCount}
+      <PageHeader
+        eyebrow="Structure"
+        title="Categories"
+        subtitle="Create and view your income and expense categories to organize your personal finances."
+        action={
+          <ActionButton
+            variant={actionVariant}
+            onClick={() => setIsCreateModalOpen(true)}
+            aria-label="Add new category"
+          >
+            {actionButtonText}
+          </ActionButton>
+        }
       />
 
       <div
@@ -199,32 +200,20 @@ export function CategoriesView({
         id={`tabpanel-${activeTab}`}
         aria-labelledby={`tab-${activeTab}`}
       >
-        <header className={styles.headerRow}>
-          <div className={styles.titleArea}>
-            <div className={styles.titleWithBadge}>
-              <h2 className={styles.title}>{title}</h2>
-              <span className={styles.countBadge}>
-                {visibleCategories.length}{" "}
-                {visibleCategories.length === 1 ? "category" : "categories"}
-              </span>
-            </div>
-            <p className={styles.subtitle}>Filter by status or edit categories</p>
-          </div>
-
-          <ActionButton
-            className={styles.headerActionButton}
-            variant={actionVariant}
-            onClick={() => setIsCreateModalOpen(true)}
-            aria-label="Add new category"
-          >
-            {actionButtonText}
-          </ActionButton>
-        </header>
-
         <CategorySummaryCards categories={categories} activeTab={activeTab} />
 
-        <div className={styles.secondaryToolbar} aria-label="Secondary filters">
-          <div className={styles.filterControls}>
+        <div className={styles.toolbar} aria-label="Category filters">
+          <div className={styles.primaryFilters}>
+            <CategorySubTabs
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              allCount={allCount}
+              expenseCount={expenseCount}
+              incomeCount={incomeCount}
+            />
+          </div>
+
+          <div className={styles.secondaryFilters}>
             <div className={styles.searchContainer}>
               <span className={styles.searchIcon} aria-hidden="true">
                 <SearchIcon />
@@ -258,6 +247,11 @@ export function CategoriesView({
                 <span>Clear filters</span>
               </button>
             )}
+
+            <span className={styles.countBadge}>
+              {visibleCategories.length}{" "}
+              {visibleCategories.length === 1 ? "category" : "categories"}
+            </span>
           </div>
         </div>
 

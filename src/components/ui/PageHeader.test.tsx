@@ -20,4 +20,17 @@ describe("PageHeader component", () => {
     expect(screen.getByRole("heading", { name: "Accounts" })).toBeTruthy();
     expect(screen.getByText("Manage bank accounts and investments.")).toBeTruthy();
   });
+
+  it("renders action slot when provided", () => {
+    render(
+      <PageHeader
+        eyebrow="Cash flow"
+        title="Transactions"
+        subtitle="Manage transactions."
+        action={<button type="button">Add Transaction</button>}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Add Transaction" })).toBeTruthy();
+  });
 });

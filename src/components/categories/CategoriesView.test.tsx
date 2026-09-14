@@ -36,7 +36,7 @@ describe("CategoriesView", () => {
   it("renders initial categories list and Add button with modal closed", () => {
     render(<CategoriesView initialCategories={[mockInitialCategory]} />);
 
-    expect(screen.getByRole("heading", { name: "Categories Management" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Categories" })).toBeTruthy();
     expect(screen.getByText("1 category")).toBeTruthy();
     expect(screen.getByText("Salary")).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new category/i })).toBeTruthy();
@@ -86,14 +86,14 @@ describe("CategoriesView", () => {
     );
 
     // Initial state: All
-    expect(screen.getByRole("heading", { name: "Categories Management" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Categories" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Category");
 
     // Click Expenses tab
     const expensesTab = screen.getByRole("tab", { name: /expenses/i });
     fireEvent.click(expensesTab);
 
-    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: /expenses/i, selected: true })).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Expense Category");
     expect(screen.getByText("Groceries")).toBeTruthy();
     expect(screen.queryByText("Salary")).toBeNull();
@@ -102,7 +102,7 @@ describe("CategoriesView", () => {
     const incomeTab = screen.getByRole("tab", { name: /income/i });
     fireEvent.click(incomeTab);
 
-    expect(screen.getByRole("heading", { name: "Income Management" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: /income/i, selected: true })).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Income Category");
     expect(screen.getByText("Salary")).toBeTruthy();
     expect(screen.queryByText("Groceries")).toBeNull();

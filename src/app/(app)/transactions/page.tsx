@@ -32,15 +32,17 @@ export default async function TransactionsPage({ searchParams }: PageProps = {})
 
   return (
     <main className={styles.page}>
-      <PageHeader
-        eyebrow="Cash flow"
-        title="Transactions"
-        subtitle="Record income and spending in the currency it happened."
-      />
       {!accounts.success || !categories.success || !records.success ? (
-        <p role="alert" className={styles.error}>
-          We could not load your transaction workspace. Please refresh and try again.
-        </p>
+        <>
+          <PageHeader
+            eyebrow="Cash flow"
+            title="Transactions"
+            subtitle="Record income and spending in the currency it happened."
+          />
+          <p role="alert" className={styles.error}>
+            We could not load your transaction workspace. Please refresh and try again.
+          </p>
+        </>
       ) : (
         <FinancialRecordsView
           initialTab={initialTab}

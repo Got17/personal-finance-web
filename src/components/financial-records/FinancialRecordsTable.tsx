@@ -1,7 +1,7 @@
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
-import { CalendarIcon, EditPencilIcon, TrashIcon } from "./icons";
+import { EditPencilIcon, TrashIcon } from "./icons";
 import { CategoryBadge } from "./CategoryBadge";
 import { CategoryAvatar } from "@/components/ui/CategoryAvatar";
 import styles from "./FinancialRecordsTable.module.css";
@@ -68,14 +68,7 @@ export function FinancialRecordsTable({
             return (
               <tr key={record.id} className={styles.row}>
                 <td>
-                  <div className={styles.dateCell}>
-                    <CalendarIcon
-                      className={
-                        isIncome ? styles.calendarIconIncome : styles.calendarIconExpense
-                      }
-                    />
-                    <span>{dateDisplay}</span>
-                  </div>
+                  <span className={styles.dateCell}>{dateDisplay}</span>
                 </td>
                 <td>
                   <div className={styles.descCell}>

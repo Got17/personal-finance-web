@@ -112,7 +112,7 @@ describe("FinancialRecordsView", () => {
     );
 
     expect(screen.getByRole("tab", { name: /^all/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Transactions Management" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Transactions" })).toBeTruthy();
     const table = screen.getByRole("table");
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(within(table).getByText("-$42.68")).toBeTruthy();
@@ -133,7 +133,7 @@ describe("FinancialRecordsView", () => {
     // Switch to Expenses
     const expenseTab = screen.getByRole("tab", { name: /expenses/i });
     fireEvent.click(expenseTab);
-    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
     expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
@@ -141,7 +141,7 @@ describe("FinancialRecordsView", () => {
     // Switch to Income
     const incomeTab = screen.getByRole("tab", { name: /income/i });
     fireEvent.click(incomeTab);
-    expect(screen.getByRole("heading", { name: "Income Management" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
     expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
@@ -411,7 +411,6 @@ describe("FinancialRecordsView", () => {
     );
 
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Expenses Management" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
@@ -450,7 +449,6 @@ describe("FinancialRecordsView", () => {
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
     });
-    expect(screen.getByRole("heading", { name: "Income Management" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
