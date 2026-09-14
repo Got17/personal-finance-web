@@ -10,7 +10,7 @@ import {
 import { createCategoryAction } from "@/app/actions/categories";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import { Dropdown } from "@/components/ui/Dropdown";
-import styles from "./CreateCategoryForm.module.css";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface CreateCategoryFormProps {
   onCategoryCreated?: (category: Category) => void;
@@ -42,6 +42,8 @@ export function CreateCategoryForm({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [isPending, startTransition] = useTransition();
+
+  const isExpense = type === "expense";
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -83,20 +85,13 @@ export function CreateCategoryForm({
   };
 
   return (
-    <form className={hideHeader ? undefined : styles.formCard} onSubmit={handleSubmit} noValidate>
-      {!hideHeader && (
-        <div className={styles.formHeader}>
-          <h3>Add New Category</h3>
-          <p>Create an income or expense category to organize your finances.</p>
-        </div>
-      )}
-
-      {serverError && <div className={styles.errorBanner}>{serverError}</div>}
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      {serverError && <div role="alert" className={styles.errorBanner}>{serverError}</div>}
       {successMessage && <div className={styles.successBanner}>{successMessage}</div>}
 
-      <div className={styles.formGrid}>
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="category-name">
+          <label htmlFor="category-name" className={styles.label}>
             Category Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -113,7 +108,7 @@ export function CreateCategoryForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="category-type">
+          <label htmlFor="category-type" className={styles.label}>
             Category Type <span className={styles.requiredStar}>*</span>
           </label>
           <Dropdown
@@ -129,20 +124,20 @@ export function CreateCategoryForm({
           />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
+      </div>
 
-        <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="category-is-active">
-            <input
-              id="category-is-active"
-              type="checkbox"
-              className={styles.checkbox}
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              disabled={isPending}
-            />
-            Active Category
-          </label>
-        </div>
+      <div className={styles.fieldGroup}>
+        <label className={styles.checkboxLabel} htmlFor="category-is-active">
+          <input
+            id="category-is-active"
+            type="checkbox"
+            className={styles.checkbox}
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            disabled={isPending}
+          />
+          Active Category
+        </label>
       </div>
 
       <div className={styles.actions}>
@@ -156,7 +151,11 @@ export function CreateCategoryForm({
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={isPending}>
+        <button
+          type="submit"
+          className={isExpense ? styles.submitButtonExpense : styles.submitButtonIncome}
+          disabled={isPending}
+        >
           {isPending ? "Creating..." : "+ Add Category"}
         </button>
       </div>

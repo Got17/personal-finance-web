@@ -128,22 +128,16 @@ describe("CategoriesView", () => {
     expect(screen.getByText("Salary")).toBeTruthy();
   });
 
-  it("toggles between Table view and Cards view", () => {
+  it("renders only table view with category items and actions", () => {
     render(
       <CategoriesView
         initialCategories={[mockInitialCategory, mockExpenseCategory]}
       />
     );
 
-    // Default view: Table
     expect(screen.getByRole("table", { name: "Categories table" })).toBeTruthy();
-
-    // Click Cards view
-    const cardsToggle = screen.getByRole("button", { name: "Cards view" });
-    fireEvent.click(cardsToggle);
-
-    expect(screen.queryByRole("table", { name: "Categories table" })).toBeNull();
-    expect(screen.getByTestId("category-card-cat-1")).toBeTruthy();
-    expect(screen.getByTestId("category-card-cat-2")).toBeTruthy();
+    expect(screen.getByTestId("category-row-cat-1")).toBeTruthy();
+    expect(screen.getByTestId("category-row-cat-2")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Cards view" })).toBeNull();
   });
 });

@@ -1,5 +1,5 @@
 import { Category } from "@/lib/schemas/categories";
-import { CategoryAvatar } from "@/components/financial-records/CategoryAvatar";
+import { CategoryAvatar } from "@/components/ui/CategoryAvatar";
 import { Badge } from "@/components/ui/Badge";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EditPencilIcon, TrashIcon } from "@/components/financial-records/icons";

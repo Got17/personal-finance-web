@@ -10,7 +10,7 @@ import {
 import { updateCategoryAction } from "@/app/actions/categories";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import { Dropdown } from "@/components/ui/Dropdown";
-import styles from "./EditCategoryForm.module.css";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface EditCategoryFormProps {
   category: Category;
@@ -39,6 +39,8 @@ export function EditCategoryForm({
   const [serverError, setServerError] = useState<string | null>(null);
 
   const [isPending, startTransition] = useTransition();
+
+  const isExpense = type === "expense";
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -78,12 +80,12 @@ export function EditCategoryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      {serverError && <div className={styles.errorBanner}>{serverError}</div>}
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      {serverError && <div role="alert" className={styles.errorBanner}>{serverError}</div>}
 
-      <div className={styles.formGrid}>
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-category-name">
+          <label htmlFor="edit-category-name" className={styles.label}>
             Category Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -100,7 +102,7 @@ export function EditCategoryForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-category-type">
+          <label htmlFor="edit-category-type" className={styles.label}>
             Category Type <span className={styles.requiredStar}>*</span>
           </label>
           <Dropdown
@@ -116,20 +118,20 @@ export function EditCategoryForm({
           />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
+      </div>
 
-        <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="edit-category-is-active">
-            <input
-              id="edit-category-is-active"
-              type="checkbox"
-              className={styles.checkbox}
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              disabled={isPending}
-            />
-            Active Category
-          </label>
-        </div>
+      <div className={styles.fieldGroup}>
+        <label className={styles.checkboxLabel} htmlFor="edit-category-is-active">
+          <input
+            id="edit-category-is-active"
+            type="checkbox"
+            className={styles.checkbox}
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            disabled={isPending}
+          />
+          Active Category
+        </label>
       </div>
 
       <div className={styles.actions}>
@@ -143,7 +145,11 @@ export function EditCategoryForm({
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={isPending}>
+        <button
+          type="submit"
+          className={isExpense ? styles.submitButtonExpense : styles.submitButtonIncome}
+          disabled={isPending}
+        >
           {isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>

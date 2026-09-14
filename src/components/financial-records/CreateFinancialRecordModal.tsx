@@ -8,7 +8,7 @@ import { FinancialRecord, FinancialRecordKind } from "@/lib/schemas/financial-re
 import { createFinancialRecordAction } from "@/app/actions/financial-records";
 import { Dropdown } from "@/components/ui/Dropdown";
 import { getCategoryIcon } from "./icons";
-import styles from "./CreateFinancialRecordModal.module.css";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface CreateFinancialRecordModalProps {
   isOpen: boolean;

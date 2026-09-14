@@ -128,41 +128,6 @@
   align-items: center;
 }
 
-.viewModeToggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  background-color: var(--surface-muted);
-  padding: 3px;
-  border-radius: 9999px;
-  border: 1px solid var(--line);
-}
-
-.toggleButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  border-radius: 9999px;
-  border: none;
-  background: transparent;
-  color: var(--ink-muted);
-  cursor: pointer;
-  transition: all 160ms ease;
-}
-
-.toggleButton:hover:not(.activeToggle) {
-  color: var(--ink);
-}
-
-.activeToggle {
-  background-color: var(--surface);
-  color: var(--ink);
-  box-shadow: 0 1px 3px rgba(31, 43, 36, 0.08);
-}
-
 .clearFiltersButton {
   display: inline-flex;
   align-items: center;

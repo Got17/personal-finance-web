@@ -3,12 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Category } from "@/lib/schemas/categories";
 import { ActionButton } from "@/components/ui/ActionButton";
-import { FilterDropdown, FilterDropdownOption } from "@/components/financial-records/FilterDropdown";
+import { FilterDropdown, FilterDropdownOption } from "@/components/ui/FilterDropdown";
 import { CheckIcon, CloseIcon } from "@/components/financial-records/icons";
 import { CategorySubTabs, CategoryTab } from "./CategorySubTabs";
 import { CategorySummaryCards } from "./CategorySummaryCards";
 import { CategoriesTable } from "./CategoriesTable";
-import { CategoriesList } from "./CategoriesList";
 import { CreateCategoryModal } from "./CreateCategoryModal";
 import { EditCategoryModal } from "./EditCategoryModal";
 import { DeactivateCategoryModal } from "./DeactivateCategoryModal";
@@ -50,48 +49,6 @@ function SearchIcon() {
   );
 }
 
-function TableIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect width="18" height="18" x="3" y="3" rx="2" />
-      <path d="M3 9h18" />
-      <path d="M3 15h18" />
-      <path d="M12 9v12" />
-    </svg>
-  );
-}
-
-function GridIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect width="7" height="7" x="3" y="3" rx="1" />
-      <rect width="7" height="7" x="14" y="3" rx="1" />
-      <rect width="7" height="7" x="14" y="14" rx="1" />
-      <rect width="7" height="7" x="3" y="14" rx="1" />
-    </svg>
-  );
-}
-
 interface CategoriesViewProps {
   initialCategories: Category[];
   initialTab?: CategoryTab;
@@ -105,7 +62,6 @@ export function CategoriesView({
   const [activeTab, setActiveTab] = useState<CategoryTab>(() => getInitialTab(initialTab));
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -303,54 +259,13 @@ export function CategoriesView({
               </button>
             )}
           </div>
-
-          <div
-            className={styles.viewModeToggle}
-            role="group"
-            aria-label="Category display view mode"
-          >
-            <button
-              type="button"
-              className={`${styles.toggleButton} ${
-                viewMode === "table" ? styles.activeToggle : ""
-              }`}
-              onClick={() => setViewMode("table")}
-              aria-label="Table view"
-              aria-pressed={viewMode === "table"}
-            >
-              <TableIcon />
-              <span>Table</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.toggleButton} ${
-                viewMode === "cards" ? styles.activeToggle : ""
-              }`}
-              onClick={() => setViewMode("cards")}
-              aria-label="Cards view"
-              aria-pressed={viewMode === "cards"}
-            >
-              <GridIcon />
-              <span>Cards</span>
-            </button>
-          </div>
         </div>
 
-        {viewMode === "table" ? (
-          <CategoriesTable
-            categories={visibleCategories}
-            onEdit={(cat) => setEditingCategory(cat)}
-            onDeactivate={(cat) => setDeactivatingCategory(cat)}
-          />
-        ) : (
-          <CategoriesList
-            categories={visibleCategories}
-            hideFilterBar
-            onAddClick={() => setIsCreateModalOpen(true)}
-            onEditClick={(cat) => setEditingCategory(cat)}
-            onDeactivateClick={(cat) => setDeactivatingCategory(cat)}
-          />
-        )}
+        <CategoriesTable
+          categories={visibleCategories}
+          onEdit={(cat) => setEditingCategory(cat)}
+          onDeactivate={(cat) => setDeactivatingCategory(cat)}
+        />
       </div>
 
       <CreateCategoryModal

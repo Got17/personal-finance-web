@@ -2,12 +2,15 @@ import { useMemo } from "react";
 import { Category } from "@/lib/schemas/categories";
 import { CategoryTab } from "./CategorySubTabs";
 import {
+  SummaryCard,
+  SummaryCardsGrid,
+} from "@/components/ui/SummaryCards";
+import {
   InflowArrowIcon,
   OutflowArrowIcon,
   TrendingStarIcon,
 } from "@/components/financial-records/summary-icons";
 import { GeneralTagIcon, CheckIcon } from "@/components/financial-records/icons";
-import styles from "./CategorySummaryCards.module.css";
 
 interface CategorySummaryCardsProps {
   categories: Category[];
@@ -46,175 +49,92 @@ export function CategorySummaryCards({
 
   if (activeTab === "income") {
     return (
-      <div className={styles.grid} data-testid="summary-cards-income">
-        <div className={`${styles.card} ${styles.cardInflow}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.label}>Total Income</span>
-            <div className={`${styles.iconWrapper} ${styles.inflowIconWrapper}`}>
-              <InflowArrowIcon />
-            </div>
-          </div>
-          <div className={styles.valueContainer}>
-            <span className={`${styles.value} ${styles.inflowValue}`}>
-              {incomeCategories.length}
-            </span>
-            <div className={styles.subtextRow}>
-              <span>Inflow classification streams</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={`${styles.card} ${styles.cardInflow}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.label}>Active Streams</span>
-            <div className={`${styles.iconWrapper} ${styles.inflowIconWrapper}`}>
-              <CheckIcon />
-            </div>
-          </div>
-          <div className={styles.valueContainer}>
-            <span className={`${styles.value} ${styles.inflowValue}`}>
-              {activeIncomes}
-            </span>
-            <div className={styles.subtextRow}>
-              <span>Available for transaction records</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={`${styles.card} ${styles.cardNeutral}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.label}>Archived Streams</span>
-            <div className={`${styles.iconWrapper} ${styles.neutralIconWrapper}`}>
-              <GeneralTagIcon />
-            </div>
-          </div>
-          <div className={styles.valueContainer}>
-            <span className={`${styles.value} ${styles.neutralValue}`}>
-              {inactiveIncomes}
-            </span>
-            <div className={styles.subtextRow}>
-              <span>Deactivated historical streams</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SummaryCardsGrid testId="summary-cards-income">
+        <SummaryCard
+          variant="inflow"
+          label="Total Income"
+          icon={<InflowArrowIcon />}
+          value={incomeCategories.length}
+          subtext={<span>Inflow classification streams</span>}
+        />
+        <SummaryCard
+          variant="inflow"
+          label="Active Streams"
+          icon={<CheckIcon />}
+          value={activeIncomes}
+          subtext={<span>Available for transaction records</span>}
+        />
+        <SummaryCard
+          variant="neutral"
+          label="Archived Streams"
+          icon={<GeneralTagIcon />}
+          value={inactiveIncomes}
+          subtext={<span>Deactivated historical streams</span>}
+        />
+      </SummaryCardsGrid>
     );
   }
 
   if (activeTab === "expense") {
     return (
-      <div className={styles.grid} data-testid="summary-cards-expense">
-        <div className={`${styles.card} ${styles.cardOutflow}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.label}>Total Expenses</span>
-            <div className={`${styles.iconWrapper} ${styles.outflowIconWrapper}`}>
-              <OutflowArrowIcon />
-            </div>
-          </div>
-          <div className={styles.valueContainer}>
-            <span className={`${styles.value} ${styles.outflowValue}`}>
-              {expenseCategories.length}
-            </span>
-            <div className={styles.subtextRow}>
-              <span>Outflow classifications</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={`${styles.card} ${styles.cardInflow}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.label}>Active Categories</span>
-            <div className={`${styles.iconWrapper} ${styles.inflowIconWrapper}`}>
-              <CheckIcon />
-            </div>
-          </div>
-          <div className={styles.valueContainer}>
-            <span className={`${styles.value} ${styles.inflowValue}`}>
-              {activeExpenses}
-            </span>
-            <div className={styles.subtextRow}>
-              <span>Available for spending records</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={`${styles.card} ${styles.cardNeutral}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.label}>Archived Categories</span>
-            <div className={`${styles.iconWrapper} ${styles.neutralIconWrapper}`}>
-              <GeneralTagIcon />
-            </div>
-          </div>
-          <div className={styles.valueContainer}>
-            <span className={`${styles.value} ${styles.neutralValue}`}>
-              {inactiveExpenses}
-            </span>
-            <div className={styles.subtextRow}>
-              <span>Deactivated historical categories</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SummaryCardsGrid testId="summary-cards-expense">
+        <SummaryCard
+          variant="outflow"
+          label="Total Expenses"
+          icon={<OutflowArrowIcon />}
+          value={expenseCategories.length}
+          subtext={<span>Outflow classifications</span>}
+        />
+        <SummaryCard
+          variant="inflow"
+          label="Active Categories"
+          icon={<CheckIcon />}
+          value={activeExpenses}
+          subtext={<span>Available for spending records</span>}
+        />
+        <SummaryCard
+          variant="neutral"
+          label="Archived Categories"
+          icon={<GeneralTagIcon />}
+          value={inactiveExpenses}
+          subtext={<span>Deactivated historical categories</span>}
+        />
+      </SummaryCardsGrid>
     );
   }
 
   // Active tab === 'all'
   return (
-    <div className={styles.grid} data-testid="summary-cards-all">
-      <div className={`${styles.card} ${styles.cardOutflow}`}>
-        <div className={styles.cardHeader}>
-          <span className={styles.label}>Expense Categories</span>
-          <div className={`${styles.iconWrapper} ${styles.outflowIconWrapper}`}>
-            <OutflowArrowIcon />
-          </div>
-        </div>
-        <div className={styles.valueContainer}>
-          <span className={`${styles.value} ${styles.outflowValue}`}>
-            {expenseCategories.length}
+    <SummaryCardsGrid testId="summary-cards-all">
+      <SummaryCard
+        variant="outflow"
+        label="Expense Categories"
+        icon={<OutflowArrowIcon />}
+        value={expenseCategories.length}
+        subtext={
+          <span>
+            {activeExpenses} active, {inactiveExpenses} inactive
           </span>
-          <div className={styles.subtextRow}>
-            <span>
-              {activeExpenses} active, {inactiveExpenses} inactive
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className={`${styles.card} ${styles.cardInflow}`}>
-        <div className={styles.cardHeader}>
-          <span className={styles.label}>Income Categories</span>
-          <div className={`${styles.iconWrapper} ${styles.inflowIconWrapper}`}>
-            <InflowArrowIcon />
-          </div>
-        </div>
-        <div className={styles.valueContainer}>
-          <span className={`${styles.value} ${styles.inflowValue}`}>
-            {incomeCategories.length}
+        }
+      />
+      <SummaryCard
+        variant="inflow"
+        label="Income Categories"
+        icon={<InflowArrowIcon />}
+        value={incomeCategories.length}
+        subtext={
+          <span>
+            {activeIncomes} active, {inactiveIncomes} inactive
           </span>
-          <div className={styles.subtextRow}>
-            <span>
-              {activeIncomes} active, {inactiveIncomes} inactive
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className={`${styles.card} ${styles.cardNeutral}`}>
-        <div className={styles.cardHeader}>
-          <span className={styles.label}>Total Classification</span>
-          <div className={`${styles.iconWrapper} ${styles.neutralIconWrapper}`}>
-            <TrendingStarIcon />
-          </div>
-        </div>
-        <div className={styles.valueContainer}>
-          <span className={`${styles.value} ${styles.neutralValue}`}>
-            {categories.length}
-          </span>
-          <div className={styles.subtextRow}>
-            <span>{totalActive} active in workspace</span>
-          </div>
-        </div>
-      </div>
-    </div>
+        }
+      />
+      <SummaryCard
+        variant="neutral"
+        label="Total Classification"
+        icon={<TrendingStarIcon />}
+        value={categories.length}
+        subtext={<span>{totalActive} active in workspace</span>}
+      />
+    </SummaryCardsGrid>
   );
 }
