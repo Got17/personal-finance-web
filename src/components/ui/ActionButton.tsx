@@ -56,7 +56,7 @@ export function ActionButton({
       {...rest}
     >
       {iconToRender}
-      <span>{children}</span>
+      <span className={styles.buttonLabel}>{children}</span>
     </button>
   );
 }

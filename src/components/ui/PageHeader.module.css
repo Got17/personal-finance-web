@@ -45,14 +45,30 @@
 
 @media (max-width: 768px) {
   .header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .titleArea {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .title {
+    font-size: 1.625rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
   }
 
   .actionArea {
-    align-self: flex-end;
+    flex-shrink: 0;
     margin-left: auto;
+    align-self: flex-start;
   }
 }
 

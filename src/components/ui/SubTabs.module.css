@@ -6,8 +6,16 @@
   padding: 4px;
   border-radius: 12px;
   width: fit-content;
+  max-width: 100%;
   margin-bottom: 0;
   border: 1px solid var(--line);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tabContainer::-webkit-scrollbar {
+  display: none;
 }
 
 .tabButton {
@@ -67,4 +75,25 @@
 .badgeIncome {
   background-color: var(--forest-soft);
   color: var(--forest-deep);
+}
+
+@media (max-width: 768px) {
+  .tabContainer {
+    gap: 4px;
+    padding: 3px;
+    max-width: 100%;
+  }
+
+  .tabButton {
+    padding: 6px 12px;
+    font-size: 0.8125rem;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tabBadge {
+    font-size: 0.6875rem;
+    padding: 1px 5px;
+  }
 }
