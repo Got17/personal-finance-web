@@ -262,6 +262,7 @@ export function FinancialRecordsView({
           </div>
 
           <ActionButton
+            className={styles.headerActionButton}
             variant={actionVariant}
             onClick={() => setIsCreateModalOpen(true)}
           >
