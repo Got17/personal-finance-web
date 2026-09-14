@@ -168,8 +168,7 @@ export function CategoriesView({
       ? "Add Expense Category"
       : "Add Income Category";
 
-  const actionVariant =
-    activeTab === "all" ? "transaction" : activeTab === "expense" ? "expense" : "forest";
+  const actionVariant = activeTab === "expense" ? "expense" : "forest";
 
   const statusOptions: FilterDropdownOption[] = [
     { value: "all", label: "All statuses", icon: <CheckIcon /> },

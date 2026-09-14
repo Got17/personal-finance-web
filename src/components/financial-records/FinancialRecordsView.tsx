@@ -232,8 +232,7 @@ export function FinancialRecordsView({
 
   const actionButtonText =
     activeTab === "all" ? "Add Transaction" : activeTab === "expense" ? "Add Expense" : "Add Income";
-  const actionVariant =
-    activeTab === "all" ? "transaction" : activeTab === "expense" ? "expense" : "forest";
+  const actionVariant = activeTab === "expense" ? "expense" : "forest";
 
   return (
     <div className={styles.container}>

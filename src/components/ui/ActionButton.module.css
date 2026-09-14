@@ -17,18 +17,21 @@
   transition: all 160ms ease;
 }
 
-.buttonForest {
+.buttonForest,
+.buttonTransaction {
   background: linear-gradient(135deg, #276749 0%, #1d4e38 100%);
   box-shadow: 0 4px 12px rgba(39, 103, 73, 0.28);
 }
 
-.buttonForest:hover:not(:disabled) {
+.buttonForest:hover:not(:disabled),
+.buttonTransaction:hover:not(:disabled) {
   background: linear-gradient(135deg, #2f855a 0%, #173d2c 100%);
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(39, 103, 73, 0.38);
 }
 
-.buttonForest:focus-visible {
+.buttonForest:focus-visible,
+.buttonTransaction:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px var(--forest-soft), 0 6px 16px rgba(39, 103, 73, 0.38);
 }
@@ -47,22 +50,6 @@
 .buttonExpense:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px #fed7d7, 0 6px 16px rgba(229, 62, 62, 0.38);
-}
-
-.buttonTransaction {
-  background: linear-gradient(135deg, #1f2b24 0%, #121a15 100%);
-  box-shadow: 0 4px 12px rgba(31, 43, 36, 0.28);
-}
-
-.buttonTransaction:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2d3f34 0%, #1f2b24 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(31, 43, 36, 0.38);
-}
-
-.buttonTransaction:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--surface-muted), 0 6px 16px rgba(31, 43, 36, 0.38);
 }
 
 .actionButton:disabled {

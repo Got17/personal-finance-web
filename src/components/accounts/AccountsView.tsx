@@ -208,8 +208,7 @@ export function AccountsView({
       ? "Add Credit Account"
       : "Add Investment Account";
 
-  const actionVariant =
-    activeTab === "credit" ? "expense" : activeTab === "all" ? "transaction" : "forest";
+  const actionVariant = activeTab === "credit" ? "expense" : "forest";
 
   const defaultCreateType: AccountType =
     activeTab === "banking"
