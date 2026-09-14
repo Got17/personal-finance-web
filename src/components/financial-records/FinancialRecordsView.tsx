@@ -285,23 +285,27 @@ export function FinancialRecordsView({
 
             {datePreset === "custom" && (
               <div className={styles.customDateRange}>
-                <span className={styles.customDateLabel}>From</span>
-                <input
-                  type="date"
-                  aria-label="Start date"
-                  className={styles.customDateInput}
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
+                <div className={styles.dateFieldGroup}>
+                  <span className={styles.customDateLabel}>From</span>
+                  <input
+                    type="date"
+                    aria-label="Start date"
+                    className={styles.customDateInput}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
                 <span className={styles.dateDivider}>–</span>
-                <span className={styles.customDateLabel}>To</span>
-                <input
-                  type="date"
-                  aria-label="End date"
-                  className={styles.customDateInput}
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
+                <div className={styles.dateFieldGroup}>
+                  <span className={styles.customDateLabel}>To</span>
+                  <input
+                    type="date"
+                    aria-label="End date"
+                    className={styles.customDateInput}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
               </div>
             )}
 
