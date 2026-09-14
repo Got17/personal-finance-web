@@ -71,5 +71,6 @@ describe("ViewHeader", () => {
     expect(button.querySelector("svg")).toBeTruthy();
     expect(button.textContent).toContain("Add Category");
     expect(button.textContent).not.toContain("+");
+    expect(button.className).toContain("headerActionButton");
   });
 });

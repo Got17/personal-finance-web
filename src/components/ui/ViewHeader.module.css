@@ -2,8 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px 16px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .titleGroup {
@@ -22,18 +23,18 @@
 
 .headerActionButton {
   flex-shrink: 0;
+  margin-left: auto !important;
+  align-self: flex-end !important;
 }
 
 @media (max-width: 768px) {
   .headerRow {
-    flex-direction: column;
-    align-items: stretch;
     gap: 12px;
   }
 
   .headerActionButton {
-    align-self: flex-end;
-    margin-left: auto;
+    margin-left: auto !important;
+    align-self: flex-end !important;
   }
 }
 

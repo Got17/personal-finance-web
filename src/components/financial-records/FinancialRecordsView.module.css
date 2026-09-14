@@ -170,6 +170,8 @@
 
 .headerActionButton {
   flex-shrink: 0;
+  margin-left: auto !important;
+  align-self: flex-end !important;
 }
 
 @media (max-width: 768px) {
@@ -184,7 +186,7 @@
   }
 
   .headerActionButton {
-    align-self: flex-end;
-    margin-left: auto;
+    align-self: flex-end !important;
+    margin-left: auto !important;
   }
 }
