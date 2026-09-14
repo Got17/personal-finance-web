@@ -18,7 +18,11 @@ const navItems: NavItem[] = [
   { name: "Goals", href: "/#goals" },
 ];
 
-export function SidebarNav() {
+export interface SidebarNavProps {
+  onNavigate?: () => void;
+}
+
+export function SidebarNav({ onNavigate }: SidebarNavProps = {}) {
   const pathname = usePathname();
 
   return (
@@ -34,6 +38,7 @@ export function SidebarNav() {
             className={isActive ? styles.activeNavItem : styles.navItem}
             href={item.href}
             key={item.name}
+            onClick={onNavigate}
           >
             <span className={styles.navMark} aria-hidden="true">
               0{index + 1}

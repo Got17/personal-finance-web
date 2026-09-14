@@ -72,14 +72,19 @@
 
 @media (max-width: 768px) {
   .actionButton {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 800;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
     padding: 0;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
     border-radius: 50%;
     justify-content: center;
     gap: 0;
+    box-shadow: 0 6px 20px rgba(39, 103, 73, 0.45);
   }
 
   .buttonLabel {
@@ -93,7 +98,8 @@
   }
 
   .icon svg {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.5;
   }
 }
