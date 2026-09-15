@@ -2,11 +2,22 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
 import { CreateAccountForm } from "./CreateAccountForm";
 import * as accountsActions from "@/app/actions/accounts";
+import * as currenciesActions from "@/app/actions/currencies";
 import { Account } from "@/lib/schemas/accounts";
 
 vi.mock("@/app/actions/accounts", () => ({
   createAccountAction: vi.fn(),
 }));
+
+vi.mock("@/app/actions/currencies", () => ({
+  getCurrenciesAction: vi.fn(),
+}));
+
+const mockCurrencies = [
+  { code: "LAK", name: "Lao Kip", symbol: "₭", decimal_digits: 0 },
+  { code: "USD", name: "US Dollar", symbol: "$", decimal_digits: 2 },
+  { code: "EUR", name: "Euro", symbol: "€", decimal_digits: 2 },
+];
 
 const mockCreatedAccount: Account = {
   id: "acc-123",
@@ -23,19 +34,50 @@ const mockCreatedAccount: Account = {
 describe("CreateAccountForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
+      success: true,
+      currencies: mockCurrencies,
+    });
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("renders form controls with default values", () => {
+  it("renders form controls with default values, loading the currency dropdown from the API", async () => {
     render(<CreateAccountForm defaultCurrency="EUR" />);
 
     expect(screen.getByLabelText(/Account Name/i)).toBeTruthy();
     expect(screen.getByLabelText(/Account Type/i)).toBeTruthy();
-    expect((screen.getByLabelText(/Currency/i) as HTMLInputElement).value).toBe("EUR");
     expect(screen.getByLabelText(/Active Account/i)).toBeTruthy();
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/Currency/i) as HTMLSelectElement).value).toBe("EUR");
+    });
+    expect(currenciesActions.getCurrenciesAction).toHaveBeenCalled();
+  });
+
+  it("disables the currency dropdown while currencies are loading", () => {
+    vi.mocked(currenciesActions.getCurrenciesAction).mockReturnValue(new Promise(() => {}));
+
+    render(<CreateAccountForm defaultCurrency="USD" />);
+
+    expect((screen.getByLabelText(/Currency/i) as HTMLSelectElement).disabled).toBe(true);
+  });
+
+  it("keeps the currency dropdown usable with just the default code if the currency fetch fails", async () => {
+    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
+      success: false,
+      error: "Unable to connect to currencies server.",
+    });
+
+    render(<CreateAccountForm defaultCurrency="USD" />);
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/Currency/i) as HTMLSelectElement).disabled).toBe(false);
+    });
+    expect((screen.getByLabelText(/Currency/i) as HTMLSelectElement).value).toBe("USD");
+    expect(screen.getByText("Unable to connect to currencies server.")).toBeTruthy();
   });
 
   it("shows client-side validation error when account name is blank", async () => {

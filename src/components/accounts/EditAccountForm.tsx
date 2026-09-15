@@ -10,6 +10,7 @@ import {
 import { updateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import { Dropdown } from "@/components/ui/Dropdown";
+import { useCurrencyOptions } from "./useCurrencyOptions";
 import styles from "@/components/ui/ModalForm.module.css";
 
 interface EditAccountFormProps {
@@ -40,6 +41,12 @@ export function EditAccountForm({
   const [currency, setCurrency] = useState(account.currency);
   const [description, setDescription] = useState(account.description || "");
   const [isActive, setIsActive] = useState(account.is_active);
+
+  const {
+    options: currencyOptions,
+    isLoading: isLoadingCurrencies,
+    error: currencyLoadError,
+  } = useCurrencyOptions(account.currency);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -142,21 +149,22 @@ export function EditAccountForm({
       <div className={styles.row}>
         <div className={styles.fieldGroup}>
           <label className={styles.label} htmlFor="edit-account-currency">
-            Currency (ISO Code) <span className={styles.requiredStar}>*</span>
+            Currency <span className={styles.requiredStar}>*</span>
           </label>
-          <input
+          <Dropdown
             id="edit-account-currency"
-            type="text"
-            className={`${styles.input} ${fieldErrors.currency ? styles.inputError : ""}`}
-            placeholder="USD, EUR, GBP..."
-            maxLength={3}
             value={currency}
-            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-            disabled={isPending}
-            required
+            options={currencyOptions}
+            onChange={setCurrency}
+            placeholder={isLoadingCurrencies ? "Loading currencies..." : undefined}
+            disabled={isPending || isLoadingCurrencies}
+            hasError={Boolean(fieldErrors.currency)}
           />
           {fieldErrors.currency && (
             <span className={styles.fieldError}>{fieldErrors.currency}</span>
+          )}
+          {!fieldErrors.currency && currencyLoadError && (
+            <span className={styles.fieldError}>{currencyLoadError}</span>
           )}
         </div>
 

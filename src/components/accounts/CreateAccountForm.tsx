@@ -10,6 +10,7 @@ import {
 import { createAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import { Dropdown } from "@/components/ui/Dropdown";
+import { useCurrencyOptions } from "./useCurrencyOptions";
 import styles from "@/components/ui/ModalForm.module.css";
 
 interface CreateAccountFormProps {
@@ -31,7 +32,7 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
 };
 
 export function CreateAccountForm({
-  defaultCurrency = "USD",
+  defaultCurrency = "LAK",
   defaultType = "checking",
   onAccountCreated,
   onCancel,
@@ -42,6 +43,12 @@ export function CreateAccountForm({
   const [currency, setCurrency] = useState(defaultCurrency);
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
+
+  const {
+    options: currencyOptions,
+    isLoading: isLoadingCurrencies,
+    error: currencyLoadError,
+  } = useCurrencyOptions(defaultCurrency);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -152,21 +159,22 @@ export function CreateAccountForm({
       <div className={styles.row}>
         <div className={styles.fieldGroup}>
           <label className={styles.label} htmlFor="account-currency">
-            Currency (ISO Code) <span className={styles.requiredStar}>*</span>
+            Currency <span className={styles.requiredStar}>*</span>
           </label>
-          <input
+          <Dropdown
             id="account-currency"
-            type="text"
-            className={`${styles.input} ${fieldErrors.currency ? styles.inputError : ""}`}
-            placeholder="USD, EUR, GBP..."
-            maxLength={3}
             value={currency}
-            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-            disabled={isPending}
-            required
+            options={currencyOptions}
+            onChange={setCurrency}
+            placeholder={isLoadingCurrencies ? "Loading currencies..." : undefined}
+            disabled={isPending || isLoadingCurrencies}
+            hasError={Boolean(fieldErrors.currency)}
           />
           {fieldErrors.currency && (
             <span className={styles.fieldError}>{fieldErrors.currency}</span>
+          )}
+          {!fieldErrors.currency && currencyLoadError && (
+            <span className={styles.fieldError}>{currencyLoadError}</span>
           )}
         </div>
 

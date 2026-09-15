@@ -50,7 +50,7 @@ export default async function AccountsPage({ searchParams }: PageProps = {}) {
         <AccountsView
           initialTab={initialTab}
           initialAccounts={accountsResult.accounts}
-          defaultCurrency={userResult.user.base_currency || "USD"}
+          defaultCurrency={userResult.user.base_currency || "LAK"}
         />
       )}
     </div>

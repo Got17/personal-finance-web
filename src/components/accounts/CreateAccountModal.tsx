@@ -15,7 +15,7 @@ interface CreateAccountModalProps {
 export function CreateAccountModal({
   isOpen,
   onClose,
-  defaultCurrency = "USD",
+  defaultCurrency = "LAK",
   defaultType = "checking",
   onAccountCreated,
 }: CreateAccountModalProps) {

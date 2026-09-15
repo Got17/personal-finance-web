@@ -82,7 +82,7 @@ interface AccountsViewProps {
 export function AccountsView({
   initialAccounts,
   initialTab,
-  defaultCurrency = "USD",
+  defaultCurrency = "LAK",
 }: AccountsViewProps) {
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
   const [activeTab, setActiveTab] = useState<AccountTab>(() => getInitialTab(initialTab));
