@@ -12,10 +12,12 @@
   box-sizing: border-box;
 }
 
-.cardContainer:hover {
-  border-color: #c2e2d0;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(31, 43, 36, 0.06);
+@media (hover: hover) and (pointer: fine) {
+  .cardContainer:hover {
+    border-color: #c2e2d0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31, 43, 36, 0.06);
+  }
 }
 
 .inactiveCard {

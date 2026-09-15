@@ -25,9 +25,15 @@
   transition: background-color 160ms ease, color 160ms ease;
 }
 
-.filterTab:hover {
-  background-color: var(--surface-muted);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .filterTab:hover {
+    background-color: var(--surface-muted);
+    color: var(--ink);
+  }
+}
+
+.filterTab:active {
+  transform: scale(0.96);
 }
 
 .activeFilterTab {
@@ -40,11 +46,17 @@
   border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
-  transition: background-color 160ms ease;
+  transition: background-color 160ms ease, transform 160ms ease;
 }
 
-.activeFilterTab:hover {
-  background-color: var(--surface-muted);
+@media (hover: hover) and (pointer: fine) {
+  .activeFilterTab:hover {
+    background-color: var(--surface-muted);
+  }
+}
+
+.activeFilterTab:active {
+  transform: scale(0.96);
 }
 
 .grid {

@@ -1,0 +1,113 @@
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+  transition: all 160ms ease;
+}
+
+.buttonForest,
+.buttonTransaction {
+  background: linear-gradient(135deg, #276749 0%, #1d4e38 100%);
+  box-shadow: 0 4px 12px rgba(39, 103, 73, 0.28);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .buttonForest:hover:not(:disabled),
+  .buttonTransaction:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2f855a 0%, #173d2c 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(39, 103, 73, 0.38);
+  }
+}
+
+.buttonForest:focus-visible,
+.buttonTransaction:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--forest-soft), 0 6px 16px rgba(39, 103, 73, 0.38);
+}
+
+.buttonExpense {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.28);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .buttonExpense:hover:not(:disabled) {
+    background: linear-gradient(135deg, #f56565 0%, #9b2c2c 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(229, 62, 62, 0.38);
+  }
+}
+
+.buttonExpense:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #fed7d7, 0 6px 16px rgba(229, 62, 62, 0.38);
+}
+
+.actionButton:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.actionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.buttonLabel {
+  display: inline;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .actionButton {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 800;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    gap: 0;
+    box-shadow: 0 6px 20px rgba(39, 103, 73, 0.45);
+  }
+
+  .buttonLabel {
+    display: none;
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.5;
+  }
+}

@@ -3,10 +3,15 @@ import { getCurrentUser } from "@/lib/auth-service";
 import { getAccounts } from "@/lib/accounts-service";
 import { redirect } from "next/navigation";
 import { AccountsView } from "@/components/accounts/AccountsView";
+import { AccountTab } from "@/components/accounts/AccountSubTabs";
 import { PageHeader } from "@/components/ui/PageHeader";
 import styles from "./page.module.css";
 
-export default async function AccountsPage() {
+interface PageProps {
+  searchParams?: Promise<{ tab?: string }>;
+}
+
+export default async function AccountsPage({ searchParams }: PageProps = {}) {
   const token = await getSessionToken();
   if (!token) {
     redirect("/login");
@@ -19,26 +24,36 @@ export default async function AccountsPage() {
     return null;
   }
 
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const tabParam = resolvedSearchParams?.tab;
+  const initialTab: AccountTab =
+    tabParam === "banking" || tabParam === "credit" || tabParam === "investment"
+      ? tabParam
+      : "all";
+
   const accountsResult = await getAccounts(token);
 
   return (
     <div className={styles.pageContainer}>
-      <PageHeader
-        eyebrow="Workspace"
-        title="Accounts"
-        subtitle="Create and view bank accounts, credit cards, and investments in one place."
-      />
-
-      {!accountsResult.success && (
-        <div className={styles.errorBanner}>
-          Failed to load accounts: {accountsResult.error}
-        </div>
+      {!accountsResult.success ? (
+        <>
+          <PageHeader
+            eyebrow="Workspace"
+            title="Accounts"
+            subtitle="Create and view bank accounts, credit cards, and investments in one place."
+          />
+          <div className={styles.errorBanner} role="alert">
+            Failed to load accounts: {accountsResult.error}
+          </div>
+        </>
+      ) : (
+        <AccountsView
+          initialTab={initialTab}
+          initialAccounts={accountsResult.accounts}
+          defaultCurrency={userResult.user.base_currency || "LAK"}
+        />
       )}
-
-      <AccountsView
-        initialAccounts={accountsResult.success ? accountsResult.accounts : []}
-        defaultCurrency={userResult.user.base_currency || "USD"}
-      />
     </div>
   );
 }
+

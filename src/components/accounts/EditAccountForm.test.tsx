@@ -3,10 +3,20 @@ import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/re
 import { EditAccountForm } from "./EditAccountForm";
 import { Account } from "@/lib/schemas/accounts";
 import * as accountsActions from "@/app/actions/accounts";
+import * as currenciesActions from "@/app/actions/currencies";
 
 vi.mock("@/app/actions/accounts", () => ({
   updateAccountAction: vi.fn(),
 }));
+
+vi.mock("@/app/actions/currencies", () => ({
+  getCurrenciesAction: vi.fn(),
+}));
+
+const mockCurrencies = [
+  { code: "LAK", name: "Lao Kip", symbol: "₭", decimal_digits: 0 },
+  { code: "USD", name: "US Dollar", symbol: "$", decimal_digits: 2 },
+];
 
 const mockAccount: Account = {
   id: "acc-1",
@@ -23,20 +33,40 @@ const mockAccount: Account = {
 describe("EditAccountForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
+      success: true,
+      currencies: mockCurrencies,
+    });
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("pre-populates form inputs with current account details", () => {
+  it("pre-populates form inputs with current account details", async () => {
     render(<EditAccountForm account={mockAccount} />);
 
     expect((screen.getByLabelText(/Account Name/i) as HTMLInputElement).value).toBe("Everyday Checking");
     expect((screen.getByLabelText(/Account Type/i) as HTMLSelectElement).value).toBe("checking");
-    expect((screen.getByLabelText(/Currency/i) as HTMLInputElement).value).toBe("USD");
     expect((screen.getByLabelText(/Description/i) as HTMLInputElement).value).toBe("Primary daily checking account");
     expect((screen.getByLabelText(/Active Account/i) as HTMLInputElement).checked).toBe(true);
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/Currency/i) as HTMLSelectElement).value).toBe("USD");
+    });
+  });
+
+  it("preserves the account's saved currency as a synthetic option when it is no longer in the fetched list", async () => {
+    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
+      success: true,
+      currencies: [{ code: "USD", name: "US Dollar", symbol: "$", decimal_digits: 2 }],
+    });
+
+    render(<EditAccountForm account={{ ...mockAccount, currency: "GBP" }} />);
+
+    await waitFor(() => {
+      expect((screen.getByLabelText(/Currency/i) as HTMLSelectElement).value).toBe("GBP");
+    });
   });
 
   it("shows client validation error when required field is empty", async () => {

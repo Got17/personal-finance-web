@@ -1,4 +1,5 @@
 import { Badge } from "./Badge";
+import { ActionButton, ActionButtonVariant } from "./ActionButton";
 import styles from "./ViewHeader.module.css";
 
 export interface ViewHeaderProps {
@@ -9,6 +10,7 @@ export interface ViewHeaderProps {
   actionLabel?: string;
   onAction?: () => void;
   actionAriaLabel?: string;
+  actionVariant?: ActionButtonVariant;
 }
 
 export function ViewHeader({
@@ -19,8 +21,10 @@ export function ViewHeader({
   actionLabel,
   onAction,
   actionAriaLabel,
+  actionVariant = "forest",
 }: ViewHeaderProps) {
   const countText = `${count} ${count === 1 ? unitSingular : unitPlural}`;
+  const displayLabel = actionLabel?.replace(/^\+\s*/, "");
 
   return (
     <div className={styles.headerRow}>
@@ -29,15 +33,16 @@ export function ViewHeader({
         <Badge variant="count">{countText}</Badge>
       </div>
       {actionLabel && onAction && (
-        <button
-          type="button"
-          className={styles.addButton}
+        <ActionButton
+          className={styles.headerActionButton}
+          variant={actionVariant}
           onClick={onAction}
           aria-label={actionAriaLabel || actionLabel}
         >
-          {actionLabel}
-        </button>
+          {displayLabel}
+        </ActionButton>
       )}
     </div>
   );
 }
+

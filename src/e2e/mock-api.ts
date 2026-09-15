@@ -64,6 +64,23 @@ export function createMockApiHandler() {
       return jsonResponse({ success: true, data: { access_token: token, token_type: "Bearer" }, message: "User created" }, 201);
     }
 
+    if (path === "/v1/currencies" && method === "GET") {
+      return jsonResponse(
+        {
+          success: true,
+          data: [
+            { code: "LAK", name: "Lao Kip", symbol: "₭", decimal_digits: 0 },
+            { code: "THB", name: "Thai Baht", symbol: "฿", decimal_digits: 2 },
+            { code: "USD", name: "US Dollar", symbol: "$", decimal_digits: 2 },
+            { code: "CNY", name: "Chinese Yuan", symbol: "¥", decimal_digits: 2 },
+            { code: "EUR", name: "Euro", symbol: "€", decimal_digits: 2 },
+          ],
+          message: "The supported currencies.",
+        },
+        200,
+      );
+    }
+
     if (path === "/v1/auth/login" && method === "POST") {
       const { email, password } = body;
       const targetUser = Array.from(users.values()).find((u) => u.email === email && u.password === password);

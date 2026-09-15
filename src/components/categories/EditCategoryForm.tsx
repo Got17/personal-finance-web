@@ -9,7 +9,8 @@ import {
 } from "@/lib/schemas/categories";
 import { updateCategoryAction } from "@/app/actions/categories";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
-import styles from "./EditCategoryForm.module.css";
+import { Dropdown } from "@/components/ui/Dropdown";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface EditCategoryFormProps {
   category: Category;
@@ -38,6 +39,8 @@ export function EditCategoryForm({
   const [serverError, setServerError] = useState<string | null>(null);
 
   const [isPending, startTransition] = useTransition();
+
+  const isExpense = type === "expense";
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -77,12 +80,12 @@ export function EditCategoryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      {serverError && <div className={styles.errorBanner}>{serverError}</div>}
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
+      {serverError && <div role="alert" className={styles.errorBanner}>{serverError}</div>}
 
-      <div className={styles.formGrid}>
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-category-name">
+          <label htmlFor="edit-category-name" className={styles.label}>
             Category Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -99,38 +102,36 @@ export function EditCategoryForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-category-type">
+          <label htmlFor="edit-category-type" className={styles.label}>
             Category Type <span className={styles.requiredStar}>*</span>
           </label>
-          <select
+          <Dropdown
             id="edit-category-type"
-            className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
             value={type}
-            onChange={(e) => setType(e.target.value as CategoryType)}
+            options={CATEGORY_TYPES.map((t) => ({
+              value: t,
+              label: CATEGORY_TYPE_LABELS[t],
+            }))}
+            onChange={(val) => setType(val as CategoryType)}
             disabled={isPending}
-          >
-            {CATEGORY_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {CATEGORY_TYPE_LABELS[t]}
-              </option>
-            ))}
-          </select>
+            hasError={Boolean(fieldErrors.type)}
+          />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
+      </div>
 
-        <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="edit-category-is-active">
-            <input
-              id="edit-category-is-active"
-              type="checkbox"
-              className={styles.checkbox}
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              disabled={isPending}
-            />
-            Active Category
-          </label>
-        </div>
+      <div className={styles.fieldGroup}>
+        <label className={styles.checkboxLabel} htmlFor="edit-category-is-active">
+          <input
+            id="edit-category-is-active"
+            type="checkbox"
+            className={styles.checkbox}
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            disabled={isPending}
+          />
+          Active Category
+        </label>
       </div>
 
       <div className={styles.actions}>
@@ -144,7 +145,11 @@ export function EditCategoryForm({
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={isPending}>
+        <button
+          type="submit"
+          className={isExpense ? styles.submitButtonExpense : styles.submitButtonIncome}
+          disabled={isPending}
+        >
           {isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>

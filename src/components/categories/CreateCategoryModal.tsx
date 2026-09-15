@@ -1,6 +1,6 @@
 "use client";
 
-import { Category } from "@/lib/schemas/categories";
+import { Category, CategoryType } from "@/lib/schemas/categories";
 import { CreateCategoryForm } from "./CreateCategoryForm";
 import { Modal } from "@/components/ui/Modal";
 
@@ -8,12 +8,14 @@ interface CreateCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCategoryCreated: (category: Category) => void;
+  defaultType?: CategoryType;
 }
 
 export function CreateCategoryModal({
   isOpen,
   onClose,
   onCategoryCreated,
+  defaultType,
 }: CreateCategoryModalProps) {
   const handleCreated = (category: Category) => {
     onCategoryCreated(category);
@@ -28,7 +30,12 @@ export function CreateCategoryModal({
       description="Create an income or expense category to organize your finances."
       testId="create-category-modal"
     >
-      <CreateCategoryForm onCategoryCreated={handleCreated} onCancel={onClose} />
+      <CreateCategoryForm
+        key={defaultType || "income"}
+        defaultType={defaultType}
+        onCategoryCreated={handleCreated}
+        onCancel={onClose}
+      />
     </Modal>
   );
 }

@@ -2,8 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px 16px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .titleGroup {
@@ -20,30 +21,21 @@
   margin: 0;
 }
 
-.addButton {
-  font-family: inherit;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  background-color: var(--forest);
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 6px rgba(39, 103, 73, 0.2);
-  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+.headerActionButton {
+  flex-shrink: 0;
+  margin-left: auto !important;
+  align-self: flex-end !important;
 }
 
-.addButton:hover {
-  background-color: var(--forest-deep);
-  box-shadow: 0 4px 12px rgba(29, 78, 56, 0.28);
-  transform: translateY(-1px);
+@media (max-width: 768px) {
+  .headerRow {
+    gap: 12px;
+  }
+
+  .headerActionButton {
+    margin-left: auto !important;
+    align-self: flex-end !important;
+  }
 }
 
-.addButton:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--forest-soft), 0 4px 12px rgba(29, 78, 56, 0.28);
-}
+

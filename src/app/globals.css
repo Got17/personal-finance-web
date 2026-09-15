@@ -21,7 +21,6 @@ html {
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
 }
 
 body {
@@ -49,11 +48,13 @@ select,
   cursor: pointer;
 }
 
-input:hover:not(:disabled):not(:focus),
-select:hover:not(:disabled):not(:focus),
-textarea:hover:not(:disabled):not(:focus) {
-  border-color: #a39c8c;
-  background-color: #faf8f3;
+@media (hover: hover) and (pointer: fine) {
+  input:hover:not(:disabled):not(:focus),
+  select:hover:not(:disabled):not(:focus),
+  textarea:hover:not(:disabled):not(:focus) {
+    border-color: #a39c8c;
+    background-color: #faf8f3;
+  }
 }
 
 button:focus-visible,

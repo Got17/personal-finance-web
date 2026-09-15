@@ -9,10 +9,13 @@ import {
 } from "@/lib/schemas/accounts";
 import { createAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
-import styles from "./CreateAccountForm.module.css";
+import { Dropdown } from "@/components/ui/Dropdown";
+import { useCurrencyOptions } from "./useCurrencyOptions";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface CreateAccountFormProps {
   defaultCurrency?: string;
+  defaultType?: AccountType;
   onAccountCreated?: (account: Account) => void;
   onCancel?: () => void;
   hideHeader?: boolean;
@@ -29,16 +32,23 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
 };
 
 export function CreateAccountForm({
-  defaultCurrency = "USD",
+  defaultCurrency = "LAK",
+  defaultType = "checking",
   onAccountCreated,
   onCancel,
   hideHeader = true,
 }: CreateAccountFormProps) {
   const [name, setName] = useState("");
-  const [type, setType] = useState<AccountType>("checking");
+  const [type, setType] = useState<AccountType>(defaultType);
   const [currency, setCurrency] = useState(defaultCurrency);
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
+
+  const {
+    options: currencyOptions,
+    isLoading: isLoadingCurrencies,
+    error: currencyLoadError,
+  } = useCurrencyOptions(defaultCurrency);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -98,7 +108,7 @@ export function CreateAccountForm({
   };
 
   return (
-    <form className={hideHeader ? undefined : styles.formCard} onSubmit={handleSubmit} noValidate>
+    <form className={hideHeader ? styles.form : styles.formCard} onSubmit={handleSubmit} noValidate>
       {!hideHeader && (
         <div className={styles.formHeader}>
           <h3>Add New Account</h3>
@@ -109,9 +119,9 @@ export function CreateAccountForm({
       {serverError && <div className={styles.errorBanner}>{serverError}</div>}
       {successMessage && <div className={styles.successBanner}>{successMessage}</div>}
 
-      <div className={styles.formGrid}>
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-name">
+          <label className={styles.label} htmlFor="account-name">
             Account Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -128,47 +138,48 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-type">
+          <label className={styles.label} htmlFor="account-type">
             Account Type <span className={styles.requiredStar}>*</span>
           </label>
-          <select
+          <Dropdown
             id="account-type"
-            className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
             value={type}
-            onChange={(e) => setType(e.target.value as AccountType)}
+            options={ACCOUNT_TYPES.map((t) => ({
+              value: t,
+              label: ACCOUNT_TYPE_LABELS[t],
+            }))}
+            onChange={(val) => setType(val as AccountType)}
             disabled={isPending}
-          >
-            {ACCOUNT_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {ACCOUNT_TYPE_LABELS[t]}
-              </option>
-            ))}
-          </select>
+            hasError={Boolean(fieldErrors.type)}
+          />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
+      </div>
 
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-currency">
-            Currency (ISO Code) <span className={styles.requiredStar}>*</span>
+          <label className={styles.label} htmlFor="account-currency">
+            Currency <span className={styles.requiredStar}>*</span>
           </label>
-          <input
+          <Dropdown
             id="account-currency"
-            type="text"
-            className={`${styles.input} ${fieldErrors.currency ? styles.inputError : ""}`}
-            placeholder="USD, EUR, GBP..."
-            maxLength={3}
             value={currency}
-            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-            disabled={isPending}
-            required
+            options={currencyOptions}
+            onChange={setCurrency}
+            placeholder={isLoadingCurrencies ? "Loading currencies..." : undefined}
+            disabled={isPending || isLoadingCurrencies}
+            hasError={Boolean(fieldErrors.currency)}
           />
           {fieldErrors.currency && (
             <span className={styles.fieldError}>{fieldErrors.currency}</span>
           )}
+          {!fieldErrors.currency && currencyLoadError && (
+            <span className={styles.fieldError}>{currencyLoadError}</span>
+          )}
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="account-description">Description (Optional)</label>
+          <label className={styles.label} htmlFor="account-description">Description (Optional)</label>
           <input
             id="account-description"
             type="text"
@@ -179,20 +190,20 @@ export function CreateAccountForm({
             disabled={isPending}
           />
         </div>
+      </div>
 
-        <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="account-is-active">
-            <input
-              id="account-is-active"
-              type="checkbox"
-              className={styles.checkbox}
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              disabled={isPending}
-            />
-            Active Account
-          </label>
-        </div>
+      <div className={styles.fieldGroup}>
+        <label className={styles.checkboxLabel} htmlFor="account-is-active">
+          <input
+            id="account-is-active"
+            type="checkbox"
+            className={styles.checkbox}
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            disabled={isPending}
+          />
+          Active Account
+        </label>
       </div>
 
       <div className={styles.actions}>
@@ -206,7 +217,11 @@ export function CreateAccountForm({
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={isPending}>
+        <button
+          type="submit"
+          className={type === "credit_card" || type === "loan" ? styles.submitButtonExpense : styles.submitButtonIncome}
+          disabled={isPending}
+        >
           {isPending ? "Creating..." : "+ Add Account"}
         </button>
       </div>

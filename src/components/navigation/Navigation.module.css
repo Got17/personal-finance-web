@@ -19,9 +19,15 @@
   cursor: pointer;
 }
 
-.navItem:hover {
+@media (hover: hover) and (pointer: fine) {
+  .navItem:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+  }
+}
+
+.navItem:active {
   background: var(--surface-muted);
-  color: var(--ink);
 }
 
 .activeNavItem {

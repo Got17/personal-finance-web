@@ -1,0 +1,3 @@
+# Transactions Cash-Flow Summary Metrics and Row Visual Hierarchy
+
+To eliminate the flat, monochrome presentation of the Transactions (Financial Records) page while upholding the editorial restraint mandated by DESIGN.md, we decided to introduce tab-reactive Cash-Flow Summary Metrics directly within the main workspace card, and enrich table rows with category-tinted icon avatars. The summary metrics dynamically reflect secondary filter subsets (dates, accounts, categories) and provide graceful multi-currency badging rather than attempting uncalibrated client-side FX conversions, keeping financial totals accurate, traceable, and immediately actionable.

@@ -22,9 +22,15 @@
   text-align: center;
 }
 
-.editButton:hover {
-  background-color: var(--forest-soft);
-  color: var(--forest-deep);
+@media (hover: hover) and (pointer: fine) {
+  .editButton:hover {
+    background-color: var(--forest-soft);
+    color: var(--forest-deep);
+  }
+}
+
+.editButton:active {
+  transform: scale(0.97);
 }
 
 .editButton:focus-visible {
@@ -42,13 +48,19 @@
   border-radius: 6px;
   padding: 5px 10px;
   cursor: pointer;
-  transition: background-color 160ms ease, border-color 160ms ease;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
   text-align: center;
 }
 
-.deactivateButton:hover {
-  background-color: #fcf0ee;
-  border-color: var(--rose);
+@media (hover: hover) and (pointer: fine) {
+  .deactivateButton:hover {
+    background-color: #fcf0ee;
+    border-color: var(--rose);
+  }
+}
+
+.deactivateButton:active {
+  transform: scale(0.97);
 }
 
 .deactivateButton:focus-visible {

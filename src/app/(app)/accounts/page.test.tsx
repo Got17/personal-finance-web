@@ -4,6 +4,7 @@ import AccountsPage from "./page";
 import * as session from "@/lib/session";
 import * as authService from "@/lib/auth-service";
 import * as accountsService from "@/lib/accounts-service";
+import * as currenciesActions from "@/app/actions/currencies";
 import { redirect } from "next/navigation";
 import { Account } from "@/lib/schemas/accounts";
 
@@ -17,6 +18,10 @@ vi.mock("@/lib/auth-service", () => ({
 
 vi.mock("@/lib/accounts-service", () => ({
   getAccounts: vi.fn(),
+}));
+
+vi.mock("@/app/actions/currencies", () => ({
+  getCurrenciesAction: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -38,6 +43,10 @@ const mockAccount: Account = {
 describe("AccountsPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
+      success: true,
+      currencies: [{ code: "USD", name: "US Dollar", symbol: "$", decimal_digits: 2 }],
+    });
   });
 
   afterEach(() => {
@@ -75,6 +84,33 @@ describe("AccountsPage", () => {
 
     expect(screen.getByRole("heading", { name: "Accounts" })).toBeTruthy();
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
+  });
+
+  it("passes resolved initialTab from searchParams to AccountsView", async () => {
+    vi.mocked(session.getSessionToken).mockResolvedValue("valid-token");
+    vi.mocked(authService.getCurrentUser).mockResolvedValue({
+      success: true,
+      status: 200,
+      user: {
+        id: "usr-1",
+        email: "alex@example.com",
+        base_currency: "USD",
+        created_at: "2026-09-07T00:00:00Z",
+        updated_at: "2026-09-07T00:00:00Z",
+      },
+    });
+    vi.mocked(accountsService.getAccounts).mockResolvedValue({
+      success: true,
+      accounts: [mockAccount],
+    });
+
+    const pageComponent = await AccountsPage({
+      searchParams: Promise.resolve({ tab: "banking" }),
+    });
+    render(pageComponent);
+
+    expect(screen.getByRole("tab", { name: /Banking/i, selected: true })).toBeTruthy();
+    expect(screen.getByText("Add Bank Account")).toBeTruthy();
   });
 
   it("displays error banner when fetching accounts fails", async () => {

@@ -54,4 +54,23 @@ describe("ViewHeader", () => {
     fireEvent.click(button);
     expect(onAction).toHaveBeenCalledTimes(1);
   });
+
+  it("renders ActionButton with vector icon and stripped plus prefix", () => {
+    render(
+      <ViewHeader
+        title="Your Categories"
+        count={5}
+        unitSingular="category"
+        unitPlural="categories"
+        actionLabel="+ Add Category"
+        onAction={vi.fn()}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: "+ Add Category" });
+    expect(button.querySelector("svg")).toBeTruthy();
+    expect(button.textContent).toContain("Add Category");
+    expect(button.textContent).not.toContain("+");
+    expect(button.className).toContain("headerActionButton");
+  });
 });

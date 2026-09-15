@@ -1,8 +1,20 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { CreateAccountModal } from "./CreateAccountModal";
+import * as currenciesActions from "@/app/actions/currencies";
+
+vi.mock("@/app/actions/currencies", () => ({
+  getCurrenciesAction: vi.fn(),
+}));
 
 describe("CreateAccountModal", () => {
+  beforeEach(() => {
+    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
+      success: true,
+      currencies: [{ code: "LAK", name: "Lao Kip", symbol: "₭", decimal_digits: 0 }],
+    });
+  });
+
   afterEach(() => {
     cleanup();
     vi.clearAllMocks();

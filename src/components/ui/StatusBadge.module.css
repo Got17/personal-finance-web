@@ -6,6 +6,13 @@
   display: inline-block;
 }
 
+@media (max-width: 768px) {
+  .statusBadge {
+    padding: 2px 6px;
+    font-size: 0.6875rem;
+  }
+}
+
 .activeStatus {
   background-color: var(--forest-soft);
   color: var(--forest-deep);

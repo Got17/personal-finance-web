@@ -9,7 +9,9 @@ import {
 } from "@/lib/schemas/accounts";
 import { updateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
-import styles from "./EditAccountForm.module.css";
+import { Dropdown } from "@/components/ui/Dropdown";
+import { useCurrencyOptions } from "./useCurrencyOptions";
+import styles from "@/components/ui/ModalForm.module.css";
 
 interface EditAccountFormProps {
   account: Account;
@@ -39,6 +41,12 @@ export function EditAccountForm({
   const [currency, setCurrency] = useState(account.currency);
   const [description, setDescription] = useState(account.description || "");
   const [isActive, setIsActive] = useState(account.is_active);
+
+  const {
+    options: currencyOptions,
+    isLoading: isLoadingCurrencies,
+    error: currencyLoadError,
+  } = useCurrencyOptions(account.currency);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -91,19 +99,19 @@ export function EditAccountForm({
   };
 
   return (
-    <form className={hideHeader ? undefined : styles.formCard} onSubmit={handleSubmit} noValidate>
+    <form className={hideHeader ? styles.form : styles.formCard} onSubmit={handleSubmit} noValidate>
       {!hideHeader && (
         <div className={styles.formHeader}>
           <h3>Edit Account</h3>
-          <p>Update mutable details for {account.name}.</p>
+          <p>Update account details and preferences.</p>
         </div>
       )}
 
       {serverError && <div className={styles.errorBanner}>{serverError}</div>}
 
-      <div className={styles.formGrid}>
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-name">
+          <label className={styles.label} htmlFor="edit-account-name">
             Account Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
@@ -120,47 +128,48 @@ export function EditAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-type">
+          <label className={styles.label} htmlFor="edit-account-type">
             Account Type <span className={styles.requiredStar}>*</span>
           </label>
-          <select
+          <Dropdown
             id="edit-account-type"
-            className={`${styles.select} ${fieldErrors.type ? styles.inputError : ""}`}
             value={type}
-            onChange={(e) => setType(e.target.value as AccountType)}
+            options={ACCOUNT_TYPES.map((t) => ({
+              value: t,
+              label: ACCOUNT_TYPE_LABELS[t],
+            }))}
+            onChange={(val) => setType(val as AccountType)}
             disabled={isPending}
-          >
-            {ACCOUNT_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {ACCOUNT_TYPE_LABELS[t]}
-              </option>
-            ))}
-          </select>
+            hasError={Boolean(fieldErrors.type)}
+          />
           {fieldErrors.type && <span className={styles.fieldError}>{fieldErrors.type}</span>}
         </div>
+      </div>
 
+      <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-currency">
-            Currency (ISO Code) <span className={styles.requiredStar}>*</span>
+          <label className={styles.label} htmlFor="edit-account-currency">
+            Currency <span className={styles.requiredStar}>*</span>
           </label>
-          <input
+          <Dropdown
             id="edit-account-currency"
-            type="text"
-            className={`${styles.input} ${fieldErrors.currency ? styles.inputError : ""}`}
-            placeholder="USD, EUR, GBP..."
-            maxLength={3}
             value={currency}
-            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-            disabled={isPending}
-            required
+            options={currencyOptions}
+            onChange={setCurrency}
+            placeholder={isLoadingCurrencies ? "Loading currencies..." : undefined}
+            disabled={isPending || isLoadingCurrencies}
+            hasError={Boolean(fieldErrors.currency)}
           />
           {fieldErrors.currency && (
             <span className={styles.fieldError}>{fieldErrors.currency}</span>
           )}
+          {!fieldErrors.currency && currencyLoadError && (
+            <span className={styles.fieldError}>{currencyLoadError}</span>
+          )}
         </div>
 
         <div className={styles.fieldGroup}>
-          <label htmlFor="edit-account-description">Description (Optional)</label>
+          <label className={styles.label} htmlFor="edit-account-description">Description (Optional)</label>
           <input
             id="edit-account-description"
             type="text"
@@ -171,20 +180,20 @@ export function EditAccountForm({
             disabled={isPending}
           />
         </div>
+      </div>
 
-        <div className={styles.fieldGroupFull}>
-          <label className={styles.checkboxLabel} htmlFor="edit-account-is-active">
-            <input
-              id="edit-account-is-active"
-              type="checkbox"
-              className={styles.checkbox}
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              disabled={isPending}
-            />
-            Active Account
-          </label>
-        </div>
+      <div className={styles.fieldGroup}>
+        <label className={styles.checkboxLabel} htmlFor="edit-account-is-active">
+          <input
+            id="edit-account-is-active"
+            type="checkbox"
+            className={styles.checkbox}
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            disabled={isPending}
+          />
+          Active Account
+        </label>
       </div>
 
       <div className={styles.actions}>
@@ -198,7 +207,11 @@ export function EditAccountForm({
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={isPending}>
+        <button
+          type="submit"
+          className={type === "credit_card" || type === "loan" ? styles.submitButtonExpense : styles.submitButtonIncome}
+          disabled={isPending}
+        >
           {isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>

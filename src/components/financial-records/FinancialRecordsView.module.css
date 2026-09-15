@@ -1,0 +1,218 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mainCard {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  padding: 1.75rem 2rem;
+  box-shadow: 0 2px 10px rgba(31, 43, 36, 0.03);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.primaryFilters {
+  display: flex;
+  align-items: center;
+}
+
+.secondaryFilters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.countBadge {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  background-color: var(--surface-muted);
+  color: var(--ink-muted);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+}
+
+.customDateRange {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  animation: customDateFadeIn 160ms ease;
+  transition: all 160ms ease;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@keyframes customDateFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .customDateRange:hover {
+    border-color: #a39c8c;
+    box-shadow: 0 2px 6px rgba(31, 43, 36, 0.06);
+  }
+}
+
+.customDateRange:focus-within {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px var(--forest-soft);
+}
+
+.dateFieldGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.customDateLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+  flex-shrink: 0;
+}
+
+.customDateInput {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  min-width: 0;
+}
+
+.customDateInput::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.dateDivider {
+  color: var(--line);
+  font-weight: 700;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.clearFiltersButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1px solid #f8d0cd;
+  background-color: #fdf2f0;
+  color: var(--rose);
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .clearFiltersButton:hover {
+    background-color: #fce4e1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(181, 80, 66, 0.15);
+  }
+}
+
+.clearFiltersButton:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+  .mainCard {
+    padding: 1.125rem 0.625rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .primaryFilters {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .primaryFilters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .secondaryFilters {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .customDateRange {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 12px;
+  }
+
+  .dateFieldGroup {
+    flex: 1;
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .customDateInput {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    font-size: 0.75rem;
+    padding: 2px 0;
+  }
+
+  .countBadge {
+    margin-left: auto;
+    width: fit-content;
+  }
+}

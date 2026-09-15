@@ -1,6 +1,6 @@
 "use client";
 
-import { Account } from "@/lib/schemas/accounts";
+import { Account, AccountType } from "@/lib/schemas/accounts";
 import { CreateAccountForm } from "./CreateAccountForm";
 import { Modal } from "@/components/ui/Modal";
 
@@ -8,13 +8,15 @@ interface CreateAccountModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultCurrency?: string;
+  defaultType?: AccountType;
   onAccountCreated: (account: Account) => void;
 }
 
 export function CreateAccountModal({
   isOpen,
   onClose,
-  defaultCurrency = "USD",
+  defaultCurrency = "LAK",
+  defaultType = "checking",
   onAccountCreated,
 }: CreateAccountModalProps) {
   const handleCreated = (account: Account) => {
@@ -32,6 +34,7 @@ export function CreateAccountModal({
     >
       <CreateAccountForm
         defaultCurrency={defaultCurrency}
+        defaultType={defaultType}
         onAccountCreated={handleCreated}
         onCancel={onClose}
       />
