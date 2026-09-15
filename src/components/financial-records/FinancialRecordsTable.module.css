@@ -14,7 +14,7 @@
 }
 
 .table th {
-  padding: 12px 16px;
+  padding: 12px 24px;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -44,7 +44,7 @@
 }
 
 .table td {
-  padding: 18px 16px;
+  padding: 18px 24px;
   border-bottom: 1px solid #eee8dc;
   vertical-align: middle;
 }
@@ -176,13 +176,13 @@
 
   .table th,
   .table td {
-    padding: 10px 8px;
+    padding: 10px 12px;
   }
 
   .table th {
     font-size: 0.6875rem;
     letter-spacing: 0.05em;
-    padding: 8px 8px;
+    padding: 8px 12px;
   }
 
   .table th.actionsHeader,
