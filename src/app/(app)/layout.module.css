@@ -1,6 +1,7 @@
 .appContainer {
   min-height: 100vh;
   display: flex;
+  overflow-x: hidden;
   background: var(--canvas);
   color: var(--ink);
 }
