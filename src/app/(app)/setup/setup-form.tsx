@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
 import { updateBaseCurrencyAction } from "@/app/actions/preferences";
 import { SUPPORTED_CURRENCIES } from "@/lib/constants/currencies";
@@ -26,7 +26,7 @@ export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
     });
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);
     setIsSubmitting(true);
