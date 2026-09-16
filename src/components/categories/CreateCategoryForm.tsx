@@ -13,10 +13,9 @@ import { Dropdown } from "@/components/ui/Dropdown";
 import styles from "@/components/ui/ModalForm.module.css";
 
 interface CreateCategoryFormProps {
-  onCategoryCreated?: (category: Category) => void;
-  onCancel?: () => void;
-  hideHeader?: boolean;
-  defaultType?: CategoryType;
+  readonly onCategoryCreated?: (category: Category) => void;
+  readonly onCancel?: () => void;
+  readonly defaultType?: CategoryType;
 }
 
 const CATEGORY_TYPE_LABELS: Record<CategoryType, string> = {
@@ -27,9 +26,8 @@ const CATEGORY_TYPE_LABELS: Record<CategoryType, string> = {
 export function CreateCategoryForm({
   onCategoryCreated,
   onCancel,
-  hideHeader = true,
   defaultType = "income",
-}: CreateCategoryFormProps) {
+}: Readonly<CreateCategoryFormProps>) {
   const [name, setName] = useState("");
   const [type, setType] = useState<CategoryType>(defaultType);
   const [isActive, setIsActive] = useState(true);
@@ -58,11 +56,14 @@ export function CreateCategoryForm({
     });
 
     if (!validation.success) {
-      const formatted = validation.error.format();
-      setFieldErrors({
-        name: formatted.name?._errors[0],
-        type: formatted.type?._errors[0],
-      });
+      const formattedErrors: { name?: string; type?: string } = {};
+      for (const issue of validation.error.issues) {
+        const fieldName = issue.path[0] as "name" | "type";
+        if (fieldName && !formattedErrors[fieldName]) {
+          formattedErrors[fieldName] = issue.message;
+        }
+      }
+      setFieldErrors(formattedErrors);
       return;
     }
 
@@ -136,7 +137,7 @@ export function CreateCategoryForm({
             onChange={(e) => setIsActive(e.target.checked)}
             disabled={isPending}
           />
-          Active Category
+          <span>Active Category</span>
         </label>
       </div>
 

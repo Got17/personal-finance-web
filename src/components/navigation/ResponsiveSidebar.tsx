@@ -13,7 +13,7 @@ export interface ResponsiveSidebarProps {
   };
 }
 
-export function ResponsiveSidebar({ user }: ResponsiveSidebarProps) {
+export function ResponsiveSidebar({ user }: Readonly<ResponsiveSidebarProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const userInitials = user.email ? user.email.slice(0, 2).toUpperCase() : "PF";
 

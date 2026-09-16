@@ -1,6 +1,10 @@
 import { ReactNode } from "react";
 
-export function CalendarIcon({ className }: { className?: string }) {
+export interface IconProps {
+  readonly className?: string;
+}
+
+export function CalendarIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="16"
@@ -22,7 +26,7 @@ export function CalendarIcon({ className }: { className?: string }) {
   );
 }
 
-export function FilterFunnelIcon({ className }: { className?: string }) {
+export function FilterFunnelIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -41,7 +45,7 @@ export function FilterFunnelIcon({ className }: { className?: string }) {
   );
 }
 
-export function PlusIcon({ className }: { className?: string }) {
+export function PlusIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -61,7 +65,7 @@ export function PlusIcon({ className }: { className?: string }) {
   );
 }
 
-export function EditPencilIcon({ className }: { className?: string }) {
+export function EditPencilIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="15"
@@ -81,7 +85,7 @@ export function EditPencilIcon({ className }: { className?: string }) {
   );
 }
 
-export function TrashIcon({ className }: { className?: string }) {
+export function TrashIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="15"
@@ -102,7 +106,7 @@ export function TrashIcon({ className }: { className?: string }) {
   );
 }
 
-export function ChevronDownIcon({ className }: { className?: string }) {
+export function ChevronDownIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -121,7 +125,7 @@ export function ChevronDownIcon({ className }: { className?: string }) {
   );
 }
 
-export function CloseIcon({ className }: { className?: string }) {
+export function CloseIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="12"
@@ -141,7 +145,7 @@ export function CloseIcon({ className }: { className?: string }) {
   );
 }
 
-export function CheckIcon({ className }: { className?: string }) {
+export function CheckIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="13"
@@ -160,7 +164,7 @@ export function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-export function WalletIcon({ className }: { className?: string }) {
+export function WalletIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -181,7 +185,7 @@ export function WalletIcon({ className }: { className?: string }) {
   );
 }
 
-export function FoodAndDrinksIcon({ className }: { className?: string }) {
+export function FoodAndDrinksIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -203,7 +207,7 @@ export function FoodAndDrinksIcon({ className }: { className?: string }) {
   );
 }
 
-export function TransportationIcon({ className }: { className?: string }) {
+export function TransportationIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -225,7 +229,7 @@ export function TransportationIcon({ className }: { className?: string }) {
   );
 }
 
-export function InvestIcon({ className }: { className?: string }) {
+export function InvestIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -245,7 +249,7 @@ export function InvestIcon({ className }: { className?: string }) {
   );
 }
 
-export function GroceriesIcon({ className }: { className?: string }) {
+export function GroceriesIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -266,7 +270,7 @@ export function GroceriesIcon({ className }: { className?: string }) {
   );
 }
 
-export function SalaryIcon({ className }: { className?: string }) {
+export function SalaryIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -280,14 +284,14 @@ export function SalaryIcon({ className }: { className?: string }) {
       className={className}
       aria-hidden="true"
     >
-      <rect width="20" height="14" x="2" y="5" rx="2" />
-      <line x1="2" x2="22" y1="10" y2="10" />
-      <path d="M16 14h.01" />
+      <rect width="20" height="12" x="2" y="6" rx="2" />
+      <circle cx="12" cy="12" r="2" />
+      <path d="M6 12h.01M18 12h.01" />
     </svg>
   );
 }
 
-export function UtilitiesIcon({ className }: { className?: string }) {
+export function UtilitiesIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -306,7 +310,7 @@ export function UtilitiesIcon({ className }: { className?: string }) {
   );
 }
 
-export function EntertainmentIcon({ className }: { className?: string }) {
+export function EntertainmentIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"
@@ -326,7 +330,7 @@ export function EntertainmentIcon({ className }: { className?: string }) {
   );
 }
 
-export function GeneralTagIcon({ className }: { className?: string }) {
+export function GeneralTagIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="14"

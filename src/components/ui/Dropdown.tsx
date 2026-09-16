@@ -5,68 +5,78 @@ import { CheckIcon, ChevronDownIcon } from "@/components/financial-records/icons
 import styles from "./Dropdown.module.css";
 
 export interface DropdownOption {
-  value: string;
-  label: string;
-  count?: number;
-  icon?: ReactNode;
-  disabled?: boolean;
+  readonly value: string;
+  readonly label: string;
+  readonly count?: number;
+  readonly icon?: ReactNode;
+  readonly disabled?: boolean;
 }
 
 export interface DropdownProps {
-  id?: string;
-  name?: string;
-  label?: string;
-  value: string;
-  options: DropdownOption[];
-  onChange: (value: string) => void;
-  variant?: "pill" | "form";
-  placeholder?: string;
-  defaultIcon?: ReactNode;
-  activeIcon?: ReactNode;
-  disabled?: boolean;
-  required?: boolean;
-  hasError?: boolean;
-  className?: string;
+  readonly id?: string;
+  readonly name?: string;
+  readonly label?: string;
+  readonly value: string;
+  readonly options: DropdownOption[];
+  readonly onChange: (value: string) => void;
+  readonly variant?: "pill" | "form";
+  readonly placeholder?: string;
+  readonly defaultIcon?: ReactNode;
+  readonly activeIcon?: ReactNode;
+  readonly disabled?: boolean;
+  readonly required?: boolean;
+  readonly hasError?: boolean;
+  readonly className?: string;
 }
 
-export function Dropdown({
-  id: customId,
-  name,
-  label,
-  value,
-  options,
-  onChange,
-  variant = "form",
-  placeholder,
-  defaultIcon,
-  activeIcon,
-  disabled = false,
-  required = false,
-  hasError = false,
-  className = "",
-}: DropdownProps) {
-  const generatedId = useId();
-  const id = customId || generatedId;
-  const [isOpen, setIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
-  const [openUpward, setOpenUpward] = useState(false);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const nativeSelectRef = useRef<HTMLSelectElement>(null);
-
-  const selectedOption = options.find((opt) => opt.value === value);
-
-  const checkPlacement = useCallback(() => {
-    if (triggerRef.current && typeof window !== "undefined") {
-      const rect = triggerRef.current.getBoundingClientRect();
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const spaceAbove = rect.top;
-      setOpenUpward(spaceBelow < 250 && spaceAbove > spaceBelow);
+function getDisplayText(
+  selectedOption?: DropdownOption,
+  placeholder?: string,
+  options?: DropdownOption[],
+  label?: string
+): string {
+  if (selectedOption) {
+    if (selectedOption.count !== undefined) {
+      return `${selectedOption.label} (${selectedOption.count})`;
     }
-  }, []);
+    return selectedOption.label;
+  }
+  return placeholder || options?.[0]?.label || label || "Select option";
+}
 
-  // Close when clicking outside
+function getDropdownClasses(
+  variant: "pill" | "form",
+  isOpen: boolean,
+  openUpward: boolean,
+  hasError: boolean,
+  className: string
+) {
+  const isPill = variant === "pill";
+  const openClass = isOpen ? styles.dropdownContainerOpen : "";
+  const containerClass = `${
+    isPill ? styles.dropdownContainer : styles.dropdownContainerFullWidth
+  } ${openClass} ${className}`.trim();
+
+  let triggerClass = isPill
+    ? `${styles.triggerPill} ${isOpen ? styles.triggerPillActive : ""}`
+    : `${styles.triggerForm} ${isOpen ? styles.triggerFormActive : ""}`;
+  if (!isPill && hasError) {
+    triggerClass += ` ${styles.triggerFormError}`;
+  }
+
+  const upwardClass = openUpward ? styles.dropdownMenuUpward : "";
+  const menuClass = `${
+    isPill ? styles.dropdownMenu : styles.dropdownMenuFullWidth
+  } ${upwardClass}`.trim();
+
+  return { containerClass, triggerClass, menuClass };
+}
+
+function useOutsideClick(
+  isOpen: boolean,
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  onClose: () => void
+) {
   useEffect(() => {
     if (!isOpen) return;
 
@@ -75,7 +85,7 @@ export function Dropdown({
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false);
+        onClose();
       }
     };
 
@@ -83,10 +93,33 @@ export function Dropdown({
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
     };
-  }, [isOpen]);
+  }, [isOpen, containerRef, onClose]);
+}
 
-  // Keyboard navigation
-  const handleKeyDown = useCallback(
+interface UseDropdownKeyboardProps {
+  readonly disabled: boolean;
+  readonly isOpen: boolean;
+  readonly highlightedIndex: number;
+  readonly options: DropdownOption[];
+  readonly onChange: (value: string) => void;
+  readonly setIsOpen: (open: boolean) => void;
+  readonly setHighlightedIndex: React.Dispatch<React.SetStateAction<number>>;
+  readonly checkPlacement: () => void;
+  readonly triggerRef: React.RefObject<HTMLButtonElement | null>;
+}
+
+function useDropdownKeyboard({
+  disabled,
+  isOpen,
+  highlightedIndex,
+  options,
+  onChange,
+  setIsOpen,
+  setHighlightedIndex,
+  checkPlacement,
+  triggerRef,
+}: UseDropdownKeyboardProps) {
+  return useCallback(
     (e: React.KeyboardEvent) => {
       if (disabled) return;
 
@@ -121,19 +154,151 @@ export function Dropdown({
       }
 
       if (e.key === "Enter" || e.key === " ") {
-        if (isOpen && highlightedIndex >= 0 && highlightedIndex < options.length) {
-          e.preventDefault();
-          const chosen = options[highlightedIndex];
-          if (!chosen.disabled) {
-            onChange(chosen.value);
-            setIsOpen(false);
-            triggerRef.current?.focus();
-          }
+        if (!isOpen || highlightedIndex < 0 || highlightedIndex >= options.length) {
+          return;
+        }
+        e.preventDefault();
+        const chosen = options[highlightedIndex];
+        if (!chosen.disabled) {
+          onChange(chosen.value);
+          setIsOpen(false);
+          triggerRef.current?.focus();
         }
       }
     },
-    [disabled, isOpen, highlightedIndex, options, onChange, checkPlacement]
+    [disabled, isOpen, highlightedIndex, options, onChange, setIsOpen, setHighlightedIndex, checkPlacement, triggerRef]
   );
+}
+
+interface DropdownMenuProps {
+  readonly id: string;
+  readonly label?: string;
+  readonly menuClass: string;
+  readonly options: DropdownOption[];
+  readonly value: string;
+  readonly highlightedIndex: number;
+  readonly defaultIcon?: ReactNode;
+  readonly onSelect: (value: string) => void;
+  readonly onHighlight: (index: number) => void;
+}
+
+function DropdownMenu({
+  id,
+  label,
+  menuClass,
+  options,
+  value,
+  highlightedIndex,
+  defaultIcon,
+  onSelect,
+  onHighlight,
+}: Readonly<DropdownMenuProps>) {
+  return (
+    <ul
+      role="listbox"
+      id={`${id}-listbox`}
+      aria-label={label}
+      className={menuClass}
+      tabIndex={-1}
+    >
+      {options.map((option, index) => {
+        const isSelected = option.value === value;
+        const isHighlighted = index === highlightedIndex;
+        const optIcon = option.icon || defaultIcon;
+
+        return (
+          <li
+            key={option.value}
+            id={`${id}-option-${index}`}
+            role="option"
+            aria-selected={isSelected}
+            aria-disabled={option.disabled}
+            className={`${isSelected ? styles.optionSelected : styles.option} ${
+              isHighlighted ? styles.optionHighlighted : ""
+            } ${option.disabled ? styles.optionDisabled : ""}`}
+            onClick={() => {
+              if (!option.disabled) {
+                onSelect(option.value);
+              }
+            }}
+            onMouseEnter={() => {
+              if (!option.disabled) {
+                onHighlight(index);
+              }
+            }}
+          >
+            <div className={styles.optionLeft}>
+              {optIcon && <span className={styles.optionIcon}>{optIcon}</span>}
+              <span className={styles.optionLabel}>{option.label}</span>
+            </div>
+
+            <div className={styles.optionRight}>
+              {option.count !== undefined && (
+                <span className={styles.optionCount}>{option.count}</span>
+              )}
+              {isSelected && <CheckIcon className={styles.checkIcon} />}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+export function Dropdown({
+  id: customId,
+  name,
+  label,
+  value,
+  options,
+  onChange,
+  variant = "form",
+  placeholder,
+  defaultIcon,
+  activeIcon,
+  disabled = false,
+  required = false,
+  hasError = false,
+  className = "",
+}: Readonly<DropdownProps>) {
+  const generatedId = useId();
+  const id = customId || generatedId;
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+  const [openUpward, setOpenUpward] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const nativeSelectRef = useRef<HTMLSelectElement>(null);
+
+  const selectedOption = options.find((opt) => opt.value === value);
+
+  const checkPlacement = useCallback(() => {
+    if (triggerRef.current && typeof window !== "undefined") {
+      const rect = triggerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      setOpenUpward(spaceBelow < 250 && spaceAbove > spaceBelow);
+    }
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  useOutsideClick(isOpen, containerRef, handleClose);
+
+  const handleKeyDown = useDropdownKeyboard({
+    disabled,
+    isOpen,
+    highlightedIndex,
+    options,
+    onChange,
+    setIsOpen,
+    setHighlightedIndex,
+    checkPlacement,
+    triggerRef,
+  });
 
   const handleSelect = (optionValue: string) => {
     onChange(optionValue);
@@ -141,31 +306,27 @@ export function Dropdown({
     triggerRef.current?.focus();
   };
 
-  const currentIcon =
-    activeIcon || (selectedOption?.icon ? selectedOption.icon : defaultIcon);
+  const handleTriggerClick = () => {
+    if (disabled) return;
+    if (!isOpen) {
+      checkPlacement();
+    }
+    setIsOpen((prev) => !prev);
+    const currentIndex = options.findIndex((o) => o.value === value);
+    setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
+  };
 
-  const displayText = selectedOption
-    ? selectedOption.count !== undefined
-      ? `${selectedOption.label} (${selectedOption.count})`
-      : selectedOption.label
-    : placeholder || options[0]?.label || label || "Select option";
-
+  const currentIcon = activeIcon || selectedOption?.icon || defaultIcon;
+  const displayText = getDisplayText(selectedOption, placeholder, options, label);
   const isPlaceholderSelected = !selectedOption && Boolean(placeholder);
 
-  const isPill = variant === "pill";
-  const containerClass = isPill
-    ? `${styles.dropdownContainer} ${isOpen ? styles.dropdownContainerOpen : ""} ${className}`.trim()
-    : `${styles.dropdownContainerFullWidth} ${isOpen ? styles.dropdownContainerOpen : ""} ${className}`.trim();
-
-  const triggerClass = isPill
-    ? `${styles.triggerPill} ${isOpen ? styles.triggerPillActive : ""}`
-    : `${styles.triggerForm} ${isOpen ? styles.triggerFormActive : ""} ${
-        hasError ? styles.triggerFormError : ""
-      }`;
-
-  const menuClass = isPill
-    ? `${styles.dropdownMenu} ${openUpward ? styles.dropdownMenuUpward : ""}`
-    : `${styles.dropdownMenuFullWidth} ${openUpward ? styles.dropdownMenuUpward : ""}`;
+  const { containerClass, triggerClass, menuClass } = getDropdownClasses(
+    variant,
+    isOpen,
+    openUpward,
+    hasError,
+    className
+  );
 
   return (
     <div
@@ -214,15 +375,7 @@ export function Dropdown({
         aria-controls={`${id}-listbox`}
         disabled={disabled}
         className={triggerClass}
-        onClick={() => {
-          if (disabled) return;
-          if (!isOpen) {
-            checkPlacement();
-          }
-          setIsOpen((prev) => !prev);
-          const currentIndex = options.findIndex((o) => o.value === value);
-          setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
-        }}
+        onClick={handleTriggerClick}
       >
         <span className={styles.triggerContent}>
           {currentIcon && <span className={styles.triggerIcon}>{currentIcon}</span>}
@@ -241,54 +394,17 @@ export function Dropdown({
 
       {/* Floating custom styled dropdown menu */}
       {isOpen && (
-        <ul
-          role="listbox"
-          id={`${id}-listbox`}
-          aria-label={label}
-          className={menuClass}
-          tabIndex={-1}
-        >
-          {options.map((option, index) => {
-            const isSelected = option.value === value;
-            const isHighlighted = index === highlightedIndex;
-            const optIcon = option.icon || defaultIcon;
-
-            return (
-              <li
-                key={option.value}
-                id={`${id}-option-${index}`}
-                role="option"
-                aria-selected={isSelected}
-                aria-disabled={option.disabled}
-                className={`${isSelected ? styles.optionSelected : styles.option} ${
-                  isHighlighted ? styles.optionHighlighted : ""
-                } ${option.disabled ? styles.optionDisabled : ""}`}
-                onClick={() => {
-                  if (!option.disabled) {
-                    handleSelect(option.value);
-                  }
-                }}
-                onMouseEnter={() => {
-                  if (!option.disabled) {
-                    setHighlightedIndex(index);
-                  }
-                }}
-              >
-                <div className={styles.optionLeft}>
-                  {optIcon && <span className={styles.optionIcon}>{optIcon}</span>}
-                  <span className={styles.optionLabel}>{option.label}</span>
-                </div>
-
-                <div className={styles.optionRight}>
-                  {option.count !== undefined && (
-                    <span className={styles.optionCount}>{option.count}</span>
-                  )}
-                  {isSelected && <CheckIcon className={styles.checkIcon} />}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <DropdownMenu
+          id={id}
+          label={label}
+          menuClass={menuClass}
+          options={options}
+          value={value}
+          highlightedIndex={highlightedIndex}
+          defaultIcon={defaultIcon}
+          onSelect={handleSelect}
+          onHighlight={setHighlightedIndex}
+        />
       )}
     </div>
   );

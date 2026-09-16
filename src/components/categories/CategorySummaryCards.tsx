@@ -13,14 +13,14 @@ import {
 import { GeneralTagIcon, CheckIcon } from "@/components/financial-records/icons";
 
 interface CategorySummaryCardsProps {
-  categories: Category[];
-  activeTab: CategoryTab;
+  readonly categories: Category[];
+  readonly activeTab: CategoryTab;
 }
 
 export function CategorySummaryCards({
   categories,
   activeTab,
-}: CategorySummaryCardsProps) {
+}: Readonly<CategorySummaryCardsProps>) {
   const expenseCategories = useMemo(
     () => categories.filter((c) => c.type === "expense"),
     [categories]

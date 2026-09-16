@@ -4,10 +4,10 @@ import styles from "./ActionButton.module.css";
 export type ActionButtonVariant = "forest" | "expense" | "transaction";
 
 export interface ActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ActionButtonVariant;
-  icon?: ReactNode;
-  showIcon?: boolean;
-  children: ReactNode;
+  readonly variant?: ActionButtonVariant;
+  readonly icon?: ReactNode;
+  readonly showIcon?: boolean;
+  readonly children: ReactNode;
 }
 
 function DefaultPlusIcon() {
@@ -37,13 +37,11 @@ export function ActionButton({
   className,
   type = "button",
   ...rest
-}: ActionButtonProps) {
+}: Readonly<ActionButtonProps>) {
+  const fallbackVariantClass =
+    variant === "transaction" ? styles.buttonTransaction : styles.buttonForest;
   const variantClass =
-    variant === "expense"
-      ? styles.buttonExpense
-      : variant === "transaction"
-      ? styles.buttonTransaction
-      : styles.buttonForest;
+    variant === "expense" ? styles.buttonExpense : fallbackVariantClass;
 
   const iconToRender = showIcon ? (
     <span className={styles.icon}>{icon || <DefaultPlusIcon />}</span>

@@ -151,7 +151,7 @@ export function getAccountAvatarIcon(type: AccountType): ReactNode {
   }
 }
 
-export function AccountAvatar({ type, className }: AccountAvatarProps) {
+export function AccountAvatar({ type, className }: Readonly<AccountAvatarProps>) {
   const themeClass = styles[type] || styles.other;
   const icon = getAccountAvatarIcon(type);
 

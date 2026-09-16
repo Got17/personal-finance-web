@@ -31,7 +31,7 @@ export function FinancialRecordsTable({
   categories,
   onEdit,
   onDelete,
-}: FinancialRecordsTableProps) {
+}: Readonly<FinancialRecordsTableProps>) {
   const getCategoryName = (id: string) =>
     categories.find((cat) => cat.id === id)?.name || "Uncategorized";
 

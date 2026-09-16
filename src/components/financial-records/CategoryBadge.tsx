@@ -32,7 +32,7 @@ export function getCategoryThemeClass(name: string): string {
   return styles.default;
 }
 
-export function CategoryBadge({ name, className }: CategoryBadgeProps) {
+export function CategoryBadge({ name, className }: Readonly<CategoryBadgeProps>) {
   const themeClass = getCategoryThemeClass(name);
   const icon = getCategoryIcon(name);
 

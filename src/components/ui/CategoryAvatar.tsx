@@ -71,7 +71,7 @@ export function getCategoryAvatarThemeClass(name: string): string {
   return styles.default;
 }
 
-export function CategoryAvatar({ categoryName, className }: CategoryAvatarProps) {
+export function CategoryAvatar({ categoryName, className }: Readonly<CategoryAvatarProps>) {
   const themeClass = getCategoryAvatarThemeClass(categoryName);
   const icon = getCategoryIcon(categoryName);
 

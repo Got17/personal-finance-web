@@ -1,4 +1,6 @@
-export function InflowArrowIcon({ className }: { className?: string }) {
+import type { IconProps } from "./icons";
+
+export function InflowArrowIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="16"
@@ -18,7 +20,7 @@ export function InflowArrowIcon({ className }: { className?: string }) {
   );
 }
 
-export function OutflowArrowIcon({ className }: { className?: string }) {
+export function OutflowArrowIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="16"
@@ -38,7 +40,7 @@ export function OutflowArrowIcon({ className }: { className?: string }) {
   );
 }
 
-export function NetBalanceIcon({ className }: { className?: string }) {
+export function NetBalanceIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="16"
@@ -60,7 +62,7 @@ export function NetBalanceIcon({ className }: { className?: string }) {
   );
 }
 
-export function TrendingStarIcon({ className }: { className?: string }) {
+export function TrendingStarIcon({ className }: Readonly<IconProps>) {
   return (
     <svg
       width="16"

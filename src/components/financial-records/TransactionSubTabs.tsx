@@ -20,7 +20,7 @@ export function TransactionSubTabs({
   allCount,
   expenseCount,
   incomeCount,
-}: TransactionSubTabsProps) {
+}: Readonly<TransactionSubTabsProps>) {
   const tabs: TabItem<TransactionTab>[] = [
     { id: TransactionTab.All, label: "All", count: allCount, badgeVariant: "default" },
     { id: TransactionTab.Expense, label: "Expenses", count: expenseCount, badgeVariant: "expense" },

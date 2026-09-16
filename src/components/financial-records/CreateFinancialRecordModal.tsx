@@ -28,7 +28,7 @@ export function CreateFinancialRecordModal({
   accounts,
   categories,
   onRecordCreated,
-}: CreateFinancialRecordModalProps) {
+}: Readonly<CreateFinancialRecordModalProps>) {
   const [kind, setKind] = useState<FinancialRecordKind>(defaultKind);
   const isExpense = kind === "expense";
   const activeAccounts = accounts.filter((account) => account.is_active);
@@ -77,17 +77,18 @@ export function CreateFinancialRecordModal({
     });
   };
 
-  const title = allowKindSelection
-    ? "Add New Transaction"
-    : isExpense
-    ? "Add New Expense"
-    : "Add New Income";
+  const defaultTitle = isExpense ? "Add New Expense" : "Add New Income";
+  const title = allowKindSelection ? "Add New Transaction" : defaultTitle;
 
-  const description = allowKindSelection
-    ? "Record an income or expense transaction with an account and category."
-    : isExpense
+  const defaultDescription = isExpense
     ? "Record an expense with an account, category, and date."
     : "Record an income stream into your selected account.";
+  const description = allowKindSelection
+    ? "Record an income or expense transaction with an account and category."
+    : defaultDescription;
+
+  const submitLabel = isExpense ? "Add Expense" : "Add Income";
+  const submitButtonText = isPending ? "Saving…" : submitLabel;
 
   return (
     <Modal
@@ -233,7 +234,7 @@ export function CreateFinancialRecordModal({
             className={isExpense ? styles.submitButtonExpense : styles.submitButtonIncome}
             disabled={isPending}
           >
-            {isPending ? "Saving…" : isExpense ? "Add Expense" : "Add Income"}
+            {submitButtonText}
           </button>
         </div>
       </form>

@@ -12,9 +12,9 @@ import { GeneralTagIcon } from "./icons";
 import styles from "./CashFlowSummaryCards.module.css";
 
 interface CashFlowSummaryCardsProps {
-  records: FinancialRecord[];
-  categories: Category[];
-  activeTab: TransactionTab;
+  readonly records: FinancialRecord[];
+  readonly categories: Category[];
+  readonly activeTab: TransactionTab;
 }
 
 interface CurrencyAggregate {
@@ -68,7 +68,7 @@ export function CashFlowSummaryCards({
   records,
   categories,
   activeTab,
-}: CashFlowSummaryCardsProps) {
+}: Readonly<CashFlowSummaryCardsProps>) {
   const categoryMap = useMemo(() => {
     const map = new Map<string, string>();
     for (const cat of categories) {
@@ -247,19 +247,19 @@ export function CashFlowSummaryCards({
   // Active tab === 'all'
   const netMinor = inflowAgg.totalMinor - outflowAgg.totalMinor;
   const netCurrency = inflowAgg.dominantCurrency || outflowAgg.dominantCurrency || fallbackCurrency;
-  const netFormatted =
-    netMinor > 0
-      ? `+${formatMoney(netMinor, netCurrency)}`
-      : netMinor < 0
-      ? `-${formatMoney(Math.abs(netMinor), netCurrency)}`
-      : formatMoney(0, netCurrency);
+  let netFormatted = formatMoney(0, netCurrency);
+  if (netMinor > 0) {
+    netFormatted = `+${formatMoney(netMinor, netCurrency)}`;
+  } else if (netMinor < 0) {
+    netFormatted = `-${formatMoney(Math.abs(netMinor), netCurrency)}`;
+  }
 
-  const netValueClass =
-    netMinor > 0
-      ? styles.netPositiveValue
-      : netMinor < 0
-      ? styles.netNegativeValue
-      : styles.neutralValue;
+  let netValueClass = styles.neutralValue;
+  if (netMinor > 0) {
+    netValueClass = styles.netPositiveValue;
+  } else if (netMinor < 0) {
+    netValueClass = styles.netNegativeValue;
+  }
 
   const hasExtraCurrencies =
     inflowAgg.extraCurrenciesCount > 0 || outflowAgg.extraCurrenciesCount > 0;

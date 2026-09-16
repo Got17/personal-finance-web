@@ -59,7 +59,7 @@ export function FinancialRecordsView({
   initialRecords,
   accounts,
   categories,
-}: Props) {
+}: Readonly<Props>) {
   const [records, setRecords] = useState<FinancialRecord[]>(initialRecords);
   const [activeTab, setActiveTab] = useState<TransactionTab>(() => getInitialTab(initialTab));
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
@@ -239,12 +239,10 @@ export function FinancialRecordsView({
     setEndDate("");
   };
 
+  const defaultActionText =
+    activeTab === TransactionTab.Expense ? "Add Expense" : "Add Income";
   const actionButtonText =
-    activeTab === TransactionTab.All
-      ? "Add Transaction"
-      : activeTab === TransactionTab.Expense
-      ? "Add Expense"
-      : "Add Income";
+    activeTab === TransactionTab.All ? "Add Transaction" : defaultActionText;
   const actionVariant = activeTab === TransactionTab.Expense ? "expense" : "forest";
 
   return (
@@ -389,7 +387,6 @@ export function FinancialRecordsView({
       <DeleteFinancialRecordModal
         isOpen={deletingRecord !== null}
         record={deletingRecord}
-        accounts={accounts}
         categories={categories}
         onClose={() => setDeletingRecord(null)}
         onRecordDeleted={handleRecordDeleted}

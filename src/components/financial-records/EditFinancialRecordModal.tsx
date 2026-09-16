@@ -11,12 +11,12 @@ import { getCategoryIcon } from "./icons";
 import styles from "./EditFinancialRecordModal.module.css";
 
 interface EditFinancialRecordModalProps {
-  isOpen: boolean;
-  record: FinancialRecord | null;
-  accounts: Account[];
-  categories: Category[];
-  onClose: () => void;
-  onRecordUpdated: (record: FinancialRecord) => void;
+  readonly isOpen: boolean;
+  readonly record: FinancialRecord | null;
+  readonly accounts: Account[];
+  readonly categories: Category[];
+  readonly onClose: () => void;
+  readonly onRecordUpdated: (record: FinancialRecord) => void;
 }
 
 export function EditFinancialRecordModal({
@@ -26,7 +26,7 @@ export function EditFinancialRecordModal({
   categories,
   onClose,
   onRecordUpdated,
-}: EditFinancialRecordModalProps) {
+}: Readonly<EditFinancialRecordModalProps>) {
   if (!isOpen || !record) return null;
 
   return (
@@ -41,6 +41,15 @@ export function EditFinancialRecordModal({
   );
 }
 
+interface EditFinancialRecordFormModalProps {
+  readonly isOpen: boolean;
+  readonly record: FinancialRecord;
+  readonly accounts: Account[];
+  readonly categories: Category[];
+  readonly onClose: () => void;
+  readonly onRecordUpdated: (record: FinancialRecord) => void;
+}
+
 function EditFinancialRecordFormModal({
   isOpen,
   record,
@@ -48,14 +57,7 @@ function EditFinancialRecordFormModal({
   categories,
   onClose,
   onRecordUpdated,
-}: {
-  isOpen: boolean;
-  record: FinancialRecord;
-  accounts: Account[];
-  categories: Category[];
-  onClose: () => void;
-  onRecordUpdated: (record: FinancialRecord) => void;
-}) {
+}: Readonly<EditFinancialRecordFormModalProps>) {
   const [kind, setKind] = useState<FinancialRecordKind>(record.kind);
   const [accountId, setAccountId] = useState(record.account_id);
   const [categoryId, setCategoryId] = useState(record.category_id);

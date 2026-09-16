@@ -2,19 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { Modal } from "@/components/ui/Modal";
-import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
 import { archiveFinancialRecordAction } from "@/app/actions/financial-records";
 import styles from "./DeleteFinancialRecordModal.module.css";
 
 interface DeleteFinancialRecordModalProps {
-  isOpen: boolean;
-  record: FinancialRecord | null;
-  accounts: Account[];
-  categories: Category[];
-  onClose: () => void;
-  onRecordDeleted: (record: FinancialRecord) => void;
+  readonly isOpen: boolean;
+  readonly record: FinancialRecord | null;
+  readonly categories: Category[];
+  readonly onClose: () => void;
+  readonly onRecordDeleted: (record: FinancialRecord) => void;
 }
 
 export function DeleteFinancialRecordModal({
@@ -23,7 +21,7 @@ export function DeleteFinancialRecordModal({
   categories,
   onClose,
   onRecordDeleted,
-}: DeleteFinancialRecordModalProps) {
+}: Readonly<DeleteFinancialRecordModalProps>) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 

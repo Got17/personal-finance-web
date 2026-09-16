@@ -1,7 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DeleteFinancialRecordModal } from "./DeleteFinancialRecordModal";
-import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
 
@@ -12,19 +11,6 @@ const { archiveFinancialRecordAction } = vi.hoisted(() => ({
 vi.mock("@/app/actions/financial-records", () => ({
   archiveFinancialRecordAction,
 }));
-
-const mockAccounts: Account[] = [
-  {
-    id: "acc-1",
-    user_id: "user-1",
-    name: "Checking",
-    type: "checking",
-    currency: "USD",
-    is_active: true,
-    created_at: "",
-    updated_at: "",
-  },
-];
 
 const mockCategories: Category[] = [
   {
@@ -65,7 +51,6 @@ describe("DeleteFinancialRecordModal", () => {
       <DeleteFinancialRecordModal
         isOpen={false}
         record={mockRecord}
-        accounts={mockAccounts}
         categories={mockCategories}
         onClose={vi.fn()}
         onRecordDeleted={vi.fn()}
@@ -80,7 +65,6 @@ describe("DeleteFinancialRecordModal", () => {
       <DeleteFinancialRecordModal
         isOpen={true}
         record={null}
-        accounts={mockAccounts}
         categories={mockCategories}
         onClose={vi.fn()}
         onRecordDeleted={vi.fn()}
@@ -95,7 +79,6 @@ describe("DeleteFinancialRecordModal", () => {
       <DeleteFinancialRecordModal
         isOpen={true}
         record={mockRecord}
-        accounts={mockAccounts}
         categories={mockCategories}
         onClose={vi.fn()}
         onRecordDeleted={vi.fn()}
@@ -121,7 +104,6 @@ describe("DeleteFinancialRecordModal", () => {
       <DeleteFinancialRecordModal
         isOpen={true}
         record={mockRecord}
-        accounts={mockAccounts}
         categories={mockCategories}
         onClose={onClose}
         onRecordDeleted={onRecordDeleted}
@@ -147,7 +129,6 @@ describe("DeleteFinancialRecordModal", () => {
       <DeleteFinancialRecordModal
         isOpen={true}
         record={mockRecord}
-        accounts={mockAccounts}
         categories={mockCategories}
         onClose={vi.fn()}
         onRecordDeleted={vi.fn()}
@@ -167,7 +148,6 @@ describe("DeleteFinancialRecordModal", () => {
       <DeleteFinancialRecordModal
         isOpen={true}
         record={mockRecord}
-        accounts={mockAccounts}
         categories={mockCategories}
         onClose={onClose}
         onRecordDeleted={vi.fn()}
