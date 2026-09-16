@@ -7,11 +7,11 @@ export enum CategoryTab {
 }
 
 interface CategorySubTabsProps {
-  activeTab: CategoryTab;
-  onTabChange: (tab: CategoryTab) => void;
-  allCount: number;
-  expenseCount: number;
-  incomeCount: number;
+  readonly activeTab: CategoryTab;
+  readonly onTabChange: (tab: CategoryTab) => void;
+  readonly allCount: number;
+  readonly expenseCount: number;
+  readonly incomeCount: number;
 }
 
 export function CategorySubTabs({
@@ -20,7 +20,7 @@ export function CategorySubTabs({
   allCount,
   expenseCount,
   incomeCount,
-}: CategorySubTabsProps) {
+}: Readonly<CategorySubTabsProps>) {
   const tabs: TabItem<CategoryTab>[] = [
     { id: CategoryTab.All, label: "All", count: allCount, badgeVariant: "default" },
     { id: CategoryTab.Expense, label: "Expenses", count: expenseCount, badgeVariant: "expense" },
