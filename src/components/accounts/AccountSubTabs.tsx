@@ -24,12 +24,12 @@ export function accountMatchesTab(type: AccountType, tab: AccountTab): boolean {
 }
 
 interface AccountSubTabsProps {
-  activeTab: AccountTab;
-  onTabChange: (tab: AccountTab) => void;
-  allCount: number;
-  bankingCount: number;
-  creditCount: number;
-  investmentCount: number;
+  readonly activeTab: AccountTab;
+  readonly onTabChange: (tab: AccountTab) => void;
+  readonly allCount: number;
+  readonly bankingCount: number;
+  readonly creditCount: number;
+  readonly investmentCount: number;
 }
 
 export function AccountSubTabs({
@@ -39,7 +39,7 @@ export function AccountSubTabs({
   bankingCount,
   creditCount,
   investmentCount,
-}: AccountSubTabsProps) {
+}: Readonly<AccountSubTabsProps>) {
   const tabs: TabItem<AccountTab>[] = [
     { id: AccountTab.All, label: "All", count: allCount, badgeVariant: "default" },
     { id: AccountTab.Banking, label: "Banking", count: bankingCount, badgeVariant: "income" },
