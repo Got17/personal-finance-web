@@ -109,6 +109,29 @@ function CheckIcon() {
   );
 }
 
+function getActionButtonText(tab: AccountTab): string {
+  if (tab === AccountTab.Banking) {
+    return "Add Bank Account";
+  }
+  if (tab === AccountTab.Credit) {
+    return "Add Credit Account";
+  }
+  if (tab === AccountTab.Investment) {
+    return "Add Investment Account";
+  }
+  return "Add Account";
+}
+
+function getDefaultCreateType(tab: AccountTab): AccountType {
+  if (tab === AccountTab.Credit) {
+    return "credit_card";
+  }
+  if (tab === AccountTab.Investment) {
+    return "investment";
+  }
+  return "checking";
+}
+
 export interface AccountsViewProps {
   readonly initialTab?: AccountTab;
   readonly initialAccounts: Account[];
@@ -235,25 +258,11 @@ export function AccountsView({
 
   const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
-  const actionButtonText =
-    activeTab === AccountTab.All
-      ? "Add Account"
-      : activeTab === AccountTab.Banking
-      ? "Add Bank Account"
-      : activeTab === AccountTab.Credit
-      ? "Add Credit Account"
-      : "Add Investment Account";
+  const actionButtonText = getActionButtonText(activeTab);
 
   const actionVariant = activeTab === AccountTab.Credit ? "expense" : "forest";
 
-  const defaultCreateType: AccountType =
-    activeTab === AccountTab.Banking
-      ? "checking"
-      : activeTab === AccountTab.Credit
-      ? "credit_card"
-      : activeTab === AccountTab.Investment
-      ? "investment"
-      : "checking";
+  const defaultCreateType: AccountType = getDefaultCreateType(activeTab);
 
   const statusOptions: FilterDropdownOption[] = [
     { value: StatusFilter.All, label: "All statuses", icon: <CheckIcon /> },
