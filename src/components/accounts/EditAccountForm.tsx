@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, FormEvent } from "react";
+import { useState, useTransition, type SubmitEvent } from "react";
 import {
   ACCOUNT_TYPES,
   Account,
@@ -57,7 +57,7 @@ export function EditAccountForm({
 
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
     setFieldErrors({});

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, FormEvent } from "react";
+import { useState, useTransition, type SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
 import { signInAction } from "@/app/actions/auth";
 import { EyeIcon, EyeOffIcon } from "@/components/icons/EyeIcons";
@@ -14,7 +14,7 @@ export function SignInForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);
 

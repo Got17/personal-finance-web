@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, FormEvent } from "react";
+import { useState, useTransition, type SubmitEvent } from "react";
 import {
   CATEGORY_TYPES,
   Category,
@@ -45,7 +45,7 @@ export function CreateCategoryForm({
 
   const isExpense = type === "expense";
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
     setSuccessMessage(null);
