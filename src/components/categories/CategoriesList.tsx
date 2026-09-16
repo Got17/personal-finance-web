@@ -9,11 +9,11 @@ import { getCategoryIcon } from "@/components/financial-records/icons";
 import styles from "./CategoriesList.module.css";
 
 interface CategoriesListProps {
-  categories: Category[];
-  onAddClick?: () => void;
-  onEditClick?: (category: Category) => void;
-  onDeactivateClick?: (category: Category) => void;
-  hideFilterBar?: boolean;
+  readonly categories: Category[];
+  readonly onAddClick?: () => void;
+  readonly onEditClick?: (category: Category) => void;
+  readonly onDeactivateClick?: (category: Category) => void;
+  readonly hideFilterBar?: boolean;
 }
 
 type FilterType = "all" | CategoryType;
@@ -36,7 +36,7 @@ export function CategoriesList({
   onEditClick,
   onDeactivateClick,
   hideFilterBar = false,
-}: CategoriesListProps) {
+}: Readonly<CategoriesListProps>) {
   const [filter, setFilter] = useState<FilterType>("all");
   const tabRefs = useRef<{ [key in FilterType]?: HTMLButtonElement | null }>({});
 
@@ -100,6 +100,7 @@ export function CategoriesList({
           role="tablist"
           aria-label="Category type filter"
           onKeyDown={handleKeyDown}
+          tabIndex={0}
         >
           {TABS.map((tab) => {
             const isSelected = filter === tab.type;
