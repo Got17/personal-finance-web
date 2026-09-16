@@ -16,7 +16,7 @@ export function CreateCategoryModal({
   onClose,
   onCategoryCreated,
   defaultType,
-}: CreateCategoryModalProps) {
+}: Readonly<CreateCategoryModalProps>) {
   const handleCreated = (category: Category) => {
     onCategoryCreated(category);
     onClose();

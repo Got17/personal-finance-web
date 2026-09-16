@@ -13,9 +13,9 @@ import { Dropdown } from "@/components/ui/Dropdown";
 import styles from "@/components/ui/ModalForm.module.css";
 
 interface EditCategoryFormProps {
-  category: Category;
-  onCategoryUpdated?: (category: Category) => void;
-  onCancel?: () => void;
+  readonly category: Category;
+  readonly onCategoryUpdated?: (category: Category) => void;
+  readonly onCancel?: () => void;
 }
 
 const CATEGORY_TYPE_LABELS: Record<CategoryType, string> = {
@@ -27,7 +27,7 @@ export function EditCategoryForm({
   category,
   onCategoryUpdated,
   onCancel,
-}: EditCategoryFormProps) {
+}: Readonly<EditCategoryFormProps>) {
   const [name, setName] = useState(category.name);
   const [type, setType] = useState<CategoryType>(category.type);
   const [isActive, setIsActive] = useState(category.is_active);
@@ -130,7 +130,7 @@ export function EditCategoryForm({
             onChange={(e) => setIsActive(e.target.checked)}
             disabled={isPending}
           />
-          Active Category
+          <span>Active Category</span>
         </label>
       </div>
 
