@@ -110,16 +110,16 @@ function CheckIcon() {
 }
 
 export interface AccountsViewProps {
-  initialTab?: AccountTab;
-  initialAccounts: Account[];
-  defaultCurrency?: string;
+  readonly initialTab?: AccountTab;
+  readonly initialAccounts: Account[];
+  readonly defaultCurrency?: string;
 }
 
 export function AccountsView({
   initialTab,
   initialAccounts,
   defaultCurrency = "LAK",
-}: AccountsViewProps) {
+}: Readonly<AccountsViewProps>) {
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
   const [activeTab, setActiveTab] = useState<AccountTab>(() => getInitialTab(initialTab));
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.All);
