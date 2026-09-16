@@ -5,11 +5,11 @@ import { CreateAccountForm } from "./CreateAccountForm";
 import { Modal } from "@/components/ui/Modal";
 
 interface CreateAccountModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  defaultCurrency?: string;
-  defaultType?: AccountType;
-  onAccountCreated: (account: Account) => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly defaultCurrency?: string;
+  readonly defaultType?: AccountType;
+  readonly onAccountCreated: (account: Account) => void;
 }
 
 export function CreateAccountModal({
@@ -18,7 +18,7 @@ export function CreateAccountModal({
   defaultCurrency = "LAK",
   defaultType = "checking",
   onAccountCreated,
-}: CreateAccountModalProps) {
+}: Readonly<CreateAccountModalProps>) {
   const handleCreated = (account: Account) => {
     onAccountCreated(account);
     onClose();
