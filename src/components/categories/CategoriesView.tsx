@@ -55,15 +55,25 @@ function SearchIcon() {
   );
 }
 
+function getActionButtonText(tab: CategoryTab): string {
+  if (tab === CategoryTab.Expense) {
+    return "Add Expense Category";
+  }
+  if (tab === CategoryTab.Income) {
+    return "Add Income Category";
+  }
+  return "Add Category";
+}
+
 export interface CategoriesViewProps {
-  initialTab?: CategoryTab;
-  initialCategories: Category[];
+  readonly initialTab?: CategoryTab;
+  readonly initialCategories: Category[];
 }
 
 export function CategoriesView({
   initialTab,
   initialCategories,
-}: CategoriesViewProps) {
+}: Readonly<CategoriesViewProps>) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [activeTab, setActiveTab] = useState<CategoryTab>(() => getInitialTab(initialTab));
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.All);
@@ -170,12 +180,7 @@ export function CategoriesView({
 
   const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
-  const actionButtonText =
-    activeTab === CategoryTab.All
-      ? "Add Category"
-      : activeTab === CategoryTab.Expense
-      ? "Add Expense Category"
-      : "Add Income Category";
+  const actionButtonText = getActionButtonText(activeTab);
 
   const actionVariant = activeTab === CategoryTab.Expense ? "expense" : "forest";
 
