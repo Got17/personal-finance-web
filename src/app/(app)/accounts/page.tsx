@@ -27,9 +27,11 @@ export default async function AccountsPage({ searchParams }: PageProps = {}) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const tabParam = resolvedSearchParams?.tab;
   const initialTab: AccountTab =
-    tabParam === "banking" || tabParam === "credit" || tabParam === "investment"
+    tabParam === AccountTab.Banking ||
+    tabParam === AccountTab.Credit ||
+    tabParam === AccountTab.Investment
       ? tabParam
-      : "all";
+      : AccountTab.All;
 
   const accountsResult = await getAccounts(token);
 

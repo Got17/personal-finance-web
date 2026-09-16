@@ -1,6 +1,10 @@
 import { SubTabs, TabItem } from "@/components/ui/SubTabs";
 
-export type TransactionTab = "all" | "expense" | "income";
+export enum TransactionTab {
+  All = "all",
+  Expense = "expense",
+  Income = "income",
+}
 
 interface TransactionSubTabsProps {
   activeTab: TransactionTab;
@@ -18,9 +22,9 @@ export function TransactionSubTabs({
   incomeCount,
 }: TransactionSubTabsProps) {
   const tabs: TabItem<TransactionTab>[] = [
-    { id: "all", label: "All", count: allCount, badgeVariant: "default" },
-    { id: "expense", label: "Expenses", count: expenseCount, badgeVariant: "expense" },
-    { id: "income", label: "Income", count: incomeCount, badgeVariant: "income" },
+    { id: TransactionTab.All, label: "All", count: allCount, badgeVariant: "default" },
+    { id: TransactionTab.Expense, label: "Expenses", count: expenseCount, badgeVariant: "expense" },
+    { id: TransactionTab.Income, label: "Income", count: incomeCount, badgeVariant: "income" },
   ];
 
   return (

@@ -1,20 +1,25 @@
-﻿import { AccountType } from "@/lib/schemas/accounts";
+import { AccountType } from "@/lib/schemas/accounts";
 import { SubTabs, TabItem } from "@/components/ui/SubTabs";
 
-export type AccountTab = "all" | "banking" | "credit" | "investment";
+export enum AccountTab {
+  All = "all",
+  Banking = "banking",
+  Credit = "credit",
+  Investment = "investment",
+}
 
 export function getAccountTabForType(type: AccountType): AccountTab {
   if (type === "checking" || type === "savings" || type === "cash") {
-    return "banking";
+    return AccountTab.Banking;
   }
   if (type === "credit_card" || type === "loan") {
-    return "credit";
+    return AccountTab.Credit;
   }
-  return "investment";
+  return AccountTab.Investment;
 }
 
 export function accountMatchesTab(type: AccountType, tab: AccountTab): boolean {
-  if (tab === "all") return true;
+  if (tab === AccountTab.All) return true;
   return getAccountTabForType(type) === tab;
 }
 
@@ -36,10 +41,10 @@ export function AccountSubTabs({
   investmentCount,
 }: AccountSubTabsProps) {
   const tabs: TabItem<AccountTab>[] = [
-    { id: "all", label: "All", count: allCount, badgeVariant: "default" },
-    { id: "banking", label: "Banking", count: bankingCount, badgeVariant: "income" },
-    { id: "credit", label: "Credit & Loans", count: creditCount, badgeVariant: "expense" },
-    { id: "investment", label: "Investments", count: investmentCount, badgeVariant: "default" },
+    { id: AccountTab.All, label: "All", count: allCount, badgeVariant: "default" },
+    { id: AccountTab.Banking, label: "Banking", count: bankingCount, badgeVariant: "income" },
+    { id: AccountTab.Credit, label: "Credit & Loans", count: creditCount, badgeVariant: "expense" },
+    { id: AccountTab.Investment, label: "Investments", count: investmentCount, badgeVariant: "default" },
   ];
 
   return (

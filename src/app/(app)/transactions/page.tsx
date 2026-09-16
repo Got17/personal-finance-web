@@ -22,7 +22,9 @@ export default async function TransactionsPage({ searchParams }: PageProps = {})
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const tabParam = resolvedSearchParams?.tab;
   const initialTab: TransactionTab =
-    tabParam === "expense" || tabParam === "income" ? tabParam : "all";
+    tabParam === TransactionTab.Expense || tabParam === TransactionTab.Income
+      ? tabParam
+      : TransactionTab.All;
 
   const [accounts, categories, records] = await Promise.all([
     getAccounts(token),

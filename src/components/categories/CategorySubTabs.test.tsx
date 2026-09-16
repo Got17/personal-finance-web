@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import { CategorySubTabs } from "./CategorySubTabs";
+import { CategorySubTabs, CategoryTab } from "./CategorySubTabs";
 
 describe("CategorySubTabs", () => {
   afterEach(() => {
@@ -11,7 +11,7 @@ describe("CategorySubTabs", () => {
     const handleTabChange = vi.fn();
     render(
       <CategorySubTabs
-        activeTab="all"
+        activeTab={CategoryTab.All}
         onTabChange={handleTabChange}
         allCount={10}
         expenseCount={7}
@@ -31,7 +31,7 @@ describe("CategorySubTabs", () => {
     const handleTabChange = vi.fn();
     render(
       <CategorySubTabs
-        activeTab="all"
+        activeTab={CategoryTab.All}
         onTabChange={handleTabChange}
         allCount={10}
         expenseCount={7}
@@ -40,14 +40,14 @@ describe("CategorySubTabs", () => {
     );
 
     fireEvent.click(screen.getByRole("tab", { name: /expenses/i }));
-    expect(handleTabChange).toHaveBeenCalledWith("expense");
+    expect(handleTabChange).toHaveBeenCalledWith(CategoryTab.Expense);
   });
 
   it("navigates tabs using arrow keys", () => {
     const handleTabChange = vi.fn();
     render(
       <CategorySubTabs
-        activeTab="all"
+        activeTab={CategoryTab.All}
         onTabChange={handleTabChange}
         allCount={10}
         expenseCount={7}
@@ -57,12 +57,12 @@ describe("CategorySubTabs", () => {
 
     const tabList = screen.getByRole("tablist");
     fireEvent.keyDown(tabList, { key: "ArrowRight" });
-    expect(handleTabChange).toHaveBeenCalledWith("expense");
+    expect(handleTabChange).toHaveBeenCalledWith(CategoryTab.Expense);
 
     fireEvent.keyDown(tabList, { key: "End" });
-    expect(handleTabChange).toHaveBeenCalledWith("income");
+    expect(handleTabChange).toHaveBeenCalledWith(CategoryTab.Income);
 
     fireEvent.keyDown(tabList, { key: "Home" });
-    expect(handleTabChange).toHaveBeenCalledWith("all");
+    expect(handleTabChange).toHaveBeenCalledWith(CategoryTab.All);
   });
 });

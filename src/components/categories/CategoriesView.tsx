@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Category } from "@/lib/schemas/categories";
 import { ActionButton } from "@/components/ui/ActionButton";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { FilterDropdown, FilterDropdownOption } from "@/components/ui/FilterDropdown";
+import { FilterDropdown, FilterDropdownOption, StatusFilter } from "@/components/ui/FilterDropdown";
 import { CheckIcon, CloseIcon } from "@/components/financial-records/icons";
 import { CategorySubTabs, CategoryTab } from "./CategorySubTabs";
 import { CategorySummaryCards } from "./CategorySummaryCards";
@@ -17,18 +17,23 @@ import styles from "./CategoriesView.module.css";
 const TAB_STORAGE_KEY = "pf_categories_active_tab";
 
 function getInitialTab(initialTab?: CategoryTab): CategoryTab {
-  if (initialTab && (initialTab === "expense" || initialTab === "income")) return initialTab;
+  if (
+    initialTab &&
+    (initialTab === CategoryTab.Expense || initialTab === CategoryTab.Income)
+  ) {
+    return initialTab;
+  }
   if (typeof window !== "undefined") {
     try {
       const urlTab = new URLSearchParams(window.location.search).get("tab") as CategoryTab | null;
-      if (urlTab === "expense" || urlTab === "income") return urlTab;
+      if (urlTab === CategoryTab.Expense || urlTab === CategoryTab.Income) return urlTab;
       const saved = localStorage.getItem(TAB_STORAGE_KEY) as CategoryTab | null;
-      if (saved === "expense" || saved === "income") return saved;
+      if (saved === CategoryTab.Expense || saved === CategoryTab.Income) return saved;
     } catch {
       // Ignore storage errors
     }
   }
-  return "all";
+  return CategoryTab.All;
 }
 
 function SearchIcon() {
@@ -50,18 +55,18 @@ function SearchIcon() {
   );
 }
 
-interface CategoriesViewProps {
-  initialCategories: Category[];
+export interface CategoriesViewProps {
   initialTab?: CategoryTab;
+  initialCategories: Category[];
 }
 
 export function CategoriesView({
-  initialCategories,
   initialTab,
+  initialCategories,
 }: CategoriesViewProps) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [activeTab, setActiveTab] = useState<CategoryTab>(() => getInitialTab(initialTab));
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.All);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -84,10 +89,10 @@ export function CategoriesView({
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
     const currentTabParam = url.searchParams.get("tab");
-    if (activeTab === "all" && currentTabParam) {
+    if (activeTab === CategoryTab.All && currentTabParam) {
       url.searchParams.delete("tab");
       window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
-    } else if (activeTab !== "all" && currentTabParam !== activeTab) {
+    } else if (activeTab !== CategoryTab.All && currentTabParam !== activeTab) {
       url.searchParams.set("tab", activeTab);
       window.history.replaceState(null, "", url.pathname + url.search);
     }
@@ -98,7 +103,11 @@ export function CategoriesView({
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get("tab") as CategoryTab | null;
-      if (tabParam === "expense" || tabParam === "income" || tabParam === "all") {
+      if (
+        tabParam === CategoryTab.Expense ||
+        tabParam === CategoryTab.Income ||
+        tabParam === CategoryTab.All
+      ) {
         setActiveTab(tabParam);
       }
     };
@@ -115,7 +124,7 @@ export function CategoriesView({
     }
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      if (newTab === "all") {
+      if (newTab === CategoryTab.All) {
         url.searchParams.delete("tab");
       } else {
         url.searchParams.set("tab", newTab);
@@ -141,16 +150,16 @@ export function CategoriesView({
   };
 
   const clearFilters = () => {
-    setStatusFilter("all");
+    setStatusFilter(StatusFilter.All);
     setSearchQuery("");
   };
 
   // Filtered categories
   const visibleCategories = useMemo(() => {
     return categories.filter((cat) => {
-      if (activeTab !== "all" && cat.type !== activeTab) return false;
-      if (statusFilter === "active" && !cat.is_active) return false;
-      if (statusFilter === "inactive" && cat.is_active) return false;
+      if (activeTab !== CategoryTab.All && cat.type !== activeTab) return false;
+      if (statusFilter === StatusFilter.Active && !cat.is_active) return false;
+      if (statusFilter === StatusFilter.Inactive && cat.is_active) return false;
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         return cat.name.toLowerCase().includes(query);
@@ -159,21 +168,21 @@ export function CategoriesView({
     });
   }, [categories, activeTab, statusFilter, searchQuery]);
 
-  const hasSecondaryFilters = statusFilter !== "all" || searchQuery.trim() !== "";
+  const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
   const actionButtonText =
-    activeTab === "all"
+    activeTab === CategoryTab.All
       ? "Add Category"
-      : activeTab === "expense"
+      : activeTab === CategoryTab.Expense
       ? "Add Expense Category"
       : "Add Income Category";
 
-  const actionVariant = activeTab === "expense" ? "expense" : "forest";
+  const actionVariant = activeTab === CategoryTab.Expense ? "expense" : "forest";
 
   const statusOptions: FilterDropdownOption[] = [
-    { value: "all", label: "All statuses", icon: <CheckIcon /> },
-    { value: "active", label: "Active only", icon: <CheckIcon /> },
-    { value: "inactive", label: "Inactive only", icon: <CloseIcon /> },
+    { value: StatusFilter.All, label: "All statuses", icon: <CheckIcon /> },
+    { value: StatusFilter.Active, label: "Active only", icon: <CheckIcon /> },
+    { value: StatusFilter.Inactive, label: "Inactive only", icon: <CloseIcon /> },
   ];
 
   return (
@@ -232,7 +241,7 @@ export function CategoriesView({
               label="Filter by status"
               value={statusFilter}
               options={statusOptions}
-              onChange={setStatusFilter}
+              onChange={(val) => setStatusFilter(val as StatusFilter)}
               defaultIcon={<CheckIcon />}
             />
 

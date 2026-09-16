@@ -1,4 +1,4 @@
-﻿import { describe, expect, it, afterEach } from "vitest";
+import { describe, expect, it, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { AccountSummaryCards } from "./AccountSummaryCards";
 import { Account } from "@/lib/schemas/accounts";
@@ -36,13 +36,15 @@ const mockAccounts: Account[] = [
   },
 ];
 
+import { AccountTab } from "./AccountSubTabs";
+
 describe("AccountSummaryCards", () => {
   afterEach(() => {
     cleanup();
   });
 
   it("renders summary cards for all tab", () => {
-    render(<AccountSummaryCards accounts={mockAccounts} activeTab="all" />);
+    render(<AccountSummaryCards accounts={mockAccounts} activeTab={AccountTab.All} />);
     expect(screen.getByTestId("summary-cards-all")).toBeTruthy();
     expect(screen.getByText("Banking Accounts")).toBeTruthy();
     expect(screen.getByText("Credit & Loans")).toBeTruthy();
@@ -50,13 +52,13 @@ describe("AccountSummaryCards", () => {
   });
 
   it("renders summary cards for banking tab", () => {
-    render(<AccountSummaryCards accounts={mockAccounts} activeTab="banking" />);
+    render(<AccountSummaryCards accounts={mockAccounts} activeTab={AccountTab.Banking} />);
     expect(screen.getByTestId("summary-cards-banking")).toBeTruthy();
     expect(screen.getByText("Available for transaction records")).toBeTruthy();
   });
 
   it("renders summary cards for credit tab", () => {
-    render(<AccountSummaryCards accounts={mockAccounts} activeTab="credit" />);
+    render(<AccountSummaryCards accounts={mockAccounts} activeTab={AccountTab.Credit} />);
     expect(screen.getByTestId("summary-cards-credit")).toBeTruthy();
   });
 });

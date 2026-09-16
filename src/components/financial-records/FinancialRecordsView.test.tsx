@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FinancialRecordsView } from "./FinancialRecordsView";
+import { TransactionTab } from "./TransactionSubTabs";
 
 const {
   createFinancialRecordAction,
@@ -403,7 +404,7 @@ describe("FinancialRecordsView", () => {
   it("respects initialTab prop and activates Expenses tab directly", () => {
     render(
       <FinancialRecordsView
-        initialTab="expense"
+        initialTab={TransactionTab.Expense}
         initialRecords={[initialExpense, initialIncome]}
         accounts={accounts}
         categories={categories}

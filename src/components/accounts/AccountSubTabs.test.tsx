@@ -1,6 +1,6 @@
-﻿import { describe, expect, it, vi, afterEach } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import { AccountSubTabs, getAccountTabForType, accountMatchesTab } from "./AccountSubTabs";
+import { AccountSubTabs, AccountTab, getAccountTabForType, accountMatchesTab } from "./AccountSubTabs";
 
 describe("AccountSubTabs", () => {
   afterEach(() => {
@@ -8,17 +8,17 @@ describe("AccountSubTabs", () => {
   });
 
   it("classifies account types correctly into tabs", () => {
-    expect(getAccountTabForType("checking")).toBe("banking");
-    expect(getAccountTabForType("savings")).toBe("banking");
-    expect(getAccountTabForType("cash")).toBe("banking");
-    expect(getAccountTabForType("credit_card")).toBe("credit");
-    expect(getAccountTabForType("loan")).toBe("credit");
-    expect(getAccountTabForType("investment")).toBe("investment");
-    expect(getAccountTabForType("other")).toBe("investment");
+    expect(getAccountTabForType("checking")).toBe(AccountTab.Banking);
+    expect(getAccountTabForType("savings")).toBe(AccountTab.Banking);
+    expect(getAccountTabForType("cash")).toBe(AccountTab.Banking);
+    expect(getAccountTabForType("credit_card")).toBe(AccountTab.Credit);
+    expect(getAccountTabForType("loan")).toBe(AccountTab.Credit);
+    expect(getAccountTabForType("investment")).toBe(AccountTab.Investment);
+    expect(getAccountTabForType("other")).toBe(AccountTab.Investment);
 
-    expect(accountMatchesTab("checking", "all")).toBe(true);
-    expect(accountMatchesTab("checking", "banking")).toBe(true);
-    expect(accountMatchesTab("checking", "credit")).toBe(false);
+    expect(accountMatchesTab("checking", AccountTab.All)).toBe(true);
+    expect(accountMatchesTab("checking", AccountTab.Banking)).toBe(true);
+    expect(accountMatchesTab("checking", AccountTab.Credit)).toBe(false);
   });
 
   it("renders all tabs with their counts and active state", () => {
@@ -26,7 +26,7 @@ describe("AccountSubTabs", () => {
 
     render(
       <AccountSubTabs
-        activeTab="all"
+        activeTab={AccountTab.All}
         onTabChange={onTabChange}
         allCount={5}
         bankingCount={3}
@@ -41,6 +41,6 @@ describe("AccountSubTabs", () => {
     expect(screen.getByRole("tab", { name: /Investments 1/i })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("tab", { name: /Banking 3/i }));
-    expect(onTabChange).toHaveBeenCalledWith("banking");
+    expect(onTabChange).toHaveBeenCalledWith(AccountTab.Banking);
   });
 });

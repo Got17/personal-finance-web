@@ -1,4 +1,4 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { AccountTab, getAccountTabForType } from "./AccountSubTabs";
 import { SummaryCardsGrid, SummaryCard } from "@/components/ui/SummaryCards";
@@ -19,17 +19,17 @@ export function AccountSummaryCards({
   activeTab,
 }: AccountSummaryCardsProps) {
   const bankingAccounts = useMemo(
-    () => accounts.filter((a) => getAccountTabForType(a.type) === "banking"),
+    () => accounts.filter((a) => getAccountTabForType(a.type) === AccountTab.Banking),
     [accounts]
   );
 
   const creditAccounts = useMemo(
-    () => accounts.filter((a) => getAccountTabForType(a.type) === "credit"),
+    () => accounts.filter((a) => getAccountTabForType(a.type) === AccountTab.Credit),
     [accounts]
   );
 
   const investmentAccounts = useMemo(
-    () => accounts.filter((a) => getAccountTabForType(a.type) === "investment"),
+    () => accounts.filter((a) => getAccountTabForType(a.type) === AccountTab.Investment),
     [accounts]
   );
 
@@ -58,7 +58,7 @@ export function AccountSummaryCards({
     return set.size;
   }, [accounts]);
 
-  if (activeTab === "banking") {
+  if (activeTab === AccountTab.Banking) {
     return (
       <SummaryCardsGrid testId="summary-cards-banking">
         <SummaryCard
@@ -86,7 +86,7 @@ export function AccountSummaryCards({
     );
   }
 
-  if (activeTab === "credit") {
+  if (activeTab === AccountTab.Credit) {
     return (
       <SummaryCardsGrid testId="summary-cards-credit">
         <SummaryCard
@@ -114,7 +114,7 @@ export function AccountSummaryCards({
     );
   }
 
-  if (activeTab === "investment") {
+  if (activeTab === AccountTab.Investment) {
     return (
       <SummaryCardsGrid testId="summary-cards-investment">
         <SummaryCard

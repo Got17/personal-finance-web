@@ -27,7 +27,9 @@ export default async function CategoriesPage({ searchParams }: PageProps = {}) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const tabParam = resolvedSearchParams?.tab;
   const initialTab: CategoryTab =
-    tabParam === "expense" || tabParam === "income" ? tabParam : "all";
+    tabParam === CategoryTab.Expense || tabParam === CategoryTab.Income
+      ? tabParam
+      : CategoryTab.All;
 
   const categoriesResult = await getCategories(token);
 

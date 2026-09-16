@@ -1,10 +1,11 @@
-export type DatePreset =
-  | "all"
-  | "this-month"
-  | "last-month"
-  | "last-30-days"
-  | "this-year"
-  | "custom";
+export enum DatePreset {
+  All = "all",
+  ThisMonth = "this-month",
+  LastMonth = "last-month",
+  Last30Days = "last-30-days",
+  ThisYear = "this-year",
+  Custom = "custom",
+}
 
 export function formatDateIso(date: Date): string {
   const y = date.getFullYear();
@@ -16,28 +17,28 @@ export function formatDateIso(date: Date): string {
 export function getDateRangeForPreset(preset: DatePreset): { startDate: string; endDate: string } {
   const now = new Date();
   switch (preset) {
-    case "this-month":
+    case DatePreset.ThisMonth:
       return {
         startDate: formatDateIso(new Date(now.getFullYear(), now.getMonth(), 1)),
         endDate: formatDateIso(new Date(now.getFullYear(), now.getMonth() + 1, 0)),
       };
-    case "last-month":
+    case DatePreset.LastMonth:
       return {
         startDate: formatDateIso(new Date(now.getFullYear(), now.getMonth() - 1, 1)),
         endDate: formatDateIso(new Date(now.getFullYear(), now.getMonth(), 0)),
       };
-    case "last-30-days":
+    case DatePreset.Last30Days:
       return {
         startDate: formatDateIso(new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)),
         endDate: formatDateIso(now),
       };
-    case "this-year":
+    case DatePreset.ThisYear:
       return {
         startDate: formatDateIso(new Date(now.getFullYear(), 0, 1)),
         endDate: formatDateIso(new Date(now.getFullYear(), 11, 31)),
       };
-    case "all":
-    case "custom":
+    case DatePreset.All:
+    case DatePreset.Custom:
     default:
       return { startDate: "", endDate: "" };
   }

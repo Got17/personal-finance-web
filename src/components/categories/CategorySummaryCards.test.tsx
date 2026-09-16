@@ -33,13 +33,15 @@ const mockCategories: Category[] = [
   },
 ];
 
+import { CategoryTab } from "./CategorySubTabs";
+
 describe("CategorySummaryCards", () => {
   afterEach(() => {
     cleanup();
   });
 
   it("renders 3 summary cards when activeTab is all", () => {
-    render(<CategorySummaryCards categories={mockCategories} activeTab="all" />);
+    render(<CategorySummaryCards categories={mockCategories} activeTab={CategoryTab.All} />);
 
     expect(screen.getByTestId("summary-cards-all")).toBeTruthy();
     expect(screen.getByText("Expense Categories")).toBeTruthy();
@@ -50,7 +52,7 @@ describe("CategorySummaryCards", () => {
   });
 
   it("renders expense summary cards when activeTab is expense", () => {
-    render(<CategorySummaryCards categories={mockCategories} activeTab="expense" />);
+    render(<CategorySummaryCards categories={mockCategories} activeTab={CategoryTab.Expense} />);
 
     expect(screen.getByTestId("summary-cards-expense")).toBeTruthy();
     expect(screen.getByText("Total Expenses")).toBeTruthy();
@@ -59,7 +61,7 @@ describe("CategorySummaryCards", () => {
   });
 
   it("renders income summary cards when activeTab is income", () => {
-    render(<CategorySummaryCards categories={mockCategories} activeTab="income" />);
+    render(<CategorySummaryCards categories={mockCategories} activeTab={CategoryTab.Income} />);
 
     expect(screen.getByTestId("summary-cards-income")).toBeTruthy();
     expect(screen.getByText("Total Income")).toBeTruthy();

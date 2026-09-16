@@ -1,6 +1,10 @@
 import { SubTabs, TabItem } from "@/components/ui/SubTabs";
 
-export type CategoryTab = "all" | "expense" | "income";
+export enum CategoryTab {
+  All = "all",
+  Expense = "expense",
+  Income = "income",
+}
 
 interface CategorySubTabsProps {
   activeTab: CategoryTab;
@@ -18,9 +22,9 @@ export function CategorySubTabs({
   incomeCount,
 }: CategorySubTabsProps) {
   const tabs: TabItem<CategoryTab>[] = [
-    { id: "all", label: "All", count: allCount, badgeVariant: "default" },
-    { id: "expense", label: "Expenses", count: expenseCount, badgeVariant: "expense" },
-    { id: "income", label: "Income", count: incomeCount, badgeVariant: "income" },
+    { id: CategoryTab.All, label: "All", count: allCount, badgeVariant: "default" },
+    { id: CategoryTab.Expense, label: "Expenses", count: expenseCount, badgeVariant: "expense" },
+    { id: CategoryTab.Income, label: "Income", count: incomeCount, badgeVariant: "income" },
   ];
 
   return (

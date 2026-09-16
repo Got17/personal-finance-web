@@ -130,7 +130,7 @@ export function CashFlowSummaryCards({
     };
   }, [activeTab, incomeRecords, expenseRecords, categoryMap, fallbackCurrency]);
 
-  if (activeTab === "income") {
+  if (activeTab === TransactionTab.Income) {
     const incomeFormatted = `+${formatMoney(inflowAgg.totalMinor, inflowAgg.dominantCurrency)}`;
     return (
       <div className={styles.grid} data-testid="summary-cards-income">
@@ -187,7 +187,7 @@ export function CashFlowSummaryCards({
     );
   }
 
-  if (activeTab === "expense") {
+  if (activeTab === TransactionTab.Expense) {
     const expenseFormatted = `-${formatMoney(outflowAgg.totalMinor, outflowAgg.dominantCurrency)}`;
     return (
       <div className={styles.grid} data-testid="summary-cards-expense">

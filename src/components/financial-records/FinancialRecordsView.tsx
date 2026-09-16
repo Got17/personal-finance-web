@@ -23,23 +23,28 @@ import { CashFlowSummaryCards } from "./CashFlowSummaryCards";
 import { DatePreset, getDateRangeForPreset } from "./date-filter-utils";
 import styles from "./FinancialRecordsView.module.css";
 
-export type { DatePreset } from "./date-filter-utils";
+export { DatePreset } from "./date-filter-utils";
 
 const TAB_STORAGE_KEY = "pf_transactions_active_tab";
 
 function getInitialTab(initialTab?: TransactionTab): TransactionTab {
-  if (initialTab && (initialTab === "expense" || initialTab === "income")) return initialTab;
+  if (
+    initialTab &&
+    (initialTab === TransactionTab.Expense || initialTab === TransactionTab.Income)
+  ) {
+    return initialTab;
+  }
   if (typeof window !== "undefined") {
     try {
       const urlTab = new URLSearchParams(window.location.search).get("tab") as TransactionTab | null;
-      if (urlTab === "expense" || urlTab === "income") return urlTab;
+      if (urlTab === TransactionTab.Expense || urlTab === TransactionTab.Income) return urlTab;
       const saved = localStorage.getItem(TAB_STORAGE_KEY) as TransactionTab | null;
-      if (saved === "expense" || saved === "income") return saved;
+      if (saved === TransactionTab.Expense || saved === TransactionTab.Income) return saved;
     } catch {
       // Ignore
     }
   }
-  return "all";
+  return TransactionTab.All;
 }
 
 interface Props {
@@ -59,7 +64,7 @@ export function FinancialRecordsView({
   const [activeTab, setActiveTab] = useState<TransactionTab>(() => getInitialTab(initialTab));
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
-  const [datePreset, setDatePreset] = useState<DatePreset>("all");
+  const [datePreset, setDatePreset] = useState<DatePreset>(DatePreset.All);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
@@ -81,7 +86,7 @@ export function FinancialRecordsView({
   const relevantCategories = useMemo(
     () =>
       categories.filter(
-        (cat) => cat.is_active && (activeTab === "all" || cat.type === activeTab)
+        (cat) => cat.is_active && (activeTab === TransactionTab.All || cat.type === activeTab)
       ),
     [categories, activeTab]
   );
@@ -93,7 +98,7 @@ export function FinancialRecordsView({
 
   // Tab-specific records to calculate per-category item counts
   const tabRecords = useMemo(
-    () => (activeTab === "all" ? records : records.filter((r) => r.kind === activeTab)),
+    () => (activeTab === TransactionTab.All ? records : records.filter((r) => r.kind === activeTab)),
     [records, activeTab]
   );
 
@@ -108,12 +113,12 @@ export function FinancialRecordsView({
   const totalItemsForTab = tabRecords.length;
 
   const dateOptions: FilterDropdownOption[] = [
-    { value: "all", label: "All dates", icon: <CalendarIcon /> },
-    { value: "this-month", label: "This month", icon: <CalendarIcon /> },
-    { value: "last-month", label: "Last month", icon: <CalendarIcon /> },
-    { value: "last-30-days", label: "Last 30 days", icon: <CalendarIcon /> },
-    { value: "this-year", label: "This year", icon: <CalendarIcon /> },
-    { value: "custom", label: "Custom range...", icon: <CalendarIcon /> },
+    { value: DatePreset.All, label: "All dates", icon: <CalendarIcon /> },
+    { value: DatePreset.ThisMonth, label: "This month", icon: <CalendarIcon /> },
+    { value: DatePreset.LastMonth, label: "Last month", icon: <CalendarIcon /> },
+    { value: DatePreset.Last30Days, label: "Last 30 days", icon: <CalendarIcon /> },
+    { value: DatePreset.ThisYear, label: "This year", icon: <CalendarIcon /> },
+    { value: DatePreset.Custom, label: "Custom range...", icon: <CalendarIcon /> },
   ];
 
   const accountOptions: FilterDropdownOption[] = useMemo(
@@ -163,10 +168,10 @@ export function FinancialRecordsView({
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
     const currentTabParam = url.searchParams.get("tab");
-    if (activeTab === "all" && currentTabParam) {
+    if (activeTab === TransactionTab.All && currentTabParam) {
       url.searchParams.delete("tab");
       window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
-    } else if (activeTab !== "all" && currentTabParam !== activeTab) {
+    } else if (activeTab !== TransactionTab.All && currentTabParam !== activeTab) {
       url.searchParams.set("tab", activeTab);
       window.history.replaceState(null, "", url.pathname + url.search);
     }
@@ -177,7 +182,11 @@ export function FinancialRecordsView({
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get("tab") as TransactionTab | null;
-      if (tabParam === "expense" || tabParam === "income" || tabParam === "all") {
+      if (
+        tabParam === TransactionTab.Expense ||
+        tabParam === TransactionTab.Income ||
+        tabParam === TransactionTab.All
+      ) {
         setActiveTab(tabParam);
       }
     };
@@ -195,7 +204,7 @@ export function FinancialRecordsView({
     }
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      if (newTab === "all") {
+      if (newTab === TransactionTab.All) {
         url.searchParams.delete("tab");
       } else {
         url.searchParams.set("tab", newTab);
@@ -218,21 +227,25 @@ export function FinancialRecordsView({
   const hasSecondaryFilters =
     Boolean(selectedCategoryId) ||
     Boolean(selectedAccountId) ||
-    datePreset !== "all" ||
+    datePreset !== DatePreset.All ||
     Boolean(startDate) ||
     Boolean(endDate);
 
   const clearSecondaryFilters = () => {
     setSelectedCategoryId("");
     setSelectedAccountId("");
-    setDatePreset("all");
+    setDatePreset(DatePreset.All);
     setStartDate("");
     setEndDate("");
   };
 
   const actionButtonText =
-    activeTab === "all" ? "Add Transaction" : activeTab === "expense" ? "Add Expense" : "Add Income";
-  const actionVariant = activeTab === "expense" ? "expense" : "forest";
+    activeTab === TransactionTab.All
+      ? "Add Transaction"
+      : activeTab === TransactionTab.Expense
+      ? "Add Expense"
+      : "Add Income";
+  const actionVariant = activeTab === TransactionTab.Expense ? "expense" : "forest";
 
   return (
     <div className={styles.container}>
@@ -283,7 +296,7 @@ export function FinancialRecordsView({
               defaultIcon={<CalendarIcon />}
             />
 
-            {datePreset === "custom" && (
+            {datePreset === DatePreset.Custom && (
               <div className={styles.customDateRange}>
                 <div className={styles.dateFieldGroup}>
                   <span className={styles.customDateLabel}>From</span>
@@ -357,8 +370,8 @@ export function FinancialRecordsView({
       <CreateFinancialRecordModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        defaultKind={activeTab === "income" ? "income" : "expense"}
-        allowKindSelection={activeTab === "all"}
+        defaultKind={activeTab === TransactionTab.Income ? "income" : "expense"}
+        allowKindSelection={activeTab === TransactionTab.All}
         accounts={accounts}
         categories={categories}
         onRecordCreated={handleRecordCreated}

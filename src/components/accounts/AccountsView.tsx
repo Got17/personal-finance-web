@@ -4,8 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Account, AccountType } from "@/lib/schemas/accounts";
 import { ActionButton } from "@/components/ui/ActionButton";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { FilterDropdown, FilterDropdownOption } from "@/components/ui/FilterDropdown";
-import { CheckIcon, CloseIcon } from "@/components/financial-records/icons";
+import { FilterDropdown, FilterDropdownOption, StatusFilter } from "@/components/ui/FilterDropdown";
 import {
   AccountSubTabs,
   AccountTab,
@@ -23,9 +22,9 @@ const TAB_STORAGE_KEY = "pf_accounts_active_tab";
 function getInitialTab(initialTab?: AccountTab): AccountTab {
   if (
     initialTab &&
-    (initialTab === "banking" ||
-      initialTab === "credit" ||
-      initialTab === "investment")
+    (initialTab === AccountTab.Banking ||
+      initialTab === AccountTab.Credit ||
+      initialTab === AccountTab.Investment)
   ) {
     return initialTab;
   }
@@ -33,25 +32,25 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
     try {
       const urlTab = new URLSearchParams(window.location.search).get("tab") as AccountTab | null;
       if (
-        urlTab === "banking" ||
-        urlTab === "credit" ||
-        urlTab === "investment"
+        urlTab === AccountTab.Banking ||
+        urlTab === AccountTab.Credit ||
+        urlTab === AccountTab.Investment
       ) {
         return urlTab;
       }
       const saved = localStorage.getItem(TAB_STORAGE_KEY) as AccountTab | null;
       if (
-        saved === "banking" ||
-        saved === "credit" ||
-        saved === "investment"
+        saved === AccountTab.Banking ||
+        saved === AccountTab.Credit ||
+        saved === AccountTab.Investment
       ) {
         return saved;
       }
     } catch {
-      // Ignore storage errors
+      // Ignore localStorage or URLSearchParams access error
     }
   }
-  return "all";
+  return AccountTab.All;
 }
 
 function SearchIcon() {
@@ -73,20 +72,57 @@ function SearchIcon() {
   );
 }
 
-interface AccountsViewProps {
-  initialAccounts: Account[];
+function CloseIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+export interface AccountsViewProps {
   initialTab?: AccountTab;
+  initialAccounts: Account[];
   defaultCurrency?: string;
 }
 
 export function AccountsView({
-  initialAccounts,
   initialTab,
+  initialAccounts,
   defaultCurrency = "LAK",
 }: AccountsViewProps) {
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
   const [activeTab, setActiveTab] = useState<AccountTab>(() => getInitialTab(initialTab));
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.All);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -96,15 +132,15 @@ export function AccountsView({
   // Sub-tab counts
   const allCount = accounts.length;
   const bankingCount = useMemo(
-    () => accounts.filter((acc) => accountMatchesTab(acc.type, "banking")).length,
+    () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Banking)).length,
     [accounts]
   );
   const creditCount = useMemo(
-    () => accounts.filter((acc) => accountMatchesTab(acc.type, "credit")).length,
+    () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Credit)).length,
     [accounts]
   );
   const investmentCount = useMemo(
-    () => accounts.filter((acc) => accountMatchesTab(acc.type, "investment")).length,
+    () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Investment)).length,
     [accounts]
   );
 
@@ -113,10 +149,10 @@ export function AccountsView({
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
     const currentTabParam = url.searchParams.get("tab");
-    if (activeTab === "all" && currentTabParam) {
+    if (activeTab === AccountTab.All && currentTabParam) {
       url.searchParams.delete("tab");
       window.history.replaceState(null, "", url.pathname + (url.search ? url.search : ""));
-    } else if (activeTab !== "all" && currentTabParam !== activeTab) {
+    } else if (activeTab !== AccountTab.All && currentTabParam !== activeTab) {
       url.searchParams.set("tab", activeTab);
       window.history.replaceState(null, "", url.pathname + url.search);
     }
@@ -128,10 +164,10 @@ export function AccountsView({
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get("tab") as AccountTab | null;
       if (
-        tabParam === "banking" ||
-        tabParam === "credit" ||
-        tabParam === "investment" ||
-        tabParam === "all"
+        tabParam === AccountTab.Banking ||
+        tabParam === AccountTab.Credit ||
+        tabParam === AccountTab.Investment ||
+        tabParam === AccountTab.All
       ) {
         setActiveTab(tabParam);
       }
@@ -149,7 +185,7 @@ export function AccountsView({
     }
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      if (newTab === "all") {
+      if (newTab === AccountTab.All) {
         url.searchParams.delete("tab");
       } else {
         url.searchParams.set("tab", newTab);
@@ -175,7 +211,7 @@ export function AccountsView({
   };
 
   const clearFilters = () => {
-    setStatusFilter("all");
+    setStatusFilter(StatusFilter.All);
     setSearchQuery("");
   };
 
@@ -183,8 +219,8 @@ export function AccountsView({
   const visibleAccounts = useMemo(() => {
     return accounts.filter((acc) => {
       if (!accountMatchesTab(acc.type, activeTab)) return false;
-      if (statusFilter === "active" && !acc.is_active) return false;
-      if (statusFilter === "inactive" && acc.is_active) return false;
+      if (statusFilter === StatusFilter.Active && !acc.is_active) return false;
+      if (statusFilter === StatusFilter.Inactive && acc.is_active) return false;
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         const nameMatch = acc.name.toLowerCase().includes(query);
@@ -197,32 +233,32 @@ export function AccountsView({
     });
   }, [accounts, activeTab, statusFilter, searchQuery]);
 
-  const hasSecondaryFilters = statusFilter !== "all" || searchQuery.trim() !== "";
+  const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
   const actionButtonText =
-    activeTab === "all"
+    activeTab === AccountTab.All
       ? "Add Account"
-      : activeTab === "banking"
+      : activeTab === AccountTab.Banking
       ? "Add Bank Account"
-      : activeTab === "credit"
+      : activeTab === AccountTab.Credit
       ? "Add Credit Account"
       : "Add Investment Account";
 
-  const actionVariant = activeTab === "credit" ? "expense" : "forest";
+  const actionVariant = activeTab === AccountTab.Credit ? "expense" : "forest";
 
   const defaultCreateType: AccountType =
-    activeTab === "banking"
+    activeTab === AccountTab.Banking
       ? "checking"
-      : activeTab === "credit"
+      : activeTab === AccountTab.Credit
       ? "credit_card"
-      : activeTab === "investment"
+      : activeTab === AccountTab.Investment
       ? "investment"
       : "checking";
 
   const statusOptions: FilterDropdownOption[] = [
-    { value: "all", label: "All statuses", icon: <CheckIcon /> },
-    { value: "active", label: "Active only", icon: <CheckIcon /> },
-    { value: "inactive", label: "Inactive only", icon: <CloseIcon /> },
+    { value: StatusFilter.All, label: "All statuses", icon: <CheckIcon /> },
+    { value: StatusFilter.Active, label: "Active only", icon: <CheckIcon /> },
+    { value: StatusFilter.Inactive, label: "Inactive only", icon: <CloseIcon /> },
   ];
 
   return (
@@ -282,7 +318,7 @@ export function AccountsView({
               label="Filter by status"
               value={statusFilter}
               options={statusOptions}
-              onChange={setStatusFilter}
+              onChange={(val) => setStatusFilter(val as StatusFilter)}
               defaultIcon={<CheckIcon />}
             />
 

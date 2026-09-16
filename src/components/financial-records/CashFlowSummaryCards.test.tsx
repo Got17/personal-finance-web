@@ -44,13 +44,15 @@ const mockRecords: FinancialRecord[] = [
   },
 ];
 
+import { TransactionTab } from "./TransactionSubTabs";
+
 describe("CashFlowSummaryCards", () => {
   it("renders inflow, outflow, and net cards on 'all' tab", () => {
     render(
       <CashFlowSummaryCards
         records={mockRecords}
         categories={mockCategories}
-        activeTab="all"
+        activeTab={TransactionTab.All}
       />
     );
 
@@ -68,7 +70,7 @@ describe("CashFlowSummaryCards", () => {
       <CashFlowSummaryCards
         records={mockRecords}
         categories={mockCategories}
-        activeTab="income"
+        activeTab={TransactionTab.Income}
       />
     );
 
@@ -85,7 +87,7 @@ describe("CashFlowSummaryCards", () => {
       <CashFlowSummaryCards
         records={mockRecords}
         categories={mockCategories}
-        activeTab="expense"
+        activeTab={TransactionTab.Expense}
       />
     );
 
@@ -120,7 +122,7 @@ describe("CashFlowSummaryCards", () => {
       <CashFlowSummaryCards
         records={multiCurrencyRecords}
         categories={mockCategories}
-        activeTab="all"
+        activeTab={TransactionTab.All}
       />
     );
 

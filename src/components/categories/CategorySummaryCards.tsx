@@ -47,7 +47,7 @@ export function CategorySummaryCards({
 
   const totalActive = activeExpenses + activeIncomes;
 
-  if (activeTab === "income") {
+  if (activeTab === CategoryTab.Income) {
     return (
       <SummaryCardsGrid testId="summary-cards-income">
         <SummaryCard
@@ -75,7 +75,7 @@ export function CategorySummaryCards({
     );
   }
 
-  if (activeTab === "expense") {
+  if (activeTab === CategoryTab.Expense) {
     return (
       <SummaryCardsGrid testId="summary-cards-expense">
         <SummaryCard
