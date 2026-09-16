@@ -50,29 +50,3 @@ export function SidebarNav({ onNavigate }: SidebarNavProps = {}) {
     </nav>
   );
 }
-
-export function MobileNav() {
-  const pathname = usePathname();
-
-  return (
-    <nav className={styles.mobileNavigation} aria-label="Mobile navigation">
-      {navItems.slice(0, 4).map((item, index) => {
-        const isActive =
-          item.href === "/"
-            ? pathname === "/" || pathname === ""
-            : pathname.startsWith(item.href);
-
-        return (
-          <Link
-            key={item.name}
-            href={item.href}
-            className={isActive ? styles.activeMobileNavItem : undefined}
-          >
-            {index + 1}
-            <span>{item.name}</span>
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}

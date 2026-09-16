@@ -44,7 +44,7 @@ Source assets are in `public/brand/`: `pf-mark.svg`, `pf-mark-light.svg`, `pf-lo
 
 ## Layout
 
-Desktop uses a 248px warm-paper left rail: PF monogram, five primary destinations, user identity, and sign-out. Mobile swaps this for a compact fixed bottom navigation.
+Desktop uses a 248px warm-paper left rail: PF monogram, five primary destinations, user identity, and sign-out. Mobile transitions this to a sticky top app header with an off-canvas slide-out navigation drawer and contextual primary action controls.
 
 The dashboard is balanced, with the first row ordered by the questions people ask on opening the app:
 
@@ -75,7 +75,7 @@ The current sign-up page is a visual prototype only because the API exposes logi
 
 ## Responsive rules
 
-The system is adaptive rather than simply shrunken. The desktop rail becomes bottom navigation below 760px. The net-worth card remains first; supporting cards stack by priority. Forms remove the illustration panel on smaller screens, retaining the focused task and privacy message.
+The system is adaptive rather than simply shrunken. The desktop rail transitions to a sticky top bar and off-canvas slide-out navigation drawer below 760px, accompanied by a floating action button (FAB) for fast record creation on key views. The net-worth card remains first; supporting cards stack by priority. Forms remove the illustration panel on smaller screens, retaining the focused task and privacy message.
 
 ## Reference boundary
 

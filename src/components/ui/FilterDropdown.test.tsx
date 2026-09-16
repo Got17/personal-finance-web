@@ -1,13 +1,18 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FilterDropdown, FilterDropdownOption } from "./FilterDropdown";
-import { CalendarIcon } from "./icons";
 
 const mockOptions: FilterDropdownOption[] = [
   { value: "all", label: "All dates" },
   { value: "this-month", label: "This month", count: 5 },
   { value: "last-month", label: "Last month", count: 2 },
 ];
+
+const mockIcon = (
+  <svg data-testid="mock-icon" width="16" height="16">
+    <rect width="16" height="16" />
+  </svg>
+);
 
 describe("FilterDropdown", () => {
   afterEach(cleanup);
@@ -20,7 +25,7 @@ describe("FilterDropdown", () => {
         value="all"
         options={mockOptions}
         onChange={onChange}
-        defaultIcon={<CalendarIcon />}
+        defaultIcon={mockIcon}
       />
     );
 
@@ -28,6 +33,7 @@ describe("FilterDropdown", () => {
     expect(combobox).toBeTruthy();
     expect(combobox.textContent).toContain("All dates");
     expect(combobox.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.getByTestId("mock-icon")).toBeTruthy();
   });
 
   it("opens menu on click and selects an option", () => {
@@ -38,7 +44,7 @@ describe("FilterDropdown", () => {
         value="all"
         options={mockOptions}
         onChange={onChange}
-        defaultIcon={<CalendarIcon />}
+        defaultIcon={mockIcon}
       />
     );
 
@@ -66,7 +72,7 @@ describe("FilterDropdown", () => {
         value="all"
         options={mockOptions}
         onChange={onChange}
-        defaultIcon={<CalendarIcon />}
+        defaultIcon={mockIcon}
       />
     );
 
@@ -100,7 +106,7 @@ describe("FilterDropdown", () => {
           value="all"
           options={mockOptions}
           onChange={onChange}
-          defaultIcon={<CalendarIcon />}
+          defaultIcon={mockIcon}
         />
       </div>
     );
