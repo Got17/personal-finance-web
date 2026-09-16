@@ -10,14 +10,14 @@ import {
 import { CheckIcon, WalletIcon } from "@/components/financial-records/icons";
 
 interface AccountSummaryCardsProps {
-  accounts: Account[];
-  activeTab: AccountTab;
+  readonly accounts: Account[];
+  readonly activeTab: AccountTab;
 }
 
 export function AccountSummaryCards({
   accounts,
   activeTab,
-}: AccountSummaryCardsProps) {
+}: Readonly<AccountSummaryCardsProps>) {
   const bankingAccounts = useMemo(
     () => accounts.filter((a) => getAccountTabForType(a.type) === AccountTab.Banking),
     [accounts]
