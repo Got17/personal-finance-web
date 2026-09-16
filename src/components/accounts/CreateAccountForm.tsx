@@ -14,11 +14,11 @@ import { useCurrencyOptions } from "./useCurrencyOptions";
 import styles from "@/components/ui/ModalForm.module.css";
 
 interface CreateAccountFormProps {
-  defaultCurrency?: string;
-  defaultType?: AccountType;
-  onAccountCreated?: (account: Account) => void;
-  onCancel?: () => void;
-  hideHeader?: boolean;
+  readonly defaultCurrency?: string;
+  readonly defaultType?: AccountType;
+  readonly onAccountCreated?: (account: Account) => void;
+  readonly onCancel?: () => void;
+  readonly hideHeader?: boolean;
 }
 
 const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
@@ -37,7 +37,7 @@ export function CreateAccountForm({
   onAccountCreated,
   onCancel,
   hideHeader = true,
-}: CreateAccountFormProps) {
+}: Readonly<CreateAccountFormProps>) {
   const [name, setName] = useState("");
   const [type, setType] = useState<AccountType>(defaultType);
   const [currency, setCurrency] = useState(defaultCurrency);
