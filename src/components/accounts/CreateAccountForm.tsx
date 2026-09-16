@@ -202,7 +202,7 @@ export function CreateAccountForm({
             onChange={(e) => setIsActive(e.target.checked)}
             disabled={isPending}
           />
-          Active Account
+          <span>Active Account</span>
         </label>
       </div>
 
