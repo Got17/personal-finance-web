@@ -1,6 +1,6 @@
 import { Account, AccountType } from "@/lib/schemas/accounts";
 import { AccountAvatar } from "@/components/ui/AccountAvatar";
-import { Badge } from "@/components/ui/Badge";
+import { Badge, BadgeVariant } from "@/components/ui/Badge";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EditPencilIcon, TrashIcon } from "@/components/financial-records/icons";
 import styles from "./AccountsTable.module.css";
@@ -20,6 +20,16 @@ const TYPE_LABELS: Record<AccountType, string> = {
   loan: "Loan",
   other: "Other",
 };
+
+function getAccountBadgeVariant(type: AccountType): BadgeVariant {
+  if (type === "credit_card" || type === "loan") {
+    return "expense";
+  }
+  if (type === "savings" || type === "cash") {
+    return "income";
+  }
+  return "default";
+}
 
 export function AccountsTable({
   accounts,
@@ -47,10 +57,7 @@ export function AccountsTable({
         <tbody>
           {accounts.map((account) => {
             const typeLabel = TYPE_LABELS[account.type] || account.type;
-            const isDebt = account.type === "credit_card" || account.type === "loan";
-            const isSavingsOrCash = account.type === "savings" || account.type === "cash";
-
-            const badgeVariant = isDebt ? "expense" : isSavingsOrCash ? "income" : "default";
+            const badgeVariant = getAccountBadgeVariant(account.type);
 
             return (
               <tr
