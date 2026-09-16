@@ -6,16 +6,16 @@ import { EditPencilIcon, TrashIcon } from "@/components/financial-records/icons"
 import styles from "./CategoriesTable.module.css";
 
 interface CategoriesTableProps {
-  categories: Category[];
-  onEdit?: (category: Category) => void;
-  onDeactivate?: (category: Category) => void;
+  readonly categories: Category[];
+  readonly onEdit?: (category: Category) => void;
+  readonly onDeactivate?: (category: Category) => void;
 }
 
 export function CategoriesTable({
   categories,
   onEdit,
   onDeactivate,
-}: CategoriesTableProps) {
+}: Readonly<CategoriesTableProps>) {
   if (categories.length === 0) {
     return <div className={styles.emptyState}>No categories match your filters.</div>;
   }
