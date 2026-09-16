@@ -14,10 +14,10 @@ import { useCurrencyOptions } from "./useCurrencyOptions";
 import styles from "@/components/ui/ModalForm.module.css";
 
 interface EditAccountFormProps {
-  account: Account;
-  onAccountUpdated?: (account: Account) => void;
-  onCancel?: () => void;
-  hideHeader?: boolean;
+  readonly account: Account;
+  readonly onAccountUpdated?: (account: Account) => void;
+  readonly onCancel?: () => void;
+  readonly hideHeader?: boolean;
 }
 
 const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
@@ -35,7 +35,7 @@ export function EditAccountForm({
   onAccountUpdated,
   onCancel,
   hideHeader = true,
-}: EditAccountFormProps) {
+}: Readonly<EditAccountFormProps>) {
   const [name, setName] = useState(account.name);
   const [type, setType] = useState<AccountType>(account.type);
   const [currency, setCurrency] = useState(account.currency);
@@ -192,7 +192,7 @@ export function EditAccountForm({
             onChange={(e) => setIsActive(e.target.checked)}
             disabled={isPending}
           />
-          Active Account
+          <span>Active Account</span>
         </label>
       </div>
 
