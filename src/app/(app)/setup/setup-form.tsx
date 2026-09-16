@@ -8,10 +8,10 @@ import { Dropdown } from "@/components/ui/Dropdown";
 import styles from "./page.module.css";
 
 export interface SetupFormProps {
-  initialCurrency?: string;
+  readonly initialCurrency?: string;
 }
 
-export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
+export function SetupForm({ initialCurrency = "USD" }: Readonly<SetupFormProps>) {
   const router = useRouter();
   const normalizedInitial = (initialCurrency || "USD").trim().toUpperCase();
   const [selectedCurrency, setSelectedCurrency] = useState(normalizedInitial);
