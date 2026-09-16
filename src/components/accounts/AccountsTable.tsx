@@ -1,4 +1,4 @@
-﻿import { Account, AccountType } from "@/lib/schemas/accounts";
+import { Account, AccountType } from "@/lib/schemas/accounts";
 import { AccountAvatar } from "@/components/ui/AccountAvatar";
 import { Badge } from "@/components/ui/Badge";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -6,9 +6,9 @@ import { EditPencilIcon, TrashIcon } from "@/components/financial-records/icons"
 import styles from "./AccountsTable.module.css";
 
 interface AccountsTableProps {
-  accounts: Account[];
-  onEdit?: (account: Account) => void;
-  onDeactivate?: (account: Account) => void;
+  readonly accounts: Account[];
+  readonly onEdit?: (account: Account) => void;
+  readonly onDeactivate?: (account: Account) => void;
 }
 
 const TYPE_LABELS: Record<AccountType, string> = {
@@ -25,7 +25,7 @@ export function AccountsTable({
   accounts,
   onEdit,
   onDeactivate,
-}: AccountsTableProps) {
+}: Readonly<AccountsTableProps>) {
   if (accounts.length === 0) {
     return <div className={styles.emptyState}>No accounts match your filters.</div>;
   }
