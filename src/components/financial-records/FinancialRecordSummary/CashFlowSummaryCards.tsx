@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
-import { TransactionTab } from "./TransactionSubTabs";
+import { TransactionTab } from "../FinancialRecordsTable/TransactionSubTabs";
 import {
   InflowArrowIcon,
   NetBalanceIcon,
   OutflowArrowIcon,
   TrendingStarIcon,
-} from "./summary-icons";
-import { GeneralTagIcon } from "./icons";
+} from "../summary-icons";
+import { GeneralTagIcon } from "../icons";
 import styles from "./CashFlowSummaryCards.module.css";
 
 interface CashFlowSummaryCardsProps {

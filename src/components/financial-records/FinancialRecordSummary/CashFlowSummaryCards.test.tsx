@@ -44,7 +44,7 @@ const mockRecords: FinancialRecord[] = [
   },
 ];
 
-import { TransactionTab } from "./TransactionSubTabs";
+import { TransactionTab } from "../FinancialRecordsTable/TransactionSubTabs";
 
 describe("CashFlowSummaryCards", () => {
   it("renders inflow, outflow, and net cards on 'all' tab", () => {

@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FinancialRecordsView } from "./FinancialRecordsView";
-import { TransactionTab } from "./TransactionSubTabs";
+import { TransactionTab } from "./FinancialRecordsTable/TransactionSubTabs";
 
 const {
   createFinancialRecordAction,

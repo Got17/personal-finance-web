@@ -7,7 +7,7 @@ import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord, FinancialRecordKind } from "@/lib/schemas/financial-records";
 import { updateFinancialRecordAction } from "@/app/actions/financial-records";
 import { Dropdown } from "@/components/ui/Dropdown";
-import { getCategoryIcon } from "./icons";
+import { getCategoryIcon } from "../icons";
 import styles from "./EditFinancialRecordModal.module.css";
 
 interface EditFinancialRecordModalProps {

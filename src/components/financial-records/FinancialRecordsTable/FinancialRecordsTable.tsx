@@ -1,7 +1,7 @@
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
-import { EditPencilIcon, TrashIcon } from "./icons";
+import { EditPencilIcon, TrashIcon } from "../icons";
 import { CategoryBadge } from "./CategoryBadge";
 import { CategoryAvatar } from "@/components/ui/CategoryAvatar";
 import styles from "./FinancialRecordsTable.module.css";

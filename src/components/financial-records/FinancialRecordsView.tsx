@@ -13,13 +13,13 @@ import {
 } from "./icons";
 import { ActionButton } from "@/components/ui/ActionButton";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { TransactionSubTabs, TransactionTab } from "./TransactionSubTabs";
-import { FinancialRecordsTable } from "./FinancialRecordsTable";
-import { CreateFinancialRecordModal } from "./CreateFinancialRecordModal";
-import { EditFinancialRecordModal } from "./EditFinancialRecordModal";
-import { DeleteFinancialRecordModal } from "./DeleteFinancialRecordModal";
+import { TransactionSubTabs, TransactionTab } from "./FinancialRecordsTable/TransactionSubTabs";
+import { FinancialRecordsTable } from "./FinancialRecordsTable/FinancialRecordsTable";
+import { CreateFinancialRecordModal } from "./FinancialRecordModals/CreateFinancialRecordModal";
+import { EditFinancialRecordModal } from "./FinancialRecordModals/EditFinancialRecordModal";
+import { DeleteFinancialRecordModal } from "./FinancialRecordModals/DeleteFinancialRecordModal";
 import { FilterDropdown, FilterDropdownOption } from "@/components/ui/FilterDropdown";
-import { CashFlowSummaryCards } from "./CashFlowSummaryCards";
+import { CashFlowSummaryCards } from "./FinancialRecordSummary/CashFlowSummaryCards";
 import { DatePreset, getDateRangeForPreset } from "./date-filter-utils";
 import styles from "./FinancialRecordsView.module.css";
 

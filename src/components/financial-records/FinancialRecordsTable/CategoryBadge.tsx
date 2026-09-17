@@ -1,4 +1,4 @@
-import { getCategoryIcon } from "./icons";
+import { getCategoryIcon } from "../icons";
 import styles from "./CategoryBadge.module.css";
 
 interface CategoryBadgeProps {
