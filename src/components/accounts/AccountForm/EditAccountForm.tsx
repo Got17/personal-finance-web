@@ -9,9 +9,9 @@ import {
 } from "@/lib/schemas/accounts";
 import { updateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
-import { Dropdown } from "@/components/ui/Dropdown";
+import { Dropdown } from "@/components/ui/dropdowns/Dropdown";
 import { useCurrencyOptions } from "../hooks/useCurrencyOptions";
-import styles from "@/components/ui/ModalForm.module.css";
+import styles from "@/components/ui/modals/ModalForm.module.css";
 
 interface EditAccountFormProps {
   readonly account: Account;

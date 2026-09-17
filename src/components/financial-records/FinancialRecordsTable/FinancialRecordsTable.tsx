@@ -3,7 +3,7 @@ import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
 import { EditPencilIcon, TrashIcon } from "../icons";
 import { CategoryBadge } from "./CategoryBadge";
-import { CategoryAvatar } from "@/components/ui/CategoryAvatar";
+import { CategoryAvatar } from "@/components/ui/avatars/CategoryAvatar";
 import styles from "./FinancialRecordsTable.module.css";
 
 interface FinancialRecordsTableProps {

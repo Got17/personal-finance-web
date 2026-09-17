@@ -1,5 +1,5 @@
-import { Badge } from "./Badge";
-import { ActionButton, ActionButtonVariant } from "./ActionButton";
+import { Badge } from "../badges/Badge";
+import { ActionButton, ActionButtonVariant } from "../buttons/ActionButton";
 import styles from "./ViewHeader.module.css";
 
 export interface ViewHeaderProps {

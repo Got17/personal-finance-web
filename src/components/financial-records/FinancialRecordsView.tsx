@@ -11,14 +11,14 @@ import {
   WalletIcon,
   getCategoryIcon,
 } from "./icons";
-import { ActionButton } from "@/components/ui/ActionButton";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { ActionButton } from "@/components/ui/buttons/ActionButton";
+import { PageHeader } from "@/components/ui/headers/PageHeader";
 import { TransactionSubTabs, TransactionTab } from "./FinancialRecordsTable/TransactionSubTabs";
 import { FinancialRecordsTable } from "./FinancialRecordsTable/FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./FinancialRecordModals/CreateFinancialRecordModal";
 import { EditFinancialRecordModal } from "./FinancialRecordModals/EditFinancialRecordModal";
 import { DeleteFinancialRecordModal } from "./FinancialRecordModals/DeleteFinancialRecordModal";
-import { FilterDropdown, FilterDropdownOption } from "@/components/ui/FilterDropdown";
+import { FilterDropdown, FilterDropdownOption } from "@/components/ui/dropdowns/FilterDropdown";
 import { CashFlowSummaryCards } from "./FinancialRecordSummary/CashFlowSummaryCards";
 import { DatePreset, getDateRangeForPreset } from "./date-filter-utils";
 import styles from "./FinancialRecordsView.module.css";

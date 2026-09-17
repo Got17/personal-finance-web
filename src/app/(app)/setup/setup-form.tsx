@@ -4,7 +4,7 @@ import { useState, type SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
 import { updateBaseCurrencyAction } from "@/app/actions/preferences";
 import { SUPPORTED_CURRENCIES } from "@/lib/constants/currencies";
-import { Dropdown } from "@/components/ui/Dropdown";
+import { Dropdown } from "@/components/ui/dropdowns/Dropdown";
 import styles from "./page.module.css";
 
 export interface SetupFormProps {

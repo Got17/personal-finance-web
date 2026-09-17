@@ -2,7 +2,7 @@
 
 import { Account } from "@/lib/schemas/accounts";
 import { deactivateAccountAction } from "@/app/actions/accounts";
-import { DeactivateModal } from "@/components/ui/DeactivateModal";
+import { DeactivateModal } from "@/components/ui/modals/DeactivateModal";
 import styles from "./DeactivateAccountModal.module.css";
 
 interface DeactivateAccountModalProps {

@@ -2,9 +2,9 @@
 
 import { useState, useRef, KeyboardEvent } from "react";
 import { Category, CategoryType } from "@/lib/schemas/categories";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { Badge } from "@/components/ui/Badge";
-import { ItemCard } from "@/components/ui/ItemCard";
+import { EmptyState } from "@/components/ui/feedback/EmptyState";
+import { Badge } from "@/components/ui/badges/Badge";
+import { ItemCard } from "@/components/ui/cards/ItemCard";
 import { getCategoryIcon } from "@/components/financial-records/icons";
 import styles from "./CategoriesList.module.css";
 

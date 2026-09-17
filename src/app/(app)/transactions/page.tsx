@@ -3,7 +3,7 @@ import { getSessionToken } from "@/lib/session";
 import { getAccounts } from "@/lib/accounts-service";
 import { getCategories } from "@/lib/categories-service";
 import { getFinancialRecords } from "@/lib/financial-records-service";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { PageHeader } from "@/components/ui/headers/PageHeader";
 import { FinancialRecordsView } from "@/components/financial-records/FinancialRecordsView";
 import { TransactionTab } from "@/components/financial-records/FinancialRecordsTable/TransactionSubTabs";
 import styles from "./page.module.css";

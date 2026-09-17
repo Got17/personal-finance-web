@@ -9,8 +9,8 @@ import {
 } from "@/lib/schemas/categories";
 import { updateCategoryAction } from "@/app/actions/categories";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
-import { Dropdown } from "@/components/ui/Dropdown";
-import styles from "@/components/ui/ModalForm.module.css";
+import { Dropdown } from "@/components/ui/dropdowns/Dropdown";
+import styles from "@/components/ui/modals/ModalForm.module.css";
 
 interface EditCategoryFormProps {
   readonly category: Category;

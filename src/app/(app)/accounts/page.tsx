@@ -4,7 +4,7 @@ import { getAccounts } from "@/lib/accounts-service";
 import { redirect } from "next/navigation";
 import { AccountsView } from "@/components/accounts/AccountsView";
 import { AccountTab } from "@/components/accounts/AccountsTable/AccountSubTabs";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { PageHeader } from "@/components/ui/headers/PageHeader";
 import styles from "./page.module.css";
 
 interface PageProps {

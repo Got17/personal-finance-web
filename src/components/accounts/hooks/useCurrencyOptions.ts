@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getCurrenciesAction } from "@/app/actions/currencies";
-import { DropdownOption } from "@/components/ui/Dropdown";
+import { DropdownOption } from "@/components/ui/dropdowns/Dropdown";
 
 export interface UseCurrencyOptionsResult {
   options: DropdownOption[];

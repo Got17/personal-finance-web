@@ -2,7 +2,7 @@
 
 import { Category, CategoryType } from "@/lib/schemas/categories";
 import { CreateCategoryForm } from "../CategoryForm/CreateCategoryForm";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/components/ui/modals/Modal";
 
 interface CreateCategoryModalProps {
   isOpen: boolean;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/components/ui/modals/Modal";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
 import { archiveFinancialRecordAction } from "@/app/actions/financial-records";

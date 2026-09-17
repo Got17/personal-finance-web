@@ -1,7 +1,7 @@
 import { Category } from "@/lib/schemas/categories";
-import { CategoryAvatar } from "@/components/ui/CategoryAvatar";
-import { Badge } from "@/components/ui/Badge";
-import { StatusBadge } from "@/components/ui/StatusBadge";
+import { CategoryAvatar } from "@/components/ui/avatars/CategoryAvatar";
+import { Badge } from "@/components/ui/badges/Badge";
+import { StatusBadge } from "@/components/ui/badges/StatusBadge";
 import { EditPencilIcon, TrashIcon } from "@/components/financial-records/icons";
 import styles from "./CategoriesTable.module.css";
 

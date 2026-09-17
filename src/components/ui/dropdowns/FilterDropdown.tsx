@@ -1,6 +1,6 @@
 "use client";
 
-import { Dropdown, DropdownOption, DropdownProps } from "@/components/ui/Dropdown";
+import { Dropdown, DropdownOption, DropdownProps } from "./Dropdown";
 
 export type FilterDropdownOption = DropdownOption;
 export type FilterDropdownProps = DropdownProps;

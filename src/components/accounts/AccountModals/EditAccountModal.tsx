@@ -2,7 +2,7 @@
 
 import { Account } from "@/lib/schemas/accounts";
 import { EditAccountForm } from "../AccountForm/EditAccountForm";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/components/ui/modals/Modal";
 
 interface EditAccountModalProps {
   isOpen: boolean;

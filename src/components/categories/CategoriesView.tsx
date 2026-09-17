@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Category } from "@/lib/schemas/categories";
-import { ActionButton } from "@/components/ui/ActionButton";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { FilterDropdown, FilterDropdownOption, StatusFilter } from "@/components/ui/FilterDropdown";
+import { ActionButton } from "@/components/ui/buttons/ActionButton";
+import { PageHeader } from "@/components/ui/headers/PageHeader";
+import { FilterDropdown, FilterDropdownOption, StatusFilter } from "@/components/ui/dropdowns/FilterDropdown";
 import { CheckIcon, CloseIcon } from "@/components/financial-records/icons";
 import { CategorySubTabs, CategoryTab } from "./CategoriesTable/CategorySubTabs";
 import { CategorySummaryCards } from "./CategorySummary/CategorySummaryCards";

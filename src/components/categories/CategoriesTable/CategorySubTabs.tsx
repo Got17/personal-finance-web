@@ -1,4 +1,4 @@
-import { SubTabs, TabItem } from "@/components/ui/SubTabs";
+import { SubTabs, TabItem } from "@/components/ui/navigation/SubTabs";
 
 export enum CategoryTab {
   All = "all",

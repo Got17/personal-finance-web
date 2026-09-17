@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { AccountTab, getAccountTabForType } from "../AccountsTable/AccountSubTabs";
-import { SummaryCardsGrid, SummaryCard } from "@/components/ui/SummaryCards";
+import { SummaryCardsGrid, SummaryCard } from "@/components/ui/cards/SummaryCards";
 import {
   InflowArrowIcon,
   OutflowArrowIcon,

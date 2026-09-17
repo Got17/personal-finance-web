@@ -4,7 +4,7 @@ import { CategoryTab } from "../CategoriesTable/CategorySubTabs";
 import {
   SummaryCard,
   SummaryCardsGrid,
-} from "@/components/ui/SummaryCards";
+} from "@/components/ui/cards/SummaryCards";
 import {
   InflowArrowIcon,
   OutflowArrowIcon,

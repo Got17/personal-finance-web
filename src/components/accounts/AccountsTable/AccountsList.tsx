@@ -1,6 +1,6 @@
 import { Account } from "@/lib/schemas/accounts";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { ItemCard } from "@/components/ui/ItemCard";
+import { EmptyState } from "@/components/ui/feedback/EmptyState";
+import { ItemCard } from "@/components/ui/cards/ItemCard";
 import styles from "./AccountsList.module.css";
 
 interface AccountsListProps {

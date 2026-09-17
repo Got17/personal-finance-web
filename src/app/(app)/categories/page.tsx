@@ -4,7 +4,7 @@ import { getCategories } from "@/lib/categories-service";
 import { redirect } from "next/navigation";
 import { CategoriesView } from "@/components/categories/CategoriesView";
 import { CategoryTab } from "@/components/categories/CategoriesTable/CategorySubTabs";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { PageHeader } from "@/components/ui/headers/PageHeader";
 import styles from "./page.module.css";
 
 interface PageProps {

@@ -2,7 +2,7 @@
 
 import { Category } from "@/lib/schemas/categories";
 import { EditCategoryForm } from "../CategoryForm/EditCategoryForm";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/components/ui/modals/Modal";
 
 interface EditCategoryModalProps {
   isOpen: boolean;

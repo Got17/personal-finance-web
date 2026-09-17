@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { StatusBadge } from "./StatusBadge";
+import { StatusBadge } from "../badges/StatusBadge";
 import { CardActions } from "./CardActions";
 import styles from "./ItemCard.module.css";
 

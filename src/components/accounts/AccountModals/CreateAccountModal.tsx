@@ -2,7 +2,7 @@
 
 import { Account, AccountType } from "@/lib/schemas/accounts";
 import { CreateAccountForm } from "../AccountForm/CreateAccountForm";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/components/ui/modals/Modal";
 
 interface CreateAccountModalProps {
   readonly isOpen: boolean;

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useTransition, type SubmitEvent } from "react";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/components/ui/modals/Modal";
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
 import { FinancialRecord, FinancialRecordKind } from "@/lib/schemas/financial-records";
 import { createFinancialRecordAction } from "@/app/actions/financial-records";
-import { Dropdown } from "@/components/ui/Dropdown";
+import { Dropdown } from "@/components/ui/dropdowns/Dropdown";
 import { getCategoryIcon } from "../icons";
-import styles from "@/components/ui/ModalForm.module.css";
+import styles from "@/components/ui/modals/ModalForm.module.css";
 
 interface CreateFinancialRecordModalProps {
   isOpen: boolean;

@@ -1,5 +1,5 @@
 import { AccountType } from "@/lib/schemas/accounts";
-import { SubTabs, TabItem } from "@/components/ui/SubTabs";
+import { SubTabs, TabItem } from "@/components/ui/navigation/SubTabs";
 
 export enum AccountTab {
   All = "all",

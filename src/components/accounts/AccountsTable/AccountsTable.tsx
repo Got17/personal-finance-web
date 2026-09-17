@@ -1,7 +1,7 @@
 import { Account, AccountType } from "@/lib/schemas/accounts";
-import { AccountAvatar } from "@/components/ui/AccountAvatar";
-import { Badge, BadgeVariant } from "@/components/ui/Badge";
-import { StatusBadge } from "@/components/ui/StatusBadge";
+import { AccountAvatar } from "@/components/ui/avatars/AccountAvatar";
+import { Badge, BadgeVariant } from "@/components/ui/badges/Badge";
+import { StatusBadge } from "@/components/ui/badges/StatusBadge";
 import { EditPencilIcon, TrashIcon } from "@/components/financial-records/icons";
 import styles from "./AccountsTable.module.css";
 

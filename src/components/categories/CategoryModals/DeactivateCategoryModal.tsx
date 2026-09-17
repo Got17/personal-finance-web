@@ -2,7 +2,7 @@
 
 import { Category } from "@/lib/schemas/categories";
 import { deactivateCategoryAction } from "@/app/actions/categories";
-import { DeactivateModal } from "@/components/ui/DeactivateModal";
+import { DeactivateModal } from "@/components/ui/modals/DeactivateModal";
 import styles from "./DeactivateCategoryModal.module.css";
 
 interface DeactivateCategoryModalProps {
