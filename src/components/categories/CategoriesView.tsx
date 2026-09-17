@@ -6,12 +6,12 @@ import { ActionButton } from "@/components/ui/ActionButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FilterDropdown, FilterDropdownOption, StatusFilter } from "@/components/ui/FilterDropdown";
 import { CheckIcon, CloseIcon } from "@/components/financial-records/icons";
-import { CategorySubTabs, CategoryTab } from "./CategorySubTabs";
-import { CategorySummaryCards } from "./CategorySummaryCards";
-import { CategoriesTable } from "./CategoriesTable";
-import { CreateCategoryModal } from "./CreateCategoryModal";
-import { EditCategoryModal } from "./EditCategoryModal";
-import { DeactivateCategoryModal } from "./DeactivateCategoryModal";
+import { CategorySubTabs, CategoryTab } from "./CategoriesTable/CategorySubTabs";
+import { CategorySummaryCards } from "./CategorySummary/CategorySummaryCards";
+import { CategoriesTable } from "./CategoriesTable/CategoriesTable";
+import { CreateCategoryModal } from "./CategoryModals/CreateCategoryModal";
+import { EditCategoryModal } from "./CategoryModals/EditCategoryModal";
+import { DeactivateCategoryModal } from "./CategoryModals/DeactivateCategoryModal";
 import styles from "./CategoriesView.module.css";
 
 const TAB_STORAGE_KEY = "pf_categories_active_tab";

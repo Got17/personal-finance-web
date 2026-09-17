@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/auth-service";
 import { getCategories } from "@/lib/categories-service";
 import { redirect } from "next/navigation";
 import { CategoriesView } from "@/components/categories/CategoriesView";
-import { CategoryTab } from "@/components/categories/CategorySubTabs";
+import { CategoryTab } from "@/components/categories/CategoriesTable/CategorySubTabs";
 import { PageHeader } from "@/components/ui/PageHeader";
 import styles from "./page.module.css";
 

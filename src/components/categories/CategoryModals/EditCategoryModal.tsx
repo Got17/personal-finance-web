@@ -1,7 +1,7 @@
 "use client";
 
 import { Category } from "@/lib/schemas/categories";
-import { EditCategoryForm } from "./EditCategoryForm";
+import { EditCategoryForm } from "../CategoryForm/EditCategoryForm";
 import { Modal } from "@/components/ui/Modal";
 
 interface EditCategoryModalProps {

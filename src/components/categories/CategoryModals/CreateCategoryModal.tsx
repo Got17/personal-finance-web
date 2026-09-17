@@ -1,7 +1,7 @@
 "use client";
 
 import { Category, CategoryType } from "@/lib/schemas/categories";
-import { CreateCategoryForm } from "./CreateCategoryForm";
+import { CreateCategoryForm } from "../CategoryForm/CreateCategoryForm";
 import { Modal } from "@/components/ui/Modal";
 
 interface CreateCategoryModalProps {

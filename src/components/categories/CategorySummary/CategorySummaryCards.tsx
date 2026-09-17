@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Category } from "@/lib/schemas/categories";
-import { CategoryTab } from "./CategorySubTabs";
+import { CategoryTab } from "../CategoriesTable/CategorySubTabs";
 import {
   SummaryCard,
   SummaryCardsGrid,

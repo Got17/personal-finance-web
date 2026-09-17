@@ -33,7 +33,7 @@ const mockCategories: Category[] = [
   },
 ];
 
-import { CategoryTab } from "./CategorySubTabs";
+import { CategoryTab } from "../CategoriesTable/CategorySubTabs";
 
 describe("CategorySummaryCards", () => {
   afterEach(() => {
