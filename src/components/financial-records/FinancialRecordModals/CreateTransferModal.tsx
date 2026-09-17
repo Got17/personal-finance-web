@@ -24,7 +24,13 @@ interface CreateTransferModalProps {
   readonly onTransferCreated: (record: FinancialRecord, feeRecord?: FinancialRecord) => void;
 }
 
-export function CreateTransferModal({
+export function CreateTransferModal(props: Readonly<CreateTransferModalProps>) {
+  if (!props.isOpen) return null;
+
+  return <CreateTransferFormModal {...props} />;
+}
+
+function CreateTransferFormModal({
   isOpen,
   accounts,
   categories,

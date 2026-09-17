@@ -454,4 +454,72 @@ describe("FinancialRecordsView", () => {
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
   });
+
+  it("opens Add Income modal when clicking Add Income button on Income tab", async () => {
+    vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+    createFinancialRecordAction.mockResolvedValueOnce({
+      success: true,
+      record: {
+        id: "record-new-inc",
+        user_id: "user-1",
+        kind: "income" as const,
+        account_id: "account-1",
+        category_id: "income-1",
+        amount_minor: 500000,
+        currency: "USD",
+        date: "2026-09-17T12:00:00.000Z",
+        note: "Consulting bonus",
+        is_active: true,
+        created_at: "",
+        updated_at: "",
+      },
+    });
+
+    render(
+      <FinancialRecordsView
+        initialRecords={[initialExpense, initialIncome]}
+        accounts={accounts}
+        categories={categories}
+      />
+    );
+
+    const incomeTab = screen.getByRole("tab", { name: /income/i });
+    fireEvent.click(incomeTab);
+
+    const addIncomeBtn = screen.getByRole("button", { name: /^add income$/i });
+    fireEvent.click(addIncomeBtn);
+
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("Add New Income")).toBeTruthy();
+    expect(
+      within(dialog).getByText("Record an income stream into your selected account.")
+    ).toBeTruthy();
+
+    const submitBtn = within(dialog).getByRole("button", { name: /^add income$/i });
+    expect(submitBtn).toBeTruthy();
+
+    // Verify income categories are available
+    expect(within(dialog).getAllByText("Salary").length).toBeGreaterThan(0);
+
+    // Fill form and submit
+    fireEvent.change(within(dialog).getByLabelText(/^amount/i), {
+      target: { value: "5000.00" },
+    });
+    fireEvent.change(within(dialog).getByLabelText(/description/i), {
+      target: { value: "Consulting bonus" },
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    expect(createFinancialRecordAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "income",
+        amount_minor: 500000,
+        note: "Consulting bonus",
+      })
+    );
+  });
 });
