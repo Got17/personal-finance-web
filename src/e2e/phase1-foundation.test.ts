@@ -28,6 +28,7 @@ import {
   updateCategoryAction,
   deactivateCategoryAction,
 } from "@/app/actions/categories";
+import { getCurrenciesAction } from "@/app/actions/currencies";
 
 let currentSessionCookie: string | null = null;
 
@@ -82,6 +83,11 @@ describe("Phase 1 Foundation contract-level integration tests (mocked /v1 API)",
 
     const profile = await getCurrentUser(aliceToken);
     expect(profile.success).toBe(true);
+
+    // 1b. Supported currency list is public reference data, reachable without a session
+    const currencies = await getCurrenciesAction();
+    expect(currencies.success).toBe(true);
+    expect(currencies.currencies?.map((c) => c.code)).toEqual(["LAK", "THB", "USD", "CNY", "EUR"]);
 
     // 2. Base currency setup & persistence
     const prefInitial = await getUserPreferences(aliceToken);

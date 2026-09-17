@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import { SidebarNav, MobileNav } from "./Navigation";
+import { SidebarNav } from "./Navigation";
 import { usePathname } from "next/navigation";
 
 vi.mock("next/navigation", () => ({
@@ -46,15 +46,15 @@ describe("Navigation components", () => {
       expect(overviewLink.className).not.toContain("activeNavItem");
       expect(categoriesLink.className).toContain("activeNavItem");
     });
-  });
 
-  describe("MobileNav", () => {
-    it("renders mobile navigation items", () => {
-      vi.mocked(usePathname).mockReturnValue("/accounts");
-      render(<MobileNav />);
+    it("calls onNavigate when a navigation link is clicked", () => {
+      vi.mocked(usePathname).mockReturnValue("/");
+      const onNavigate = vi.fn();
+      render(<SidebarNav onNavigate={onNavigate} />);
 
-      expect(screen.getByRole("navigation", { name: "Mobile navigation" })).toBeTruthy();
-      expect(screen.getByRole("link", { name: /Accounts/i })).toBeTruthy();
+      const accountsLink = screen.getByRole("link", { name: /Accounts/i });
+      accountsLink.click();
+      expect(onNavigate).toHaveBeenCalledTimes(1);
     });
   });
 });

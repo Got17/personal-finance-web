@@ -72,9 +72,11 @@
   transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-.select:hover:not(:disabled):not(:focus) {
-  border-color: #a39c8c;
-  background-color: #faf8f3;
+@media (hover: hover) and (pointer: fine) {
+  .select:hover:not(:disabled):not(:focus) {
+    border-color: #a39c8c;
+    background-color: #faf8f3;
+  }
 }
 
 .select:focus {
@@ -92,11 +94,17 @@
   font-size: 0.9rem;
   font-weight: 800;
   cursor: pointer;
-  transition: background 0.16s ease;
+  transition: background 0.16s ease, transform 0.16s ease;
 }
 
-.submitButton:hover {
-  background: var(--forest-deep);
+@media (hover: hover) and (pointer: fine) {
+  .submitButton:hover {
+    background: var(--forest-deep);
+  }
+}
+
+.submitButton:active {
+  transform: scale(0.98);
 }
 
 .submitButton:disabled {

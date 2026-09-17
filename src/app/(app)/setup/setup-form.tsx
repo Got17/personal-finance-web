@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
 import { updateBaseCurrencyAction } from "@/app/actions/preferences";
 import { SUPPORTED_CURRENCIES } from "@/lib/constants/currencies";
+import { Dropdown } from "@/components/ui/dropdowns/Dropdown";
 import styles from "./page.module.css";
 
 export interface SetupFormProps {
-  initialCurrency?: string;
+  readonly initialCurrency?: string;
 }
 
-export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
+export function SetupForm({ initialCurrency = "USD" }: Readonly<SetupFormProps>) {
   const router = useRouter();
   const normalizedInitial = (initialCurrency || "USD").trim().toUpperCase();
   const [selectedCurrency, setSelectedCurrency] = useState(normalizedInitial);
@@ -25,7 +26,7 @@ export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
     });
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);
     setIsSubmitting(true);
@@ -59,20 +60,17 @@ export function SetupForm({ initialCurrency = "USD" }: SetupFormProps) {
         <label htmlFor="baseCurrency" className={styles.label}>
           Select base currency
         </label>
-        <select
+        <Dropdown
           id="baseCurrency"
           name="baseCurrency"
           value={selectedCurrency}
-          onChange={(e) => setSelectedCurrency(e.target.value)}
-          className={styles.select}
+          onChange={setSelectedCurrency}
+          options={availableCurrencies.map((currency) => ({
+            value: currency.code,
+            label: currency.name,
+          }))}
           disabled={isSubmitting}
-        >
-          {availableCurrencies.map((currency) => (
-            <option key={currency.code} value={currency.code}>
-              {currency.name}
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
       <button

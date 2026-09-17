@@ -1,0 +1,206 @@
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 0.75rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  min-width: 640px;
+}
+
+.table th {
+  padding: 12px 24px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.table th.actionsHeader {
+  text-align: right;
+  width: 90px;
+}
+
+.row {
+  transition: background-color 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover {
+    background-color: rgba(39, 103, 73, 0.03);
+  }
+}
+
+.inactiveRow {
+  opacity: 0.75;
+}
+
+.table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #eee8dc;
+  vertical-align: middle;
+}
+
+.accountCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.accountInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.accountName {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.accountDescription {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.currencyCell {
+  white-space: nowrap;
+}
+
+.currencyCode {
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink);
+  background-color: var(--surface-muted);
+  border: 1px solid var(--line);
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.actionsCell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.actionsGroup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background-color: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .actionButton:hover:not(:disabled) {
+    background-color: var(--surface-muted);
+    color: var(--ink);
+    transform: scale(1.08);
+  }
+
+  .editButton:hover:not(:disabled) {
+    background-color: #eff6ff;
+    color: #2563eb;
+  }
+
+  .deactivateButton:hover:not(:disabled) {
+    background-color: #fdf2f0;
+    color: #dc2626;
+  }
+}
+
+.actionButton:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.actionButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.emptyState {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+  background-color: rgba(238, 233, 223, 0.2);
+  border-radius: 12px;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .table {
+    min-width: 100%;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 12px;
+  }
+
+  .table th {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    padding: 8px 12px;
+  }
+
+  .table th.actionsHeader,
+  .actionsCell {
+    width: 68px;
+  }
+
+  .accountCell {
+    gap: 8px;
+  }
+
+  .accountName {
+    font-size: 0.875rem;
+  }
+
+  .accountDescription {
+    font-size: 0.6875rem;
+  }
+
+  .currencyCode {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+  }
+
+  .actionsGroup {
+    gap: 4px;
+  }
+
+  .actionButton {
+    width: 28px;
+    height: 28px;
+  }
+}

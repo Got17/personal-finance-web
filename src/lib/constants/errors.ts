@@ -23,6 +23,10 @@ export const ERROR_MESSAGES = {
     INVALID_RESPONSE: "Invalid response from preferences server.",
     INVALID_CURRENCY: "Base currency must be a valid 3-letter currency code (e.g. USD, EUR).",
   },
+  CURRENCIES: {
+    CANNOT_CONNECT: "Unable to connect to currencies server.",
+    INVALID_RESPONSE: "Invalid response from currencies server.",
+  },
   CATEGORIES: {
     CANNOT_CONNECT: "Unable to connect to categories server.",
     INVALID_RESPONSE: "Invalid response from categories server.",
