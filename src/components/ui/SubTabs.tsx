@@ -27,7 +27,7 @@ export function SubTabs<T extends string = string>({
   onTabChange,
   ariaLabel = "Sub-tabs navigation",
   className,
-}: SubTabsProps<T>) {
+}: Readonly<SubTabsProps<T>>) {
   const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -66,6 +66,7 @@ export function SubTabs<T extends string = string>({
       className={`${styles.tabContainer} ${className || ""}`.trim()}
       role="tablist"
       aria-label={ariaLabel}
+      tabIndex={-1}
       onKeyDown={handleKeyDown}
     >
       {tabs.map((tab) => {

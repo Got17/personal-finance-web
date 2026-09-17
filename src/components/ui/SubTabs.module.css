@@ -18,6 +18,10 @@
   display: none;
 }
 
+.tabContainer:focus {
+  outline: none;
+}
+
 .tabButton {
   font-family: inherit;
   font-size: 0.875rem;

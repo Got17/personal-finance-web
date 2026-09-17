@@ -22,7 +22,7 @@ export function ViewHeader({
   onAction,
   actionAriaLabel,
   actionVariant = "forest",
-}: ViewHeaderProps) {
+}: Readonly<ViewHeaderProps>) {
   const countText = `${count} ${count === 1 ? unitSingular : unitPlural}`;
   const displayLabel = actionLabel?.replace(/^\+\s*/, "");
 

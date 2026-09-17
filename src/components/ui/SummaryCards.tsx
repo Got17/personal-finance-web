@@ -11,7 +11,7 @@ export function SummaryCardsGrid({
   children,
   testId,
   className,
-}: SummaryCardsGridProps) {
+}: Readonly<SummaryCardsGridProps>) {
   return (
     <div
       className={`${styles.grid} ${className || ""}`.trim()}
@@ -22,8 +22,10 @@ export function SummaryCardsGrid({
   );
 }
 
+export type SummaryCardVariant = "inflow" | "outflow" | "neutral" | "highlight";
+
 export interface SummaryCardProps {
-  variant?: "inflow" | "outflow" | "neutral" | "highlight";
+  variant?: SummaryCardVariant;
   label: string;
   icon: ReactNode;
   value: ReactNode;
@@ -32,6 +34,27 @@ export interface SummaryCardProps {
   className?: string;
   testId?: string;
 }
+
+const CARD_VARIANT_CLASSES: Record<SummaryCardVariant, string> = {
+  inflow: styles.cardInflow,
+  outflow: styles.cardOutflow,
+  highlight: styles.cardHighlight,
+  neutral: styles.cardNeutral,
+};
+
+const ICON_WRAPPER_VARIANT_CLASSES: Record<SummaryCardVariant, string> = {
+  inflow: styles.inflowIconWrapper,
+  outflow: styles.outflowIconWrapper,
+  highlight: styles.highlightIconWrapper,
+  neutral: styles.neutralIconWrapper,
+};
+
+const DEFAULT_VALUE_CLASSES: Record<SummaryCardVariant, string> = {
+  inflow: styles.inflowValue,
+  outflow: styles.outflowValue,
+  highlight: styles.neutralValue,
+  neutral: styles.neutralValue,
+};
 
 export function SummaryCard({
   variant = "neutral",
@@ -42,31 +65,11 @@ export function SummaryCard({
   subtext,
   className,
   testId,
-}: SummaryCardProps) {
-  const cardVariantClass =
-    variant === "inflow"
-      ? styles.cardInflow
-      : variant === "outflow"
-      ? styles.cardOutflow
-      : variant === "highlight"
-      ? styles.cardHighlight
-      : styles.cardNeutral;
-
+}: Readonly<SummaryCardProps>) {
+  const cardVariantClass = CARD_VARIANT_CLASSES[variant] ?? styles.cardNeutral;
   const iconWrapperVariantClass =
-    variant === "inflow"
-      ? styles.inflowIconWrapper
-      : variant === "outflow"
-      ? styles.outflowIconWrapper
-      : variant === "highlight"
-      ? styles.highlightIconWrapper
-      : styles.neutralIconWrapper;
-
-  const defaultValueClass =
-    variant === "inflow"
-      ? styles.inflowValue
-      : variant === "outflow"
-      ? styles.outflowValue
-      : styles.neutralValue;
+    ICON_WRAPPER_VARIANT_CLASSES[variant] ?? styles.neutralIconWrapper;
+  const defaultValueClass = DEFAULT_VALUE_CLASSES[variant] ?? styles.neutralValue;
 
   return (
     <div

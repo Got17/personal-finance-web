@@ -52,22 +52,26 @@ function getDropdownClasses(
   className: string
 ) {
   const isPill = variant === "pill";
+  const baseContainerClass = isPill
+    ? styles.dropdownContainer
+    : styles.dropdownContainerFullWidth;
   const openClass = isOpen ? styles.dropdownContainerOpen : "";
-  const containerClass = `${
-    isPill ? styles.dropdownContainer : styles.dropdownContainerFullWidth
-  } ${openClass} ${className}`.trim();
+  const containerClass = `${baseContainerClass} ${openClass} ${className}`.trim();
 
-  let triggerClass = isPill
-    ? `${styles.triggerPill} ${isOpen ? styles.triggerPillActive : ""}`
-    : `${styles.triggerForm} ${isOpen ? styles.triggerFormActive : ""}`;
-  if (!isPill && hasError) {
-    triggerClass += ` ${styles.triggerFormError}`;
+  const baseTriggerClass = isPill ? styles.triggerPill : styles.triggerForm;
+  const activeTriggerClass = isPill ? styles.triggerPillActive : styles.triggerFormActive;
+  const triggerClasses = [baseTriggerClass];
+  if (isOpen) {
+    triggerClasses.push(activeTriggerClass);
   }
+  if (!isPill && hasError) {
+    triggerClasses.push(styles.triggerFormError);
+  }
+  const triggerClass = triggerClasses.join(" ");
 
+  const baseMenuClass = isPill ? styles.dropdownMenu : styles.dropdownMenuFullWidth;
   const upwardClass = openUpward ? styles.dropdownMenuUpward : "";
-  const menuClass = `${
-    isPill ? styles.dropdownMenu : styles.dropdownMenuFullWidth
-  } ${upwardClass}`.trim();
+  const menuClass = `${baseMenuClass} ${upwardClass}`.trim();
 
   return { containerClass, triggerClass, menuClass };
 }
@@ -221,6 +225,12 @@ function DropdownMenu({
                 onSelect(option.value);
               }
             }}
+            onKeyDown={(e) => {
+              if (!option.disabled && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault();
+                onSelect(option.value);
+              }
+            }}
             onMouseEnter={() => {
               if (!option.disabled) {
                 onHighlight(index);
@@ -313,7 +323,7 @@ export function Dropdown({
     }
     setIsOpen((prev) => !prev);
     const currentIndex = options.findIndex((o) => o.value === value);
-    setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
+    setHighlightedIndex(Math.max(0, currentIndex));
   };
 
   const currentIcon = activeIcon || selectedOption?.icon || defaultIcon;
@@ -329,11 +339,7 @@ export function Dropdown({
   );
 
   return (
-    <div
-      ref={containerRef}
-      className={containerClass}
-      onKeyDown={handleKeyDown}
-    >
+    <div ref={containerRef} className={containerClass}>
       {/* Hidden native select for form data, label associations, and automated tests */}
       <select
         ref={nativeSelectRef}
@@ -373,9 +379,13 @@ export function Dropdown({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={`${id}-listbox`}
+        aria-activedescendant={
+          isOpen && highlightedIndex >= 0 ? `${id}-option-${highlightedIndex}` : undefined
+        }
         disabled={disabled}
         className={triggerClass}
         onClick={handleTriggerClick}
+        onKeyDown={handleKeyDown}
       >
         <span className={styles.triggerContent}>
           {currentIcon && <span className={styles.triggerIcon}>{currentIcon}</span>}

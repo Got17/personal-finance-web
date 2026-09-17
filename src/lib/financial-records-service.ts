@@ -52,9 +52,11 @@ export async function getFinancialRecords(
     if (value) params.set(key, value);
   });
 
+  const queryString = params.size ? `?${params.toString()}` : "";
+
   try {
     const response = await fetch(
-      `${getBaseUrl()}/v1/financial-records${params.size ? `?${params}` : ""}`,
+      `${getBaseUrl()}/v1/financial-records${queryString}`,
       {
         cache: "no-store",
         headers: { Authorization: `Bearer ${token}` },

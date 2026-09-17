@@ -29,7 +29,7 @@ export const createFinancialRecordSchema = z.object({
   category_id: z.string().trim().min(1, { message: "Please select a category." }),
   amount_minor: z.number().int().positive({ message: "Amount must be greater than zero." }),
   currency: currencySchema,
-  date: z.string().datetime({ message: "Please enter a valid date." }),
+  date: z.iso.datetime({ message: "Please enter a valid date." }),
   note: z.preprocess(
     (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
     z.string().trim().max(1000, { message: "Note must be 1,000 characters or fewer." }).optional(),
@@ -44,7 +44,7 @@ export const updateFinancialRecordSchema = z.object({
   category_id: z.string().trim().min(1, { message: "Please select a category." }).optional(),
   amount_minor: z.number().int().positive({ message: "Amount must be greater than zero." }).optional(),
   currency: currencySchema.optional(),
-  date: z.string().datetime({ message: "Please enter a valid date." }).optional(),
+  date: z.iso.datetime({ message: "Please enter a valid date." }).optional(),
   note: z.preprocess(
     (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
     z.string().trim().max(1000, { message: "Note must be 1,000 characters or fewer." }).optional(),
@@ -54,8 +54,8 @@ export const updateFinancialRecordSchema = z.object({
 export type UpdateFinancialRecordInput = z.infer<typeof updateFinancialRecordSchema>;
 
 export const financialRecordFiltersSchema = z.object({
-  start_date: z.string().date().optional(),
-  end_date: z.string().date().optional(),
+  start_date: z.iso.date().optional(),
+  end_date: z.iso.date().optional(),
   kind: z.enum(FINANCIAL_RECORD_KINDS).optional(),
   account_id: z.string().min(1).optional(),
   category_id: z.string().min(1).optional(),
