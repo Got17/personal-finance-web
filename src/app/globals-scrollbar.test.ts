@@ -7,8 +7,8 @@ describe("globals.css scrollbar styling", () => {
   const cssContent = fs.readFileSync(cssPath, "utf-8");
 
   it("defines theme-aligned scrollbar CSS variables in :root", () => {
-    expect(cssContent).toMatch(/--scrollbar-thumb:\s*#cdc7b9/);
-    expect(cssContent).toMatch(/--scrollbar-thumb-hover:\s*#4a7c64/);
+    expect(cssContent).toMatch(/--scrollbar-thumb:\s*#8fb59f/);
+    expect(cssContent).toMatch(/--scrollbar-thumb-hover:\s*var\(--forest\)/);
     expect(cssContent).toMatch(/--scrollbar-thumb-active:\s*var\(--forest-deep\)/);
     expect(cssContent).toMatch(/--scrollbar-track:\s*transparent/);
   });

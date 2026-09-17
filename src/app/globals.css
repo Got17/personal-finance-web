@@ -10,8 +10,8 @@
   --forest-soft: #e2eee7;
   --rose: #b55042;
   --gold: #a56b22;
-  --scrollbar-thumb: #cdc7b9;
-  --scrollbar-thumb-hover: #4a7c64;
+  --scrollbar-thumb: #8fb59f;
+  --scrollbar-thumb-hover: var(--forest);
   --scrollbar-thumb-active: var(--forest-deep);
   --scrollbar-track: transparent;
   --background: var(--canvas);
