@@ -4,6 +4,7 @@ export enum TransactionTab {
   All = "all",
   Expense = "expense",
   Income = "income",
+  Transfer = "transfer",
 }
 
 interface TransactionSubTabsProps {
@@ -12,6 +13,7 @@ interface TransactionSubTabsProps {
   allCount: number;
   expenseCount: number;
   incomeCount: number;
+  transferCount?: number;
 }
 
 export function TransactionSubTabs({
@@ -20,11 +22,13 @@ export function TransactionSubTabs({
   allCount,
   expenseCount,
   incomeCount,
+  transferCount = 0,
 }: Readonly<TransactionSubTabsProps>) {
   const tabs: TabItem<TransactionTab>[] = [
     { id: TransactionTab.All, label: "All", count: allCount, badgeVariant: "default" },
     { id: TransactionTab.Expense, label: "Expenses", count: expenseCount, badgeVariant: "expense" },
     { id: TransactionTab.Income, label: "Income", count: incomeCount, badgeVariant: "income" },
+    { id: TransactionTab.Transfer, label: "Transfers", count: transferCount, badgeVariant: "default" },
   ];
 
   return (

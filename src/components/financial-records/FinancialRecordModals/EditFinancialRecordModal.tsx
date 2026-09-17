@@ -60,7 +60,7 @@ function EditFinancialRecordFormModal({
 }: Readonly<EditFinancialRecordFormModalProps>) {
   const [kind, setKind] = useState<FinancialRecordKind>(record.kind);
   const [accountId, setAccountId] = useState(record.account_id);
-  const [categoryId, setCategoryId] = useState(record.category_id);
+  const [categoryId, setCategoryId] = useState(record.category_id || "");
   const [amount, setAmount] = useState((record.amount_minor / 100).toFixed(2));
   const [date, setDate] = useState(record.date.slice(0, 10));
   const [note, setNote] = useState(record.note || "");

@@ -22,7 +22,9 @@ export default async function TransactionsPage({ searchParams }: PageProps = {})
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const tabParam = resolvedSearchParams?.tab;
   const initialTab: TransactionTab =
-    tabParam === TransactionTab.Expense || tabParam === TransactionTab.Income
+    tabParam === TransactionTab.Expense ||
+    tabParam === TransactionTab.Income ||
+    tabParam === TransactionTab.Transfer
       ? tabParam
       : TransactionTab.All;
 

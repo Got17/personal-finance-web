@@ -50,3 +50,23 @@ export async function archiveFinancialRecordAction(id: string) {
     return result;
   });
 }
+
+export async function createTransferAction(input: import("@/lib/schemas/transfers").CreateTransferInput) {
+  return withAuth(async (token) => {
+    const { createTransfer } = await import("@/lib/transfers-service");
+    const result = await createTransfer(token, input);
+    if (result.success) {
+      revalidatePath("/transactions");
+      revalidatePath("/accounts");
+    }
+    return result;
+  });
+}
+
+export async function getFXQuoteAction(from: string, to: string, date?: string) {
+  return withAuth(async (token) => {
+    const { getFXQuote } = await import("@/lib/transfers-service");
+    return getFXQuote(token, from, to, date);
+  });
+}
+

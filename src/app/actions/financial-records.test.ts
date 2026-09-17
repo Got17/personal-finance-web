@@ -163,4 +163,35 @@ describe("financial-records server actions", () => {
       expect(revalidatePath).toHaveBeenCalledWith("/transactions");
     });
   });
+
+  describe("createTransferAction", () => {
+    it("returns error if unauthenticated", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue(null);
+
+      const { createTransferAction } = await import("./financial-records");
+      const result = await createTransferAction({
+        account_id: "acc-1",
+        destination_account_id: "acc-2",
+        amount_minor: 5000,
+        destination_amount_minor: 5000,
+        currency: "USD",
+        destination_currency: "USD",
+        date: mockRecord.date,
+      });
+
+      expect(result).toEqual({ success: false, error: "Unauthenticated." });
+    });
+  });
+
+  describe("getFXQuoteAction", () => {
+    it("returns error if unauthenticated", async () => {
+      vi.mocked(session.getSessionToken).mockResolvedValue(null);
+
+      const { getFXQuoteAction } = await import("./financial-records");
+      const result = await getFXQuoteAction("USD", "EUR");
+
+      expect(result).toEqual({ success: false, error: "Unauthenticated." });
+    });
+  });
 });
+
