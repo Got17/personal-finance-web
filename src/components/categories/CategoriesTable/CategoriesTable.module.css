@@ -112,9 +112,14 @@
     transform: scale(1.08);
   }
 
+  .editButton:hover:not(:disabled) {
+    background-color: #eff6ff;
+    color: #2563eb;
+  }
+
   .deactivateButton:hover:not(:disabled) {
     background-color: #fdf2f0;
-    color: var(--rose);
+    color: #dc2626;
   }
 }
 

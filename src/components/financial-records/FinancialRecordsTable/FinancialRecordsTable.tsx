@@ -99,7 +99,7 @@ export function FinancialRecordsTable({
                   <div className={styles.actionsGroup}>
                     <button
                       type="button"
-                      className={styles.actionButton}
+                      className={`${styles.actionButton} ${styles.editButton}`}
                       onClick={() => onEdit?.(record)}
                       aria-label={`Edit ${record.note || categoryName}`}
                     >
@@ -107,7 +107,7 @@ export function FinancialRecordsTable({
                     </button>
                     <button
                       type="button"
-                      className={styles.actionButton}
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
                       onClick={() => onDelete?.(record)}
                       aria-label={`Delete ${record.note || categoryName}`}
                     >

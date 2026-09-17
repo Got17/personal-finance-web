@@ -94,7 +94,7 @@ export function AccountsTable({
                     {onEdit && (
                       <button
                         type="button"
-                        className={styles.actionButton}
+                        className={`${styles.actionButton} ${styles.editButton}`}
                         onClick={() => onEdit(account)}
                         aria-label={`Edit ${account.name}`}
                       >

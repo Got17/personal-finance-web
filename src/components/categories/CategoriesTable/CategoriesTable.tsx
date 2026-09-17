@@ -67,7 +67,7 @@ export function CategoriesTable({
                     {onEdit && (
                       <button
                         type="button"
-                        className={styles.actionButton}
+                        className={`${styles.actionButton} ${styles.editButton}`}
                         onClick={() => onEdit(category)}
                         aria-label={`Edit ${category.name}`}
                       >
