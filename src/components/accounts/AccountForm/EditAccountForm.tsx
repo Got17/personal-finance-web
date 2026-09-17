@@ -5,18 +5,17 @@ import {
   ACCOUNT_TYPES,
   Account,
   AccountType,
-  createAccountSchema,
+  updateAccountSchema,
 } from "@/lib/schemas/accounts";
-import { createAccountAction } from "@/app/actions/accounts";
+import { updateAccountAction } from "@/app/actions/accounts";
 import { ERROR_MESSAGES } from "@/lib/constants/errors";
 import { Dropdown } from "@/components/ui/Dropdown";
-import { useCurrencyOptions } from "./useCurrencyOptions";
+import { useCurrencyOptions } from "../hooks/useCurrencyOptions";
 import styles from "@/components/ui/ModalForm.module.css";
 
-interface CreateAccountFormProps {
-  readonly defaultCurrency?: string;
-  readonly defaultType?: AccountType;
-  readonly onAccountCreated?: (account: Account) => void;
+interface EditAccountFormProps {
+  readonly account: Account;
+  readonly onAccountUpdated?: (account: Account) => void;
   readonly onCancel?: () => void;
   readonly hideHeader?: boolean;
 }
@@ -31,24 +30,23 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   other: "Other Account",
 };
 
-export function CreateAccountForm({
-  defaultCurrency = "LAK",
-  defaultType = "checking",
-  onAccountCreated,
+export function EditAccountForm({
+  account,
+  onAccountUpdated,
   onCancel,
   hideHeader = true,
-}: Readonly<CreateAccountFormProps>) {
-  const [name, setName] = useState("");
-  const [type, setType] = useState<AccountType>(defaultType);
-  const [currency, setCurrency] = useState(defaultCurrency);
-  const [description, setDescription] = useState("");
-  const [isActive, setIsActive] = useState(true);
+}: Readonly<EditAccountFormProps>) {
+  const [name, setName] = useState(account.name);
+  const [type, setType] = useState<AccountType>(account.type);
+  const [currency, setCurrency] = useState(account.currency);
+  const [description, setDescription] = useState(account.description || "");
+  const [isActive, setIsActive] = useState(account.is_active);
 
   const {
     options: currencyOptions,
     isLoading: isLoadingCurrencies,
     error: currencyLoadError,
-  } = useCurrencyOptions(defaultCurrency);
+  } = useCurrencyOptions(account.currency);
 
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
@@ -56,17 +54,15 @@ export function CreateAccountForm({
     currency?: string;
   }>({});
   const [serverError, setServerError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
-    setSuccessMessage(null);
     setFieldErrors({});
 
-    const validation = createAccountSchema.safeParse({
+    const validation = updateAccountSchema.safeParse({
       name,
       type,
       currency,
@@ -89,20 +85,15 @@ export function CreateAccountForm({
     }
 
     startTransition(async () => {
-      const result = await createAccountAction(validation.data);
+      const result = await updateAccountAction(account.id, validation.data);
 
       if (!result.success || !result.account) {
-        setServerError(result.error || ERROR_MESSAGES.ACCOUNTS.CREATE_FAILED);
+        setServerError(result.error || ERROR_MESSAGES.ACCOUNTS.UPDATE_FAILED);
         return;
       }
 
-      setSuccessMessage(`Account "${result.account.name}" created successfully.`);
-      setName("");
-      setDescription("");
-      setIsActive(true);
-
-      if (onAccountCreated) {
-        onAccountCreated(result.account);
+      if (onAccountUpdated) {
+        onAccountUpdated(result.account);
       }
     });
   };
@@ -111,21 +102,20 @@ export function CreateAccountForm({
     <form className={hideHeader ? styles.form : styles.formCard} onSubmit={handleSubmit} noValidate>
       {!hideHeader && (
         <div className={styles.formHeader}>
-          <h3>Add New Account</h3>
-          <p>Enter details to track a bank account, card, or asset.</p>
+          <h3>Edit Account</h3>
+          <p>Update account details and preferences.</p>
         </div>
       )}
 
       {serverError && <div className={styles.errorBanner}>{serverError}</div>}
-      {successMessage && <div className={styles.successBanner}>{successMessage}</div>}
 
       <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="account-name">
+          <label className={styles.label} htmlFor="edit-account-name">
             Account Name <span className={styles.requiredStar}>*</span>
           </label>
           <input
-            id="account-name"
+            id="edit-account-name"
             type="text"
             className={`${styles.input} ${fieldErrors.name ? styles.inputError : ""}`}
             placeholder="e.g. Everyday Checking"
@@ -138,11 +128,11 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="account-type">
+          <label className={styles.label} htmlFor="edit-account-type">
             Account Type <span className={styles.requiredStar}>*</span>
           </label>
           <Dropdown
-            id="account-type"
+            id="edit-account-type"
             value={type}
             options={ACCOUNT_TYPES.map((t) => ({
               value: t,
@@ -158,11 +148,11 @@ export function CreateAccountForm({
 
       <div className={styles.row}>
         <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="account-currency">
+          <label className={styles.label} htmlFor="edit-account-currency">
             Currency <span className={styles.requiredStar}>*</span>
           </label>
           <Dropdown
-            id="account-currency"
+            id="edit-account-currency"
             value={currency}
             options={currencyOptions}
             onChange={setCurrency}
@@ -179,9 +169,9 @@ export function CreateAccountForm({
         </div>
 
         <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="account-description">Description (Optional)</label>
+          <label className={styles.label} htmlFor="edit-account-description">Description (Optional)</label>
           <input
-            id="account-description"
+            id="edit-account-description"
             type="text"
             className={styles.input}
             placeholder="e.g. Primary salary checking account"
@@ -193,9 +183,9 @@ export function CreateAccountForm({
       </div>
 
       <div className={styles.fieldGroup}>
-        <label className={styles.checkboxLabel} htmlFor="account-is-active">
+        <label className={styles.checkboxLabel} htmlFor="edit-account-is-active">
           <input
-            id="account-is-active"
+            id="edit-account-is-active"
             type="checkbox"
             className={styles.checkbox}
             checked={isActive}
@@ -222,7 +212,7 @@ export function CreateAccountForm({
           className={type === "credit_card" || type === "loan" ? styles.submitButtonExpense : styles.submitButtonIncome}
           disabled={isPending}
         >
-          {isPending ? "Creating..." : "+ Add Account"}
+          {isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </form>

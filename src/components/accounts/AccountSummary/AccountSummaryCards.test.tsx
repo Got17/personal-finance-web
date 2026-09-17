@@ -36,7 +36,7 @@ const mockAccounts: Account[] = [
   },
 ];
 
-import { AccountTab } from "./AccountSubTabs";
+import { AccountTab } from "../AccountsTable/AccountSubTabs";
 
 describe("AccountSummaryCards", () => {
   afterEach(() => {

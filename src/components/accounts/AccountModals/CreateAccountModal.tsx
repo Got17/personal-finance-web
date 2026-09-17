@@ -1,7 +1,7 @@
 "use client";
 
 import { Account, AccountType } from "@/lib/schemas/accounts";
-import { CreateAccountForm } from "./CreateAccountForm";
+import { CreateAccountForm } from "../AccountForm/CreateAccountForm";
 import { Modal } from "@/components/ui/Modal";
 
 interface CreateAccountModalProps {

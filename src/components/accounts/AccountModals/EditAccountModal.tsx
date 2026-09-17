@@ -1,7 +1,7 @@
 "use client";
 
 import { Account } from "@/lib/schemas/accounts";
-import { EditAccountForm } from "./EditAccountForm";
+import { EditAccountForm } from "../AccountForm/EditAccountForm";
 import { Modal } from "@/components/ui/Modal";
 
 interface EditAccountModalProps {

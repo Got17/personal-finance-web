@@ -9,12 +9,12 @@ import {
   AccountSubTabs,
   AccountTab,
   accountMatchesTab,
-} from "./AccountSubTabs";
-import { AccountSummaryCards } from "./AccountSummaryCards";
-import { AccountsTable } from "./AccountsTable";
-import { CreateAccountModal } from "./CreateAccountModal";
-import { EditAccountModal } from "./EditAccountModal";
-import { DeactivateAccountModal } from "./DeactivateAccountModal";
+} from "./AccountsTable/AccountSubTabs";
+import { AccountSummaryCards } from "./AccountSummary/AccountSummaryCards";
+import { AccountsTable } from "./AccountsTable/AccountsTable";
+import { CreateAccountModal } from "./AccountModals/CreateAccountModal";
+import { EditAccountModal } from "./AccountModals/EditAccountModal";
+import { DeactivateAccountModal } from "./AccountModals/DeactivateAccountModal";
 import styles from "./AccountsView.module.css";
 
 const TAB_STORAGE_KEY = "pf_accounts_active_tab";
