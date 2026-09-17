@@ -219,30 +219,6 @@
   animation: menuFadeIn 140ms ease;
 }
 
-.dropdownMenu,
-.dropdownMenuFullWidth {
-  scrollbar-width: thin;
-  scrollbar-color: #dcd7cb transparent;
-}
-
-.dropdownMenu::-webkit-scrollbar,
-.dropdownMenuFullWidth::-webkit-scrollbar {
-  width: 6px;
-}
-
-.dropdownMenu::-webkit-scrollbar-thumb,
-.dropdownMenuFullWidth::-webkit-scrollbar-thumb {
-  background-color: #dcd7cb;
-  border-radius: 9999px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .dropdownMenu::-webkit-scrollbar-thumb:hover,
-  .dropdownMenuFullWidth::-webkit-scrollbar-thumb:hover {
-    background-color: #a39c8c;
-  }
-}
-
 .dropdownMenuUpward {
   top: auto;
   bottom: calc(100% + 6px);
