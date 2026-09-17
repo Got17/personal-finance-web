@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { SidebarNav } from "./Navigation";
-import { SignOutButton } from "@/components/auth/SignOutButton";
+import { SignOutButton } from "@/components/auth/AuthActions/SignOutButton";
 import styles from "./ResponsiveSidebar.module.css";
 
 export interface ResponsiveSidebarProps {
