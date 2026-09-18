@@ -29,7 +29,6 @@ export default async function AccountsPage({ searchParams }: PageProps = {}) {
   const tabParam = resolvedSearchParams?.tab;
   const initialTab: AccountTab =
     tabParam === AccountTab.Banking ||
-    tabParam === AccountTab.Credit ||
     tabParam === AccountTab.Investment
       ? tabParam
       : AccountTab.All;

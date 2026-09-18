@@ -26,7 +26,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
   if (
     initialTab &&
     (initialTab === AccountTab.Banking ||
-      initialTab === AccountTab.Credit ||
       initialTab === AccountTab.Investment)
   ) {
     return initialTab;
@@ -36,7 +35,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
       const urlTab = new URLSearchParams(window.location.search).get("tab") as AccountTab | null;
       if (
         urlTab === AccountTab.Banking ||
-        urlTab === AccountTab.Credit ||
         urlTab === AccountTab.Investment
       ) {
         return urlTab;
@@ -44,7 +42,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
       const saved = localStorage.getItem(TAB_STORAGE_KEY) as AccountTab | null;
       if (
         saved === AccountTab.Banking ||
-        saved === AccountTab.Credit ||
         saved === AccountTab.Investment
       ) {
         return saved;
@@ -57,9 +54,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
 }
 
 function getDefaultCreateType(tab: AccountTab): AccountType {
-  if (tab === AccountTab.Credit) {
-    return "credit_card";
-  }
   if (tab === AccountTab.Investment) {
     return "investment";
   }
@@ -96,10 +90,6 @@ export function AccountsView({
     () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Banking)).length,
     [accounts]
   );
-  const creditCount = useMemo(
-    () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Credit)).length,
-    [accounts]
-  );
   const investmentCount = useMemo(
     () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Investment)).length,
     [accounts]
@@ -126,7 +116,6 @@ export function AccountsView({
       const tabParam = params.get("tab") as AccountTab | null;
       if (
         tabParam === AccountTab.Banking ||
-        tabParam === AccountTab.Credit ||
         tabParam === AccountTab.Investment ||
         tabParam === AccountTab.All
       ) {
@@ -196,7 +185,7 @@ export function AccountsView({
 
   const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
-  const actionVariant = activeTab === AccountTab.Credit ? "expense" : "forest";
+  const actionVariant = "forest";
 
   const defaultCreateType: AccountType = getDefaultCreateType(activeTab);
 
@@ -238,7 +227,6 @@ export function AccountsView({
               onTabChange={handleTabChange}
               allCount={allCount}
               bankingCount={bankingCount}
-              creditCount={creditCount}
               investmentCount={investmentCount}
             />
           </div>

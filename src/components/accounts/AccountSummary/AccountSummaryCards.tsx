@@ -4,7 +4,6 @@ import { AccountTab, getAccountTabForType } from "../AccountsTable/AccountSubTab
 import { SummaryCardsGrid, SummaryCard } from "@/components/ui/cards/SummaryCards";
 import {
   InflowArrowIcon,
-  OutflowArrowIcon,
   TrendingStarIcon,
 } from "@/components/financial-records/summary-icons";
 import { CheckIcon, WalletIcon } from "@/components/financial-records/icons";
@@ -23,11 +22,6 @@ export function AccountSummaryCards({
     [accounts]
   );
 
-  const creditAccounts = useMemo(
-    () => accounts.filter((a) => getAccountTabForType(a.type) === AccountTab.Credit),
-    [accounts]
-  );
-
   const investmentAccounts = useMemo(
     () => accounts.filter((a) => getAccountTabForType(a.type) === AccountTab.Investment),
     [accounts]
@@ -41,11 +35,6 @@ export function AccountSummaryCards({
   const activeBanking = useMemo(
     () => bankingAccounts.filter((a) => a.is_active).length,
     [bankingAccounts]
-  );
-
-  const activeCredit = useMemo(
-    () => creditAccounts.filter((a) => a.is_active).length,
-    [creditAccounts]
   );
 
   const activeInvestment = useMemo(
@@ -74,34 +63,6 @@ export function AccountSummaryCards({
           icon={<CheckIcon />}
           value={activeBanking}
           subtext={<span>Available for transaction records</span>}
-        />
-        <SummaryCard
-          variant="neutral"
-          label="Currencies"
-          icon={<WalletIcon />}
-          value={uniqueCurrencies}
-          subtext={<span>{uniqueCurrencies === 1 ? "Active currency" : "Active currencies"}</span>}
-        />
-      </SummaryCardsGrid>
-    );
-  }
-
-  if (activeTab === AccountTab.Credit) {
-    return (
-      <SummaryCardsGrid testId="summary-cards-credit">
-        <SummaryCard
-          variant="outflow"
-          label="Credit & Loans"
-          icon={<OutflowArrowIcon />}
-          value={creditAccounts.length}
-          subtext={<span>Credit cards, loans, and mortgages</span>}
-        />
-        <SummaryCard
-          variant="outflow"
-          label="Active Accounts"
-          icon={<CheckIcon />}
-          value={activeCredit}
-          subtext={<span>Active liability accounts</span>}
         />
         <SummaryCard
           variant="neutral"
@@ -153,16 +114,16 @@ export function AccountSummaryCards({
         subtext={<span>{activeBanking} active liquid accounts</span>}
       />
       <SummaryCard
-        variant="outflow"
-        label="Credit & Loans"
-        icon={<OutflowArrowIcon />}
-        value={creditAccounts.length}
-        subtext={<span>{activeCredit} active credit accounts</span>}
+        variant="highlight"
+        label="Investments & Assets"
+        icon={<TrendingStarIcon />}
+        value={investmentAccounts.length}
+        subtext={<span>{activeInvestment} active investment accounts</span>}
       />
       <SummaryCard
         variant="neutral"
         label="Total Accounts"
-        icon={<TrendingStarIcon />}
+        icon={<WalletIcon />}
         value={accounts.length}
         subtext={<span>{totalActive} of {accounts.length} active in workspace</span>}
       />

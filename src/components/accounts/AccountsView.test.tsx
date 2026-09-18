@@ -119,15 +119,7 @@ describe("AccountsView", () => {
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
     expect(screen.queryByText("Sapphire Preferred")).toBeNull();
     expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
-
-    // Switch to Credit & Loans tab
-    const creditTab = screen.getByRole("tab", { name: /Credit & Loans/i });
-    fireEvent.click(creditTab);
-
-    expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
-    expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
-    expect(screen.queryByText("Everyday Checking")).toBeNull();
-    expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
+    expect(screen.queryByRole("tab", { name: /Credit & Loans/i })).toBeNull();
 
     // Switch to Investments tab
     const investmentTab = screen.getByRole("tab", { name: /Investments/i });
