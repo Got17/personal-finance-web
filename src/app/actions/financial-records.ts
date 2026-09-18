@@ -70,3 +70,18 @@ export async function getFXQuoteAction(from: string, to: string, date?: string) 
   });
 }
 
+export async function listTransfersAction(filter?: import("@/lib/transfers-service").ListTransferFilter) {
+  return withAuth(async (token) => {
+    const { listTransfers } = await import("@/lib/transfers-service");
+    return listTransfers(token, filter);
+  });
+}
+
+export async function getTransferAction(id: string) {
+  return withAuth(async (token) => {
+    const { getTransfer } = await import("@/lib/transfers-service");
+    return getTransfer(token, id);
+  });
+}
+
+

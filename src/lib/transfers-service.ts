@@ -1,6 +1,9 @@
 import {
   CreateTransferInput,
   createTransferSchema,
+  TransferResponse,
+  transferResponseToFinancialRecord,
+  transferFeeResponseToFinancialRecord,
 } from "@/lib/schemas/transfers";
 import { FinancialRecord } from "@/lib/schemas/financial-records";
 
@@ -50,8 +53,11 @@ export async function getFXQuote(
   if (date) params.set("date", date);
 
   try {
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
     const response = await fetch(`${getBaseUrl()}/v1/fx-quotes?${params.toString()}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers,
     });
     const data = await dataFor(response);
     if (!response.ok || !data?.success || !data.data) {
@@ -88,19 +94,48 @@ export async function createTransfer(
   }
 
   const payload = validation.data;
+  const sourceAccountId = payload.source_account_id || payload.account_id!;
+  const sourceAmountMinor = payload.source_amount_minor ?? payload.amount_minor!;
+  const destinationAccountId = payload.destination_account_id;
+  const destinationAmountMinor = payload.destination_amount_minor;
+  const rate = payload.rate ?? payload.fx_quote?.rate;
+
+  const requestBody: Record<string, unknown> = {
+    source_account_id: sourceAccountId,
+    destination_account_id: destinationAccountId,
+    source_amount_minor: sourceAmountMinor,
+    date: payload.date,
+  };
+  if (destinationAmountMinor !== undefined) {
+    requestBody.destination_amount_minor = destinationAmountMinor;
+  }
+  if (payload.note) {
+    requestBody.note = payload.note;
+  }
+  if (rate !== undefined && rate > 0) {
+    requestBody.rate = rate;
+  }
+  if (payload.fee) {
+    requestBody.fee = {
+      account_id: payload.fee.account_id,
+      category_id: payload.fee.category_id,
+      amount_minor: payload.fee.amount_minor,
+      note: payload.fee.note,
+    };
+  }
 
   try {
-    // 1. Send transfer creation request
+    // 1. Send transfer creation request matching OpenAPI spec
     let response = await fetch(`${getBaseUrl()}/v1/transfers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(requestBody),
     });
 
-    // If /v1/transfers is not yet deployed (parallel implementation), fall back to /v1/financial-records
+    // Fallback: If /v1/transfers endpoint is unavailable, fall back to /v1/financial-records
     if (response.status === 404) {
       response = await fetch(`${getBaseUrl()}/v1/financial-records`, {
         method: "POST",
@@ -110,11 +145,11 @@ export async function createTransfer(
         },
         body: JSON.stringify({
           kind: "transfer",
-          account_id: payload.account_id,
-          destination_account_id: payload.destination_account_id,
-          amount_minor: payload.amount_minor,
-          destination_amount_minor: payload.destination_amount_minor,
-          currency: payload.currency,
+          account_id: sourceAccountId,
+          destination_account_id: destinationAccountId,
+          amount_minor: sourceAmountMinor,
+          destination_amount_minor: destinationAmountMinor,
+          currency: payload.source_currency || payload.currency,
           destination_currency: payload.destination_currency,
           date: payload.date,
           note: payload.note,
@@ -128,11 +163,22 @@ export async function createTransfer(
       return { success: false, error: errorMessage(response, data), status: response.status };
     }
 
-    const transferRecord = data.data as FinancialRecord;
-
-    // 2. If fee is included, record separate linked fee expense
+    const rawData = data.data as Record<string, unknown>;
+    let transferRecord: FinancialRecord;
     let feeRecord: FinancialRecord | undefined;
-    if (payload.fee) {
+
+    if ("source_account_id" in rawData) {
+      const transferData = rawData as unknown as TransferResponse;
+      transferRecord = transferResponseToFinancialRecord(transferData);
+      if (transferData.transfer_fee) {
+        feeRecord = transferFeeResponseToFinancialRecord(transferData.transfer_fee, transferRecord.id);
+      }
+    } else {
+      transferRecord = rawData as unknown as FinancialRecord;
+    }
+
+    // Fallback: If fee was not created atomically by the server, create linked expense
+    if (!feeRecord && payload.fee) {
       const feeResponse = await fetch(`${getBaseUrl()}/v1/financial-records`, {
         method: "POST",
         headers: {
@@ -160,5 +206,57 @@ export async function createTransfer(
     return { success: true, record: transferRecord, feeRecord };
   } catch {
     return { success: false, error: "Unable to connect to financial records server." };
+  }
+}
+
+export interface ListTransferFilter {
+  startDate?: string;
+  endDate?: string;
+  accountId?: string;
+  includeArchived?: boolean;
+}
+
+export async function listTransfers(
+  token: string,
+  filter?: ListTransferFilter,
+): Promise<Result<{ transfers: TransferResponse[] }>> {
+  const params = new URLSearchParams();
+  if (filter?.startDate) params.set("start_date", filter.startDate);
+  if (filter?.endDate) params.set("end_date", filter.endDate);
+  if (filter?.accountId) params.set("account_id", filter.accountId);
+  if (filter?.includeArchived) params.set("include_archived", "true");
+
+  const query = params.toString();
+  const url = `${getBaseUrl()}/v1/transfers${query ? `?${query}` : ""}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await dataFor(response);
+    if (!response.ok || !data?.success || !Array.isArray(data.data)) {
+      return { success: false, error: errorMessage(response, data), status: response.status };
+    }
+    return { success: true, transfers: data.data as TransferResponse[] };
+  } catch {
+    return { success: false, error: "Unable to retrieve transfers from server." };
+  }
+}
+
+export async function getTransfer(
+  token: string,
+  id: string,
+): Promise<Result<{ transfer: TransferResponse }>> {
+  try {
+    const response = await fetch(`${getBaseUrl()}/v1/transfers/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await dataFor(response);
+    if (!response.ok || !data?.success || !data.data) {
+      return { success: false, error: errorMessage(response, data), status: response.status };
+    }
+    return { success: true, transfer: data.data as TransferResponse };
+  } catch {
+    return { success: false, error: "Unable to retrieve transfer from server." };
   }
 }

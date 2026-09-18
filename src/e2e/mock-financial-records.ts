@@ -32,6 +32,7 @@ export function handleFinancialRecordAndTransferRoutes(
   body: Record<string, unknown>,
   currentUser: MockUser,
   records: Map<string, FinancialRecord>,
+  accounts?: Map<string, import("@/lib/schemas/accounts").Account>,
 ): Response | null {
   const path = url.pathname;
 
@@ -54,63 +55,192 @@ export function handleFinancialRecordAndTransferRoutes(
     });
   }
 
-  // POST /v1/transfers
+  // POST /v1/transfers (OpenAPI 3.1)
   if (path === "/v1/transfers" && method === "POST") {
-    const accountId = String(body.account_id || "");
+    const sourceAccountId = String(body.source_account_id || body.account_id || "");
     const destAccountId = String(body.destination_account_id || "");
-    const amountMinor = Number(body.amount_minor);
-    const destAmountMinor = Number(body.destination_amount_minor);
-    const currency = String(body.currency || "");
-    const destCurrency = String(body.destination_currency || "");
+    const sourceAmountMinor = Number(body.source_amount_minor ?? body.amount_minor);
+    const destAmountMinor = Number(body.destination_amount_minor ?? sourceAmountMinor);
+    const srcAcct = accounts?.get(sourceAccountId);
+    const destAcct = accounts?.get(destAccountId);
+    const sourceCurrency = srcAcct?.currency || String(body.source_currency || body.currency || "USD");
+    const destCurrency = destAcct?.currency || String(body.destination_currency || "USD");
 
-    if (accountId === destAccountId) {
+    if (sourceAccountId === destAccountId) {
       return jsonResponse({ success: false, error: "VALIDATION_FAILED", message: "Source and destination accounts must be distinct" }, 422);
     }
 
-    if (currency === destCurrency && amountMinor !== destAmountMinor) {
+    if (sourceCurrency === destCurrency && sourceAmountMinor !== destAmountMinor) {
       return jsonResponse({ success: false, error: "VALIDATION_FAILED", message: "Same-currency transfer amounts must be equal" }, 422);
     }
 
-    const fxQuote = body.fx_quote as { rate?: number; provenance?: "provider" | "manual_override" } | undefined;
-    if (currency !== destCurrency) {
-      if (!fxQuote || !fxQuote.rate) {
+    const rate = typeof body.rate === "number" ? body.rate : (body.fx_quote as { rate?: number })?.rate;
+    if (sourceCurrency !== destCurrency) {
+      if (!rate) {
         return jsonResponse({ success: false, error: "VALIDATION_FAILED", message: "Exchange rate is required for cross-currency transfers" }, 422);
       }
-      if (!validateTransferPrecision(currency, destCurrency, amountMinor, destAmountMinor, fxQuote.rate)) {
+      if (!validateTransferPrecision(sourceCurrency, destCurrency, sourceAmountMinor, destAmountMinor, rate)) {
         return jsonResponse({ success: false, error: "VALIDATION_FAILED", message: "Destination amount does not match rate conversion precision" }, 422);
       }
     }
 
     const transferId = generateId("tr");
     const now = new Date().toISOString();
+
+    const quote = rate
+      ? {
+          id: generateId("fx"),
+          rate,
+          from_currency: sourceCurrency,
+          to_currency: destCurrency,
+          provenance: (body.rate !== undefined ? "manual_override" : "provider") as "manual_override" | "provider",
+          effective_date: String(body.date || now),
+          record_id: transferId,
+          created_at: now,
+        }
+      : undefined;
+
+    // Handle fee if present in CreateTransferRequest
+    let feeRecord: FinancialRecord | undefined;
+    const feeInput = body.fee as { account_id?: string; category_id?: string; amount_minor?: number; note?: string } | undefined;
+    if (feeInput && feeInput.account_id && feeInput.amount_minor) {
+      const feeId = generateId("rec");
+      feeRecord = {
+        id: feeId,
+        user_id: currentUser.id,
+        kind: "expense",
+        account_id: feeInput.account_id,
+        category_id: feeInput.category_id,
+        amount_minor: Number(feeInput.amount_minor),
+        currency: sourceCurrency,
+        date: String(body.date || now),
+        note: feeInput.note || "Transfer fee",
+        is_active: true,
+        linked_transfer_id: transferId,
+        created_at: now,
+        updated_at: now,
+      };
+      records.set(feeId, feeRecord);
+    }
+
     const transferRecord: FinancialRecord = {
       id: transferId,
       user_id: currentUser.id,
       kind: "transfer",
-      account_id: accountId,
+      account_id: sourceAccountId,
       destination_account_id: destAccountId,
-      amount_minor: amountMinor,
+      amount_minor: sourceAmountMinor,
       destination_amount_minor: destAmountMinor,
-      currency,
+      currency: sourceCurrency,
       destination_currency: destCurrency,
       date: String(body.date || now),
       note: typeof body.note === "string" ? body.note : undefined,
       is_active: true,
-      historical_fx_quote: fxQuote?.rate
-        ? {
-            rate: fxQuote.rate,
-            from_currency: currency,
-            to_currency: destCurrency,
-            provenance: fxQuote.provenance || "provider",
-            effective_date: String(body.date || now),
-          }
-        : undefined,
+      historical_fx_quote: quote,
+      transfer_fee_record_id: feeRecord?.id,
       created_at: now,
       updated_at: now,
     };
     records.set(transferId, transferRecord);
 
-    return jsonResponse({ success: true, data: transferRecord, message: "Transfer created" }, 201);
+    const transferResponse = {
+      id: transferId,
+      user_id: currentUser.id,
+      kind: "transfer",
+      source_account_id: sourceAccountId,
+      destination_account_id: destAccountId,
+      source_amount_minor: sourceAmountMinor,
+      destination_amount_minor: destAmountMinor,
+      source_currency: sourceCurrency,
+      destination_currency: destCurrency,
+      date: String(body.date || now),
+      note: typeof body.note === "string" ? body.note : undefined,
+      is_active: true,
+      historical_fx_quote: quote,
+      transfer_fee_record_id: feeRecord?.id,
+      transfer_fee: feeRecord
+        ? {
+            id: feeRecord.id,
+            user_id: feeRecord.user_id,
+            kind: "expense",
+            account_id: feeRecord.account_id,
+            category_id: feeRecord.category_id,
+            amount_minor: feeRecord.amount_minor,
+            currency: feeRecord.currency,
+            date: feeRecord.date,
+            note: feeRecord.note,
+            is_active: feeRecord.is_active,
+            created_at: feeRecord.created_at,
+            updated_at: feeRecord.updated_at,
+          }
+        : undefined,
+      created_at: now,
+      updated_at: now,
+    };
+
+    return jsonResponse({ success: true, data: transferResponse, message: "Transfer created successfully" }, 201);
+  }
+
+  // GET /v1/transfers (OpenAPI 3.1)
+  if (path === "/v1/transfers" && method === "GET") {
+    const accountFilter = url.searchParams.get("account_id");
+    const transfers = Array.from(records.values())
+      .filter((r) => r.user_id === currentUser.id && r.kind === "transfer" && r.is_active)
+      .filter(
+        (r) =>
+          !accountFilter ||
+          r.account_id === accountFilter ||
+          r.destination_account_id === accountFilter,
+      )
+      .map((r) => ({
+        id: r.id,
+        user_id: r.user_id,
+        kind: "transfer" as const,
+        source_account_id: r.account_id,
+        destination_account_id: r.destination_account_id || "",
+        source_amount_minor: r.amount_minor,
+        destination_amount_minor: r.destination_amount_minor || r.amount_minor,
+        source_currency: r.currency,
+        destination_currency: r.destination_currency || r.currency,
+        date: r.date,
+        note: r.note,
+        is_active: r.is_active,
+        historical_fx_quote: r.historical_fx_quote,
+        transfer_fee_record_id: r.transfer_fee_record_id,
+        created_at: r.created_at,
+        updated_at: r.updated_at,
+      }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return jsonResponse({ success: true, data: transfers, message: "Transfers list." }, 200);
+  }
+
+  // GET /v1/transfers/:id (OpenAPI 3.1)
+  if (path.startsWith("/v1/transfers/") && method === "GET") {
+    const transferId = path.replace("/v1/transfers/", "");
+    const r = records.get(transferId);
+    if (!r || r.user_id !== currentUser.id || r.kind !== "transfer") {
+      return jsonResponse({ success: false, error: "NOT_FOUND", message: "Transfer not found." }, 404);
+    }
+    const transferData = {
+      id: r.id,
+      user_id: r.user_id,
+      kind: "transfer" as const,
+      source_account_id: r.account_id,
+      destination_account_id: r.destination_account_id || "",
+      source_amount_minor: r.amount_minor,
+      destination_amount_minor: r.destination_amount_minor || r.amount_minor,
+      source_currency: r.currency,
+      destination_currency: r.destination_currency || r.currency,
+      date: r.date,
+      note: r.note,
+      is_active: r.is_active,
+      historical_fx_quote: r.historical_fx_quote,
+      transfer_fee_record_id: r.transfer_fee_record_id,
+      created_at: r.created_at,
+      updated_at: r.updated_at,
+    };
+    return jsonResponse({ success: true, data: transferData, message: "Transfer found." }, 200);
   }
 
   // /v1/financial-records collection

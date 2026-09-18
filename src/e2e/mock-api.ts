@@ -359,7 +359,7 @@ export function createMockApiHandler() {
       handleUserRoutes(path, method, body, currentUser) ||
       handleAccountRoutes(path, method, body, currentUser, accounts) ||
       handleCategoryRoutes(path, method, body, currentUser, categories) ||
-      handleFinancialRecordAndTransferRoutes(url, method, body, currentUser, financialRecords);
+      handleFinancialRecordAndTransferRoutes(url, method, body, currentUser, financialRecords, accounts);
 
     return authResponse || jsonResponse({ success: false, error: "NOT_FOUND", message: "Endpoint not found" }, 404);
   }

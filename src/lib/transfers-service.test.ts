@@ -203,6 +203,66 @@ describe("transfers-service", () => {
       }
     });
 
+    it("creates transfer with atomic fee response directly from OpenAPI /v1/transfers", async () => {
+      const transferWithFee: CreateTransferInput = {
+        ...validSameCurrencyTransfer,
+        fee: {
+          account_id: "acc-source-1",
+          category_id: "cat-bank-fees",
+          amount_minor: 250,
+          currency: "USD",
+          note: "Transfer processing fee",
+        },
+      };
+
+      const openApiTransferResponse = {
+        id: "tr-openapi-1",
+        user_id: "user-1",
+        kind: "transfer",
+        source_account_id: "acc-source-1",
+        destination_account_id: "acc-dest-2",
+        source_amount_minor: 5000,
+        destination_amount_minor: 5000,
+        source_currency: "USD",
+        destination_currency: "USD",
+        date: "2026-09-17T12:00:00.000Z",
+        transfer_fee_record_id: "fee-openapi-1",
+        transfer_fee: {
+          id: "fee-openapi-1",
+          user_id: "user-1",
+          kind: "expense",
+          account_id: "acc-source-1",
+          category_id: "cat-bank-fees",
+          amount_minor: 250,
+          currency: "USD",
+          date: "2026-09-17T12:00:00.000Z",
+          note: "Transfer processing fee",
+          is_active: true,
+          created_at: "2026-09-17T12:00:00.000Z",
+          updated_at: "2026-09-17T12:00:00.000Z",
+        },
+        is_active: true,
+        created_at: "2026-09-17T12:00:00.000Z",
+        updated_at: "2026-09-17T12:00:00.000Z",
+      };
+
+      global.fetch = vi.fn().mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ success: true, data: openApiTransferResponse }),
+      });
+
+      const result = await createTransfer("test-token", transferWithFee);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.record.id).toBe("tr-openapi-1");
+        expect(result.record.account_id).toBe("acc-source-1");
+        expect(result.record.amount_minor).toBe(5000);
+        expect(result.feeRecord?.id).toBe("fee-openapi-1");
+        expect(result.feeRecord?.linked_transfer_id).toBe("tr-openapi-1");
+      }
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
     it("fails validation if input is invalid", async () => {
       const invalidInput = {
         ...validSameCurrencyTransfer,
@@ -211,6 +271,71 @@ describe("transfers-service", () => {
 
       const result = await createTransfer("test-token", invalidInput);
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe("listTransfers and getTransfer", () => {
+    it("lists transfers with filter parameters", async () => {
+      const { listTransfers } = await import("./transfers-service");
+      const mockList = [
+        {
+          id: "tr-1",
+          user_id: "user-1",
+          kind: "transfer",
+          source_account_id: "acc-1",
+          destination_account_id: "acc-2",
+          source_amount_minor: 1000,
+          destination_amount_minor: 1000,
+          source_currency: "USD",
+          destination_currency: "USD",
+          date: "2026-09-17T12:00:00.000Z",
+          is_active: true,
+          created_at: "2026-09-17T12:00:00.000Z",
+          updated_at: "2026-09-17T12:00:00.000Z",
+        },
+      ];
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ success: true, data: mockList }),
+      });
+
+      const res = await listTransfers("test-token", { accountId: "acc-1" });
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.transfers.length).toBe(1);
+        expect(res.transfers[0]?.id).toBe("tr-1");
+      }
+    });
+
+    it("gets a single transfer by id", async () => {
+      const { getTransfer } = await import("./transfers-service");
+      const mockItem = {
+        id: "tr-1",
+        user_id: "user-1",
+        kind: "transfer",
+        source_account_id: "acc-1",
+        destination_account_id: "acc-2",
+        source_amount_minor: 1000,
+        destination_amount_minor: 1000,
+        source_currency: "USD",
+        destination_currency: "USD",
+        date: "2026-09-17T12:00:00.000Z",
+        is_active: true,
+        created_at: "2026-09-17T12:00:00.000Z",
+        updated_at: "2026-09-17T12:00:00.000Z",
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ success: true, data: mockItem }),
+      });
+
+      const res = await getTransfer("test-token", "tr-1");
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.transfer.id).toBe("tr-1");
+      }
     });
   });
 });
