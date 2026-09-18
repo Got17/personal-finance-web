@@ -3,6 +3,18 @@
   display: inline-block;
 }
 
+.container svg {
+  transition: transform 160ms ease;
+}
+
+.fabOpen svg {
+  transform: rotate(45deg);
+}
+
+.backdrop {
+  display: none;
+}
+
 .menu {
   position: absolute;
   top: calc(100% + 8px);
@@ -28,6 +40,26 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes speedDialUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -93,13 +125,34 @@
   line-height: 1.2;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(31, 43, 36, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 840;
+    animation: fadeIn 160ms ease-out;
+  }
+
+  .fabOpen {
+    z-index: 850;
+  }
+
   .menu {
-    right: 0;
-    min-width: 200px;
+    position: fixed;
+    top: auto;
+    bottom: calc(1.5rem + 66px);
+    right: 1.5rem;
+    min-width: 240px;
+    max-width: calc(100vw - 3rem);
+    z-index: 850;
+    box-shadow: 0 16px 36px -4px rgba(31, 43, 36, 0.22), 0 10px 16px -6px rgba(31, 43, 36, 0.15);
+    animation: speedDialUp 160ms ease-out;
   }
 
   .menuItem {
-    padding: 10px 12px;
+    padding: 12px 14px;
   }
 }

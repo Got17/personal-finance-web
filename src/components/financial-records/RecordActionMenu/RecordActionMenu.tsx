@@ -63,12 +63,22 @@ export function RecordActionMenu({
       ref={containerRef}
       className={`${styles.container} ${className || ""}`.trim()}
     >
+      {isOpen && (
+        <div
+          className={styles.backdrop}
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+          data-testid="record-action-backdrop"
+        />
+      )}
+
       <ActionButton
         variant={variant}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         aria-label="Add new transaction or transfer"
+        className={isOpen ? styles.fabOpen : undefined}
       >
         New
       </ActionButton>

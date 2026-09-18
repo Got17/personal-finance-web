@@ -121,4 +121,26 @@ describe("RecordActionMenu", () => {
     fireEvent.mouseDown(screen.getByTestId("outside"));
     expect(screen.queryByRole("menu")).toBeNull();
   });
+
+  it("renders backdrop when opened and closes when backdrop is clicked", () => {
+    render(
+      <RecordActionMenu
+        onSelectTransaction={vi.fn()}
+        onSelectTransfer={vi.fn()}
+      />
+    );
+
+    const button = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(screen.queryByTestId("record-action-backdrop")).toBeNull();
+
+    fireEvent.click(button);
+    const backdrop = screen.getByTestId("record-action-backdrop");
+    expect(backdrop).toBeTruthy();
+    expect(button.className).toContain("fabOpen");
+
+    fireEvent.click(backdrop);
+    expect(screen.queryByTestId("record-action-backdrop")).toBeNull();
+    expect(screen.queryByRole("menu")).toBeNull();
+    expect(button.className).not.toContain("fabOpen");
+  });
 });
