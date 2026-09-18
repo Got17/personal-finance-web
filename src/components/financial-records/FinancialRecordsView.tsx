@@ -284,6 +284,7 @@ export function FinancialRecordsView({
         subtitle="Record income and spending in the currency it happened."
         action={
           <RecordActionMenu
+            variant={activeTab === TransactionTab.Expense ? "expense" : "forest"}
             onSelectTransaction={() => setIsCreateModalOpen(true)}
             onSelectTransfer={() => setIsTransferModalOpen(true)}
           />

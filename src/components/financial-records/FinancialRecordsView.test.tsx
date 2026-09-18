@@ -135,7 +135,9 @@ describe("FinancialRecordsView", () => {
     const expenseTab = screen.getByRole("tab", { name: /expenses/i });
     fireEvent.click(expenseTab);
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
+    const expenseActionBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(expenseActionBtn).toBeTruthy();
+    expect(expenseActionBtn.className).toContain("buttonExpense");
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
 
@@ -143,7 +145,9 @@ describe("FinancialRecordsView", () => {
     const incomeTab = screen.getByRole("tab", { name: /income/i });
     fireEvent.click(incomeTab);
     expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
+    const incomeActionBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(incomeActionBtn).toBeTruthy();
+    expect(incomeActionBtn.className).toContain("buttonForest");
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
   });
@@ -413,7 +417,9 @@ describe("FinancialRecordsView", () => {
     );
 
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
+    const actionBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(actionBtn).toBeTruthy();
+    expect(actionBtn.className).toContain("buttonExpense");
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
   });

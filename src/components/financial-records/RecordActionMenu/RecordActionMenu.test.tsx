@@ -17,7 +17,21 @@ describe("RecordActionMenu", () => {
     const button = screen.getByRole("button", { name: /Add new transaction or transfer/i });
     expect(button).toBeTruthy();
     expect(button.textContent).toContain("New");
+    expect(button.className).toContain("buttonForest");
     expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("renders with expense variant styling when variant='expense'", () => {
+    render(
+      <RecordActionMenu
+        variant="expense"
+        onSelectTransaction={vi.fn()}
+        onSelectTransfer={vi.fn()}
+      />
+    );
+
+    const button = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(button.className).toContain("buttonExpense");
   });
 
   it("toggles menu open on button click and exposes menu items", () => {

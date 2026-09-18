@@ -95,6 +95,10 @@
     box-shadow: 0 6px 20px rgba(39, 103, 73, 0.45);
   }
 
+  .buttonExpense {
+    box-shadow: 0 6px 20px rgba(229, 62, 62, 0.45);
+  }
+
   .buttonLabel {
     display: none;
   }

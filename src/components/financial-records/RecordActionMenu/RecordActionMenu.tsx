@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ActionButton } from "@/components/ui/buttons/ActionButton";
+import { ActionButton, ActionButtonVariant } from "@/components/ui/buttons/ActionButton";
 import { PlusIcon, TransferArrowsIcon } from "../icons";
 import styles from "./RecordActionMenu.module.css";
 
@@ -9,12 +9,14 @@ export interface RecordActionMenuProps {
   readonly onSelectTransaction: () => void;
   readonly onSelectTransfer: () => void;
   readonly className?: string;
+  readonly variant?: ActionButtonVariant;
 }
 
 export function RecordActionMenu({
   onSelectTransaction,
   onSelectTransfer,
   className,
+  variant = "forest",
 }: Readonly<RecordActionMenuProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ export function RecordActionMenu({
       className={`${styles.container} ${className || ""}`.trim()}
     >
       <ActionButton
-        variant="forest"
+        variant={variant}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
