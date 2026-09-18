@@ -14,7 +14,8 @@ import {
 } from "@/lib/currency-utils";
 import { TransferFeeSection } from "./TransferFeeSection";
 import { TransferCrossCurrencySection } from "./TransferCrossCurrencySection";
-import styles from "./CreateTransferModal.module.css";
+import { Dropdown } from "@/components/ui/dropdowns/Dropdown";
+import styles from "@/components/ui/modals/ModalForm.module.css";
 
 interface CreateTransferModalProps {
   readonly isOpen: boolean;
@@ -212,7 +213,7 @@ function CreateTransferFormModal({
       isOpen={isOpen}
       onClose={onClose}
       title="Transfer Funds"
-      description="Move money between owned accounts with atomic balance updates."
+      description="Move money between your accounts with balance updates."
       testId="create-transfer-modal"
     >
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
@@ -227,38 +228,42 @@ function CreateTransferFormModal({
             <label htmlFor="transfer-source-account" className={styles.label}>
               Source Account
             </label>
-            <select
+            <Dropdown
               id="transfer-source-account"
-              className={styles.select}
               value={sourceAccountId}
-              onChange={(e) => setSourceAccountId(e.target.value)}
+              placeholder="Select source account"
+              options={activeAccounts.map((acc) => ({
+                value: acc.id,
+                label: `${acc.name} (${acc.currency})`,
+              }))}
+              onChange={(val) => {
+                setSourceAccountId(val);
+                if (val === destAccountId) {
+                  const nextDest = activeAccounts.find((a) => a.id !== val)?.id || val;
+                  setDestAccountId(nextDest);
+                }
+              }}
               disabled={isPending}
-            >
-              {activeAccounts.map((acc) => (
-                <option key={acc.id} value={acc.id}>
-                  {acc.name} ({acc.currency})
-                </option>
-              ))}
-            </select>
+              required
+            />
           </div>
 
           <div className={styles.fieldGroup}>
             <label htmlFor="transfer-dest-account" className={styles.label}>
               Destination Account
             </label>
-            <select
+            <Dropdown
               id="transfer-dest-account"
-              className={styles.select}
               value={destAccountId}
-              onChange={(e) => setDestAccountId(e.target.value)}
+              placeholder="Select destination account"
+              options={activeAccounts.map((acc) => ({
+                value: acc.id,
+                label: `${acc.name} (${acc.currency})`,
+              }))}
+              onChange={setDestAccountId}
               disabled={isPending}
-            >
-              {activeAccounts.map((acc) => (
-                <option key={acc.id} value={acc.id}>
-                  {acc.name} ({acc.currency})
-                </option>
-              ))}
-            </select>
+              required
+            />
           </div>
         </div>
 
@@ -358,8 +363,12 @@ function CreateTransferFormModal({
           >
             Cancel
           </button>
-          <button type="submit" className={styles.submitButton} disabled={isPending}>
-            {isPending ? "Saving…" : "Transfer Funds"}
+          <button
+            type="submit"
+            className={styles.submitButtonIncome}
+            disabled={isPending}
+          >
+            {isPending ? "Transferring…" : "Transfer Funds"}
           </button>
         </div>
       </form>

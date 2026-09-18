@@ -1,7 +1,8 @@
 "use client";
 
 import { type ChangeEvent } from "react";
-import styles from "./CreateTransferModal.module.css";
+import modalStyles from "@/components/ui/modals/ModalForm.module.css";
+import transferStyles from "./CreateTransferModal.module.css";
 
 interface TransferCrossCurrencySectionProps {
   readonly sourceCurrency: string;
@@ -34,9 +35,9 @@ export function TransferCrossCurrencySection({
 }: Readonly<TransferCrossCurrencySectionProps>) {
   return (
     <>
-      <div className={styles.row}>
-        <div className={styles.fieldGroup}>
-          <label htmlFor="transfer-source-amount" className={styles.label}>
+      <div className={modalStyles.row}>
+        <div className={modalStyles.fieldGroup}>
+          <label htmlFor="transfer-source-amount" className={modalStyles.label}>
             Source Amount ({sourceCurrency})
           </label>
           <input
@@ -44,7 +45,7 @@ export function TransferCrossCurrencySection({
             type="text"
             inputMode="decimal"
             placeholder="0.00"
-            className={styles.input}
+            className={modalStyles.input}
             value={amount}
             onChange={(e) => onSourceAmountChange(e.target.value)}
             disabled={isPending}
@@ -52,8 +53,8 @@ export function TransferCrossCurrencySection({
           />
         </div>
 
-        <div className={styles.fieldGroup}>
-          <label htmlFor="transfer-dest-amount" className={styles.label}>
+        <div className={modalStyles.fieldGroup}>
+          <label htmlFor="transfer-dest-amount" className={modalStyles.label}>
             Destination Amount ({destCurrency})
           </label>
           <input
@@ -61,7 +62,7 @@ export function TransferCrossCurrencySection({
             type="text"
             inputMode="decimal"
             placeholder="0.00"
-            className={styles.input}
+            className={modalStyles.input}
             value={destAmount}
             onChange={(e) => onDestAmountChange(e.target.value)}
             disabled={isPending}
@@ -70,31 +71,34 @@ export function TransferCrossCurrencySection({
         </div>
       </div>
 
-      <div className={styles.rateCard}>
-        <div className={styles.rateHeader}>
+      <div className={transferStyles.rateCard}>
+        <div className={transferStyles.rateHeader}>
           <span>
-            Rate: 1 {sourceCurrency} = <span className={styles.rateValue}>{rate}</span> {destCurrency}
+            Rate: 1 {sourceCurrency} ={" "}
+            <span className={transferStyles.rateValue}>{rate}</span> {destCurrency}
           </span>
-          <span className={styles.rateProvenance}>
+          <span className={transferStyles.rateProvenance}>
             {rateSource === "manual_override" ? "Manual Override" : "Market Quote"}
           </span>
         </div>
 
-        <label className={styles.checkboxContainer}>
+        <label className={modalStyles.checkboxLabel}>
           <input
             type="checkbox"
             aria-label="Override exchange rate manually"
-            className={styles.checkbox}
+            className={modalStyles.checkbox}
             checked={isManualOverride}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => onToggleManualOverride(e.target.checked)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onToggleManualOverride(e.target.checked)
+            }
             disabled={isPending}
           />
           <span>Override exchange rate manually</span>
         </label>
 
         {isManualOverride && (
-          <div className={styles.fieldGroup}>
-            <label htmlFor="transfer-rate-override" className={styles.label}>
+          <div className={modalStyles.fieldGroup}>
+            <label htmlFor="transfer-rate-override" className={modalStyles.label}>
               Rate Override
             </label>
             <input
@@ -102,7 +106,7 @@ export function TransferCrossCurrencySection({
               type="number"
               step="any"
               aria-label="Rate Override"
-              className={styles.input}
+              className={modalStyles.input}
               value={rate}
               onChange={(e) => onRateChange(e.target.value)}
               disabled={isPending}

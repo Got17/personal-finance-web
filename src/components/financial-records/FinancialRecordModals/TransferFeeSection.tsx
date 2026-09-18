@@ -3,6 +3,8 @@
 import { type ChangeEvent } from "react";
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
+import { Dropdown } from "@/components/ui/dropdowns/Dropdown";
+import modalStyles from "@/components/ui/modals/ModalForm.module.css";
 import styles from "./CreateTransferModal.module.css";
 
 interface TransferFeeSectionProps {
@@ -40,13 +42,15 @@ export function TransferFeeSection({
 }: Readonly<TransferFeeSectionProps>) {
   return (
     <div className={styles.feeSection}>
-      <label className={styles.checkboxContainer}>
+      <label className={modalStyles.checkboxLabel}>
         <input
           type="checkbox"
           aria-label="Include transfer fee expense"
-          className={styles.checkbox}
+          className={modalStyles.checkbox}
           checked={includeFee}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => onToggleFee(e.target.checked)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            onToggleFee(e.target.checked)
+          }
           disabled={isPending}
         />
         <span>Include transfer fee expense</span>
@@ -59,49 +63,45 @@ export function TransferFeeSection({
             cash flow totals.
           </div>
 
-          <div className={styles.row}>
-            <div className={styles.fieldGroup}>
-              <label htmlFor="fee-account" className={styles.label}>
+          <div className={modalStyles.row}>
+            <div className={modalStyles.fieldGroup}>
+              <label htmlFor="fee-account" className={modalStyles.label}>
                 Fee Account
               </label>
-              <select
+              <Dropdown
                 id="fee-account"
-                className={styles.select}
                 value={feeAccountId}
-                onChange={(e) => onFeeAccountIdChange(e.target.value)}
+                placeholder="Select fee account"
+                options={activeAccounts.map((acc) => ({
+                  value: acc.id,
+                  label: `${acc.name} (${acc.currency})`,
+                }))}
+                onChange={onFeeAccountIdChange}
                 disabled={isPending}
-              >
-                {activeAccounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name} ({acc.currency})
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
-            <div className={styles.fieldGroup}>
-              <label htmlFor="fee-category" className={styles.label}>
+            <div className={modalStyles.fieldGroup}>
+              <label htmlFor="fee-category" className={modalStyles.label}>
                 Fee Category
               </label>
-              <select
+              <Dropdown
                 id="fee-category"
-                className={styles.select}
                 value={feeCategoryId}
-                onChange={(e) => onFeeCategoryIdChange(e.target.value)}
+                placeholder="Select fee category"
+                options={activeExpenseCategories.map((cat) => ({
+                  value: cat.id,
+                  label: cat.name,
+                }))}
+                onChange={onFeeCategoryIdChange}
                 disabled={isPending}
-              >
-                {activeExpenseCategories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
           </div>
 
-          <div className={styles.row}>
-            <div className={styles.fieldGroup}>
-              <label htmlFor="fee-amount" className={styles.label}>
+          <div className={modalStyles.row}>
+            <div className={modalStyles.fieldGroup}>
+              <label htmlFor="fee-amount" className={modalStyles.label}>
                 Fee Amount ({feeCurrency})
               </label>
               <input
@@ -109,7 +109,7 @@ export function TransferFeeSection({
                 type="text"
                 inputMode="decimal"
                 placeholder="0.00"
-                className={styles.input}
+                className={modalStyles.input}
                 value={feeAmount}
                 onChange={(e) => onFeeAmountChange(e.target.value)}
                 disabled={isPending}
@@ -117,15 +117,15 @@ export function TransferFeeSection({
               />
             </div>
 
-            <div className={styles.fieldGroup}>
-              <label htmlFor="fee-note" className={styles.label}>
-                Fee Note <span className={styles.optional}>(optional)</span>
+            <div className={modalStyles.fieldGroup}>
+              <label htmlFor="fee-note" className={modalStyles.label}>
+                Fee Note <span className={modalStyles.optional}>(optional)</span>
               </label>
               <input
                 id="fee-note"
                 type="text"
                 placeholder="e.g. Wire transfer fee"
-                className={styles.input}
+                className={modalStyles.input}
                 value={feeNote}
                 maxLength={1000}
                 onChange={(e) => onFeeNoteChange(e.target.value)}
