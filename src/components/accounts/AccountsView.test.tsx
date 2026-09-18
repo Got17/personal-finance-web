@@ -174,16 +174,11 @@ describe("AccountsView", () => {
     expect(screen.getByText("2 accounts")).toBeTruthy();
   });
 
-  it("renders Transfer button in header when at least 2 active accounts exist, and opens modal on click", () => {
+  it("does not render a Transfer button in header and only renders Add Account button", () => {
     render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
 
-    const transferHeaderBtn = screen.getByRole("button", { name: /^transfer$/i });
-    expect(transferHeaderBtn).toBeTruthy();
-
-    fireEvent.click(transferHeaderBtn);
-
-    expect(screen.getByRole("dialog")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Transfer Funds" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /^transfer$/i })).toBeNull();
+    expect(screen.getByRole("button", { name: /Add new account/i })).toBeTruthy();
   });
 
   it("renders row transfer action button for active accounts and opens modal with preselected source account", () => {
@@ -196,12 +191,6 @@ describe("AccountsView", () => {
 
     expect(screen.getByRole("dialog")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Transfer Funds" })).toBeTruthy();
-  });
-
-  it("does not render Transfer button in header when fewer than 2 active accounts exist", () => {
-    render(<AccountsView initialAccounts={[mockChecking]} defaultCurrency="USD" />);
-
-    expect(screen.queryByRole("button", { name: /^transfer$/i })).toBeNull();
   });
 });
 

@@ -15,3 +15,7 @@ _Avoid_: KPI widget, stats box, balance banner
 **Category Icon Avatar**:
 A visually distinct, tinted icon container paired with a Financial Record to provide quick visual categorization and scanning rhythm.
 _Avoid_: Merchant logo, generic icon, category sticker
+
+**Account Transfer Shortcut**:
+An account-anchored action button located within a specific account's table row that initiates a transfer modal with the source account already pre-populated.
+_Avoid_: Global transfer trigger, header transfer button, floating transfer action

@@ -117,10 +117,6 @@ export function AccountsView({
     () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Investment)).length,
     [accounts]
   );
-  const activeAccountsCount = useMemo(
-    () => accounts.filter((acc) => acc.is_active).length,
-    [accounts]
-  );
 
   // Sync active tab to URL
   useEffect(() => {
@@ -232,35 +228,13 @@ export function AccountsView({
         title="Accounts"
         subtitle="Create and view bank accounts, credit cards, and investments in one place."
         action={
-          activeAccountsCount >= 2 ? (
-            <div className={styles.headerActions}>
-              <ActionButton
-                variant="transaction"
-                onClick={() => {
-                  setTransferSourceAccountId(undefined);
-                  setIsTransferModalOpen(true);
-                }}
-                aria-label="Transfer"
-              >
-                Transfer
-              </ActionButton>
-              <ActionButton
-                variant={actionVariant}
-                onClick={() => setIsCreateModalOpen(true)}
-                aria-label="Add new account"
-              >
-                {actionButtonText}
-              </ActionButton>
-            </div>
-          ) : (
-            <ActionButton
-              variant={actionVariant}
-              onClick={() => setIsCreateModalOpen(true)}
-              aria-label="Add new account"
-            >
-              {actionButtonText}
-            </ActionButton>
-          )
+          <ActionButton
+            variant={actionVariant}
+            onClick={() => setIsCreateModalOpen(true)}
+            aria-label="Add new account"
+          >
+            {actionButtonText}
+          </ActionButton>
         }
       />
 
