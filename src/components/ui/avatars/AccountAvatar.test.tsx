@@ -1,4 +1,4 @@
-﻿import { describe, expect, it, afterEach } from "vitest";
+import { describe, expect, it, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { AccountAvatar } from "./AccountAvatar";
 
@@ -12,8 +12,8 @@ describe("AccountAvatar", () => {
     expect(screen.getByTestId("account-avatar")).toBeTruthy();
   });
 
-  it("renders correctly for credit card account", () => {
-    render(<AccountAvatar type="credit_card" />);
+  it("renders correctly for other accounts", () => {
+    render(<AccountAvatar type="other" />);
     expect(screen.getByTestId("account-avatar")).toBeTruthy();
   });
 

@@ -13,20 +13,16 @@ interface AccountsListProps {
 const TYPE_ICONS: Record<string, string> = {
   checking: "C",
   savings: "S",
-  credit_card: "CC",
   investment: "I",
   cash: "W",
-  loan: "L",
   other: "A",
 };
 
 const TYPE_FORMATTED: Record<string, string> = {
   checking: "Checking",
   savings: "Savings",
-  credit_card: "Credit Card",
   investment: "Investment",
   cash: "Cash",
-  loan: "Loan",
   other: "Other",
 };
 

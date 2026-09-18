@@ -336,6 +336,7 @@ export function createMockApiHandler() {
   const tokens = new Map<string, string>();
   const accounts = new Map<string, Account>();
   const categories = new Map<string, Category>();
+  const financialRecords = new Map<string, import("@/lib/schemas/financial-records").FinancialRecord>();
 
   async function handleRequest(urlStr: string, init?: RequestInit): Promise<Response> {
     const url = new URL(urlStr);
@@ -352,10 +353,13 @@ export function createMockApiHandler() {
       return jsonResponse({ success: false, error: "UNAUTHORIZED", message: "Unauthenticated or invalid token." }, 401);
     }
 
+    const { handleFinancialRecordAndTransferRoutes } = await import("./mock-financial-records");
+
     const authResponse =
       handleUserRoutes(path, method, body, currentUser) ||
       handleAccountRoutes(path, method, body, currentUser, accounts) ||
-      handleCategoryRoutes(path, method, body, currentUser, categories);
+      handleCategoryRoutes(path, method, body, currentUser, categories) ||
+      handleFinancialRecordAndTransferRoutes(url, method, body, currentUser, financialRecords, accounts);
 
     return authResponse || jsonResponse({ success: false, error: "NOT_FOUND", message: "Endpoint not found" }, 404);
   }

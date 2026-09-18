@@ -48,6 +48,15 @@ describe("createAccountSchema", () => {
     }
   });
 
+  it.each(["credit_card", "loan"])("rejects retired %s account types", (type) => {
+    const result = createAccountSchema.safeParse({
+      name: "Retired account",
+      type,
+      currency: "USD",
+    });
+
+    expect(result.success).toBe(false);
+  });
   it("rejects invalid currency code", () => {
     const result = createAccountSchema.safeParse({
       name: "Emergency Savings",

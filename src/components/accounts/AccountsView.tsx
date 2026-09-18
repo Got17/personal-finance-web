@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Account, AccountType } from "@/lib/schemas/accounts";
+import { Category } from "@/lib/schemas/categories";
 import { ActionButton } from "@/components/ui/buttons/ActionButton";
 import { PageHeader } from "@/components/ui/headers/PageHeader";
 import { FilterDropdown, FilterDropdownOption, StatusFilter } from "@/components/ui/dropdowns/FilterDropdown";
@@ -15,6 +16,8 @@ import { AccountsTable } from "./AccountsTable/AccountsTable";
 import { CreateAccountModal } from "./AccountModals/CreateAccountModal";
 import { EditAccountModal } from "./AccountModals/EditAccountModal";
 import { DeactivateAccountModal } from "./AccountModals/DeactivateAccountModal";
+import { CreateTransferModal } from "@/components/financial-records/FinancialRecordModals/CreateTransferModal";
+import { SearchIcon, CloseIcon, CheckIcon } from "./AccountsIcons";
 import styles from "./AccountsView.module.css";
 
 const TAB_STORAGE_KEY = "pf_accounts_active_tab";
@@ -23,7 +26,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
   if (
     initialTab &&
     (initialTab === AccountTab.Banking ||
-      initialTab === AccountTab.Credit ||
       initialTab === AccountTab.Investment)
   ) {
     return initialTab;
@@ -33,7 +35,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
       const urlTab = new URLSearchParams(window.location.search).get("tab") as AccountTab | null;
       if (
         urlTab === AccountTab.Banking ||
-        urlTab === AccountTab.Credit ||
         urlTab === AccountTab.Investment
       ) {
         return urlTab;
@@ -41,7 +42,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
       const saved = localStorage.getItem(TAB_STORAGE_KEY) as AccountTab | null;
       if (
         saved === AccountTab.Banking ||
-        saved === AccountTab.Credit ||
         saved === AccountTab.Investment
       ) {
         return saved;
@@ -53,79 +53,7 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
   return AccountTab.All;
 }
 
-function SearchIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
-function getActionButtonText(tab: AccountTab): string {
-  if (tab === AccountTab.Banking) {
-    return "Add Bank Account";
-  }
-  if (tab === AccountTab.Credit) {
-    return "Add Credit Account";
-  }
-  if (tab === AccountTab.Investment) {
-    return "Add Investment Account";
-  }
-  return "Add Account";
-}
-
 function getDefaultCreateType(tab: AccountTab): AccountType {
-  if (tab === AccountTab.Credit) {
-    return "credit_card";
-  }
   if (tab === AccountTab.Investment) {
     return "investment";
   }
@@ -135,12 +63,14 @@ function getDefaultCreateType(tab: AccountTab): AccountType {
 export interface AccountsViewProps {
   readonly initialTab?: AccountTab;
   readonly initialAccounts: Account[];
+  readonly categories?: Category[];
   readonly defaultCurrency?: string;
 }
 
 export function AccountsView({
   initialTab,
   initialAccounts,
+  categories = [],
   defaultCurrency = "LAK",
 }: Readonly<AccountsViewProps>) {
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
@@ -149,6 +79,8 @@ export function AccountsView({
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [transferSourceAccountId, setTransferSourceAccountId] = useState<string | undefined>(undefined);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [deactivatingAccount, setDeactivatingAccount] = useState<Account | null>(null);
 
@@ -156,10 +88,6 @@ export function AccountsView({
   const allCount = accounts.length;
   const bankingCount = useMemo(
     () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Banking)).length,
-    [accounts]
-  );
-  const creditCount = useMemo(
-    () => accounts.filter((acc) => accountMatchesTab(acc.type, AccountTab.Credit)).length,
     [accounts]
   );
   const investmentCount = useMemo(
@@ -188,7 +116,6 @@ export function AccountsView({
       const tabParam = params.get("tab") as AccountTab | null;
       if (
         tabParam === AccountTab.Banking ||
-        tabParam === AccountTab.Credit ||
         tabParam === AccountTab.Investment ||
         tabParam === AccountTab.All
       ) {
@@ -258,9 +185,7 @@ export function AccountsView({
 
   const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
-  const actionButtonText = getActionButtonText(activeTab);
-
-  const actionVariant = activeTab === AccountTab.Credit ? "expense" : "forest";
+  const actionVariant = "forest";
 
   const defaultCreateType: AccountType = getDefaultCreateType(activeTab);
 
@@ -282,7 +207,7 @@ export function AccountsView({
             onClick={() => setIsCreateModalOpen(true)}
             aria-label="Add new account"
           >
-            {actionButtonText}
+            New
           </ActionButton>
         }
       />
@@ -302,7 +227,6 @@ export function AccountsView({
               onTabChange={handleTabChange}
               allCount={allCount}
               bankingCount={bankingCount}
-              creditCount={creditCount}
               investmentCount={investmentCount}
             />
           </div>
@@ -351,6 +275,10 @@ export function AccountsView({
 
         <AccountsTable
           accounts={visibleAccounts}
+          onTransfer={(acc) => {
+            setTransferSourceAccountId(acc.id);
+            setIsTransferModalOpen(true);
+          }}
           onEdit={(acc) => setEditingAccount(acc)}
           onDeactivate={(acc) => setDeactivatingAccount(acc)}
         />
@@ -376,6 +304,21 @@ export function AccountsView({
         account={deactivatingAccount}
         onClose={() => setDeactivatingAccount(null)}
         onAccountDeactivated={handleAccountDeactivated}
+      />
+
+      <CreateTransferModal
+        isOpen={isTransferModalOpen}
+        accounts={accounts}
+        categories={categories}
+        initialSourceAccountId={transferSourceAccountId}
+        onClose={() => {
+          setIsTransferModalOpen(false);
+          setTransferSourceAccountId(undefined);
+        }}
+        onTransferCreated={() => {
+          setIsTransferModalOpen(false);
+          setTransferSourceAccountId(undefined);
+        }}
       />
     </div>
   );

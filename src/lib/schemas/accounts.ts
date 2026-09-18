@@ -4,10 +4,8 @@ import { ERROR_MESSAGES } from "@/lib/constants/errors";
 export const ACCOUNT_TYPES = [
   "checking",
   "savings",
-  "credit_card",
   "investment",
   "cash",
-  "loan",
   "other",
 ] as const;
 

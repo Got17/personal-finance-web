@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { HistoricalFXQuote } from "./transfers";
 
-export const FINANCIAL_RECORD_KINDS = ["income", "expense"] as const;
+export const FINANCIAL_RECORD_KINDS = ["income", "expense", "transfer"] as const;
 
 export type FinancialRecordKind = (typeof FINANCIAL_RECORD_KINDS)[number];
 
@@ -9,12 +10,19 @@ export interface FinancialRecord {
   user_id: string;
   kind: FinancialRecordKind;
   account_id: string;
-  category_id: string;
+  destination_account_id?: string;
+  category_id?: string;
   amount_minor: number;
+  destination_amount_minor?: number;
   currency: string;
+  destination_currency?: string;
   date: string;
   note?: string;
+  historical_fx_quote_id?: string;
+  transfer_fee_record_id?: string;
+  linked_transfer_id?: string;
   is_active: boolean;
+  historical_fx_quote?: HistoricalFXQuote;
   created_at: string;
   updated_at: string;
 }

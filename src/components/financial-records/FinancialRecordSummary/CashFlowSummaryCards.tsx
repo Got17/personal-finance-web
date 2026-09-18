@@ -106,6 +106,7 @@ export function CashFlowSummaryCards({
 
     const catTotals = new Map<string, { minor: number; currency: string }>();
     for (const r of targetRecords) {
+      if (!r.category_id) continue;
       const existing = catTotals.get(r.category_id);
       const newMinor = (existing?.minor || 0) + r.amount_minor;
       catTotals.set(r.category_id, { minor: newMinor, currency: r.currency });

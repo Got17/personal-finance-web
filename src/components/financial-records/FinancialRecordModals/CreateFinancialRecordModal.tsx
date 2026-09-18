@@ -20,7 +20,20 @@ interface CreateFinancialRecordModalProps {
   onRecordCreated: (record: FinancialRecord) => void;
 }
 
-export function CreateFinancialRecordModal({
+export function CreateFinancialRecordModal(
+  props: Readonly<CreateFinancialRecordModalProps>
+) {
+  if (!props.isOpen) return null;
+
+  return (
+    <CreateFinancialRecordFormModal
+      key={`${props.defaultKind}-${props.allowKindSelection}`}
+      {...props}
+    />
+  );
+}
+
+function CreateFinancialRecordFormModal({
   isOpen,
   onClose,
   defaultKind = "expense",
@@ -123,8 +136,12 @@ export function CreateFinancialRecordModal({
                 { value: "income", label: "Income" },
               ]}
               onChange={(val) => {
-                setKind(val as FinancialRecordKind);
-                setCategoryId("");
+                const nextKind = val as FinancialRecordKind;
+                setKind(nextKind);
+                const nextMatching = categories.filter(
+                  (cat) => cat.is_active && cat.type === nextKind
+                );
+                setCategoryId(nextMatching[0]?.id || "");
               }}
               disabled={isPending}
             />

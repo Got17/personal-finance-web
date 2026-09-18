@@ -1,0 +1,50 @@
+.rateCard {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+
+.rateValue {
+  font-weight: 600;
+  color: var(--forest);
+  font-variant-numeric: tabular-nums;
+}
+
+.rateProvenance {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background-color: var(--forest-soft);
+  color: var(--forest);
+}
+
+.feeSection {
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feeNotice {
+  background-color: #fefbf3;
+  border: 1px solid #faecd0;
+  border-radius: 8px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  line-height: 1.4;
+}

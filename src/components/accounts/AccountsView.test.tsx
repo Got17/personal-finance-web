@@ -20,11 +20,11 @@ const mockChecking: Account = {
   updated_at: "2026-09-07T00:00:00Z",
 };
 
-const mockCredit: Account = {
+const mockOther: Account = {
   id: "acc-2",
   user_id: "usr-1",
   name: "Sapphire Preferred",
-  type: "credit_card",
+  type: "other",
   currency: "USD",
   description: "Travel card",
   is_active: false,
@@ -44,7 +44,7 @@ const mockInvestment: Account = {
   updated_at: "2026-09-07T00:00:00Z",
 };
 
-const mockAccounts = [mockChecking, mockCredit, mockInvestment];
+const mockAccounts = [mockChecking, mockOther, mockInvestment];
 
 describe("AccountsView", () => {
   beforeEach(() => {
@@ -65,7 +65,7 @@ describe("AccountsView", () => {
 
     expect(screen.getByRole("heading", { name: "Accounts" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new account/i })).toBeTruthy();
-    expect(screen.getByText("Add Account")).toBeTruthy();
+    expect(screen.getByText("New")).toBeTruthy();
 
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
     expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
@@ -108,35 +108,27 @@ describe("AccountsView", () => {
     expect(screen.getByRole("heading", { name: "Deactivate Account" })).toBeTruthy();
   });
 
-  it("filters accounts by sub-tab and updates action button label", () => {
+  it("filters accounts by sub-tab and maintains New action button", () => {
     render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
 
     // Switch to Banking tab
     const bankingTab = screen.getByRole("tab", { name: /Banking/i });
     fireEvent.click(bankingTab);
 
-    expect(screen.getByText("Add Bank Account")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
     expect(screen.queryByText("Sapphire Preferred")).toBeNull();
     expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
-
-    // Switch to Credit & Loans tab
-    const creditTab = screen.getByRole("tab", { name: /Credit & Loans/i });
-    fireEvent.click(creditTab);
-
-    expect(screen.getByText("Add Credit Account")).toBeTruthy();
-    expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
-    expect(screen.queryByText("Everyday Checking")).toBeNull();
-    expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
+    expect(screen.queryByRole("tab", { name: /Credit & Loans/i })).toBeNull();
 
     // Switch to Investments tab
     const investmentTab = screen.getByRole("tab", { name: /Investments/i });
     fireEvent.click(investmentTab);
 
-    expect(screen.getByText("Add Investment Account")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
     expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
     expect(screen.queryByText("Everyday Checking")).toBeNull();
-    expect(screen.queryByText("Sapphire Preferred")).toBeNull();
+    expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
   });
 
   it("filters accounts by search query and allows clearing filters", () => {
@@ -172,6 +164,25 @@ describe("AccountsView", () => {
     expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
     expect(screen.queryByText("Sapphire Preferred")).toBeNull();
     expect(screen.getByText("2 accounts")).toBeTruthy();
+  });
+
+  it("does not render a Transfer button in header and only renders Add Account button", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
+
+    expect(screen.queryByRole("button", { name: /^transfer$/i })).toBeNull();
+    expect(screen.getByRole("button", { name: /Add new account/i })).toBeTruthy();
+  });
+
+  it("renders row transfer action button for active accounts and opens modal with preselected source account", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
+
+    const rowTransferBtn = screen.getByRole("button", { name: "Transfer from Everyday Checking" });
+    expect(rowTransferBtn).toBeTruthy();
+
+    fireEvent.click(rowTransferBtn);
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Transfer Funds" })).toBeTruthy();
   });
 });
 

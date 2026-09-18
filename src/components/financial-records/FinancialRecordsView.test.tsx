@@ -135,7 +135,9 @@ describe("FinancialRecordsView", () => {
     const expenseTab = screen.getByRole("tab", { name: /expenses/i });
     fireEvent.click(expenseTab);
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
+    const expenseActionBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(expenseActionBtn).toBeTruthy();
+    expect(expenseActionBtn.className).toContain("buttonExpense");
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
 
@@ -143,7 +145,9 @@ describe("FinancialRecordsView", () => {
     const incomeTab = screen.getByRole("tab", { name: /income/i });
     fireEvent.click(incomeTab);
     expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
+    const incomeActionBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(incomeActionBtn).toBeTruthy();
+    expect(incomeActionBtn.className).toContain("buttonForest");
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
   });
@@ -206,9 +210,10 @@ describe("FinancialRecordsView", () => {
     // Switch to Expenses tab
     fireEvent.click(screen.getByRole("tab", { name: /expenses/i }));
 
-    // Open modal
-    const addExpenseBtn = screen.getByRole("button", { name: /^add expense$/i });
-    fireEvent.click(addExpenseBtn);
+    // Open modal via New action menu
+    const newBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    fireEvent.click(newBtn);
+    fireEvent.click(screen.getByRole("menuitem", { name: /Transaction/i }));
 
     expect(screen.getByRole("dialog")).toBeTruthy();
 
@@ -412,7 +417,9 @@ describe("FinancialRecordsView", () => {
     );
 
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
+    const actionBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    expect(actionBtn).toBeTruthy();
+    expect(actionBtn.className).toContain("buttonExpense");
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
   });
@@ -450,8 +457,77 @@ describe("FinancialRecordsView", () => {
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
     });
-    expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
+  });
+
+  it("opens Add Income modal when selecting Transaction from New menu on Income tab", async () => {
+    vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+    createFinancialRecordAction.mockResolvedValueOnce({
+      success: true,
+      record: {
+        id: "record-new-inc",
+        user_id: "user-1",
+        kind: "income" as const,
+        account_id: "account-1",
+        category_id: "income-1",
+        amount_minor: 500000,
+        currency: "USD",
+        date: "2026-09-17T12:00:00.000Z",
+        note: "Consulting bonus",
+        is_active: true,
+        created_at: "",
+        updated_at: "",
+      },
+    });
+
+    render(
+      <FinancialRecordsView
+        initialRecords={[initialExpense, initialIncome]}
+        accounts={accounts}
+        categories={categories}
+      />
+    );
+
+    const incomeTab = screen.getByRole("tab", { name: /income/i });
+    fireEvent.click(incomeTab);
+
+    const newBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    fireEvent.click(newBtn);
+    fireEvent.click(screen.getByRole("menuitem", { name: /Transaction/i }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("Add New Income")).toBeTruthy();
+    expect(
+      within(dialog).getByText("Record an income stream into your selected account.")
+    ).toBeTruthy();
+
+    const submitBtn = within(dialog).getByRole("button", { name: /^add income$/i });
+    expect(submitBtn).toBeTruthy();
+
+    // Verify income categories are available
+    expect(within(dialog).getAllByText("Salary").length).toBeGreaterThan(0);
+
+    // Fill form and submit
+    fireEvent.change(within(dialog).getByLabelText(/^amount/i), {
+      target: { value: "5000.00" },
+    });
+    fireEvent.change(within(dialog).getByLabelText(/description/i), {
+      target: { value: "Consulting bonus" },
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    expect(createFinancialRecordAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "income",
+        amount_minor: 500000,
+        note: "Consulting bonus",
+      })
+    );
   });
 });

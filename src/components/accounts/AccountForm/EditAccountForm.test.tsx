@@ -56,12 +56,17 @@ describe("EditAccountForm", () => {
     });
   });
 
-  it("preserves the account's saved currency as a synthetic option when it is no longer in the fetched list", async () => {
-    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
-      success: true,
-      currencies: [{ code: "USD", name: "US Dollar", symbol: "$", decimal_digits: 2 }],
-    });
+  it("offers only account types supported by the API", () => {
+    render(<EditAccountForm account={mockAccount} />);
 
+    const typeOptions = Array.from(
+      (screen.getByLabelText(/Account Type/i) as HTMLSelectElement).options,
+      (option) => option.value,
+    );
+
+    expect(typeOptions).toEqual(["checking", "savings", "investment", "cash", "other"]);
+  });
+  it("preserves the account's saved currency as a synthetic option when it is no longer in the fetched list", async () => {
     render(<EditAccountForm account={{ ...mockAccount, currency: "GBP" }} />);
 
     await waitFor(() => {

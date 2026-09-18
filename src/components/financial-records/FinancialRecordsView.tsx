@@ -11,11 +11,12 @@ import {
   WalletIcon,
   getCategoryIcon,
 } from "./icons";
-import { ActionButton } from "@/components/ui/buttons/ActionButton";
+import { RecordActionMenu } from "./RecordActionMenu/RecordActionMenu";
 import { PageHeader } from "@/components/ui/headers/PageHeader";
 import { TransactionSubTabs, TransactionTab } from "./FinancialRecordsTable/TransactionSubTabs";
 import { FinancialRecordsTable } from "./FinancialRecordsTable/FinancialRecordsTable";
 import { CreateFinancialRecordModal } from "./FinancialRecordModals/CreateFinancialRecordModal";
+import { CreateTransferModal } from "./FinancialRecordModals/CreateTransferModal";
 import { EditFinancialRecordModal } from "./FinancialRecordModals/EditFinancialRecordModal";
 import { DeleteFinancialRecordModal } from "./FinancialRecordModals/DeleteFinancialRecordModal";
 import { FilterDropdown, FilterDropdownOption } from "@/components/ui/dropdowns/FilterDropdown";
@@ -30,16 +31,26 @@ const TAB_STORAGE_KEY = "pf_transactions_active_tab";
 function getInitialTab(initialTab?: TransactionTab): TransactionTab {
   if (
     initialTab &&
-    (initialTab === TransactionTab.Expense || initialTab === TransactionTab.Income)
+    (initialTab === TransactionTab.Expense ||
+      initialTab === TransactionTab.Income ||
+      initialTab === TransactionTab.Transfer)
   ) {
     return initialTab;
   }
   if (typeof window !== "undefined") {
     try {
       const urlTab = new URLSearchParams(window.location.search).get("tab") as TransactionTab | null;
-      if (urlTab === TransactionTab.Expense || urlTab === TransactionTab.Income) return urlTab;
+      if (
+        urlTab === TransactionTab.Expense ||
+        urlTab === TransactionTab.Income ||
+        urlTab === TransactionTab.Transfer
+      ) return urlTab;
       const saved = localStorage.getItem(TAB_STORAGE_KEY) as TransactionTab | null;
-      if (saved === TransactionTab.Expense || saved === TransactionTab.Income) return saved;
+      if (
+        saved === TransactionTab.Expense ||
+        saved === TransactionTab.Income ||
+        saved === TransactionTab.Transfer
+      ) return saved;
     } catch {
       // Ignore
     }
@@ -68,6 +79,7 @@ export function FinancialRecordsView({
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState<boolean>(false);
   const [editingRecord, setEditingRecord] = useState<FinancialRecord | null>(null);
   const [deletingRecord, setDeletingRecord] = useState<FinancialRecord | null>(null);
 
@@ -79,6 +91,10 @@ export function FinancialRecordsView({
   );
   const incomeCount = useMemo(
     () => records.filter((r) => r.kind === "income").length,
+    [records]
+  );
+  const transferCount = useMemo(
+    () => records.filter((r) => r.kind === "transfer").length,
     [records]
   );
 
@@ -105,7 +121,9 @@ export function FinancialRecordsView({
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const record of tabRecords) {
-      counts[record.category_id] = (counts[record.category_id] || 0) + 1;
+      if (record.category_id) {
+        counts[record.category_id] = (counts[record.category_id] || 0) + 1;
+      }
     }
     return counts;
   }, [tabRecords]);
@@ -156,7 +174,13 @@ export function FinancialRecordsView({
     return records.filter((record) => {
       if (activeTab !== "all" && record.kind !== activeTab) return false;
       if (selectedCategoryId && record.category_id !== selectedCategoryId) return false;
-      if (selectedAccountId && record.account_id !== selectedAccountId) return false;
+      if (
+        selectedAccountId &&
+        record.account_id !== selectedAccountId &&
+        record.destination_account_id !== selectedAccountId
+      ) {
+        return false;
+      }
       if (startDate && record.date.slice(0, 10) < startDate) return false;
       if (endDate && record.date.slice(0, 10) > endDate) return false;
       return true;
@@ -185,6 +209,7 @@ export function FinancialRecordsView({
       if (
         tabParam === TransactionTab.Expense ||
         tabParam === TransactionTab.Income ||
+        tabParam === TransactionTab.Transfer ||
         tabParam === TransactionTab.All
       ) {
         setActiveTab(tabParam);
@@ -214,6 +239,18 @@ export function FinancialRecordsView({
   };
 
   const handleRecordCreated = (newRecord: FinancialRecord) => setRecords((c) => [newRecord, ...c]);
+  const handleTransferCreated = (
+    newRecord: FinancialRecord,
+    feeRecord?: FinancialRecord,
+  ) => {
+    setRecords((current) => {
+      const next = [newRecord, ...current];
+      if (feeRecord) {
+        next.unshift(feeRecord);
+      }
+      return next;
+    });
+  };
   const handleRecordUpdated = (upd: FinancialRecord) => setRecords((c) => c.map((i) => (i.id === upd.id ? upd : i)));
   const handleRecordDeleted = (del: FinancialRecord) => setRecords((c) => c.filter((i) => i.id !== del.id));
 
@@ -239,12 +276,6 @@ export function FinancialRecordsView({
     setEndDate("");
   };
 
-  const defaultActionText =
-    activeTab === TransactionTab.Expense ? "Add Expense" : "Add Income";
-  const actionButtonText =
-    activeTab === TransactionTab.All ? "Add Transaction" : defaultActionText;
-  const actionVariant = activeTab === TransactionTab.Expense ? "expense" : "forest";
-
   return (
     <div className={styles.container}>
       <PageHeader
@@ -252,12 +283,11 @@ export function FinancialRecordsView({
         title="Transactions"
         subtitle="Record income and spending in the currency it happened."
         action={
-          <ActionButton
-            variant={actionVariant}
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            {actionButtonText}
-          </ActionButton>
+          <RecordActionMenu
+            variant={activeTab === TransactionTab.Expense ? "expense" : "forest"}
+            onSelectTransaction={() => setIsCreateModalOpen(true)}
+            onSelectTransfer={() => setIsTransferModalOpen(true)}
+          />
         }
       />
 
@@ -281,6 +311,7 @@ export function FinancialRecordsView({
               allCount={allCount}
               expenseCount={expenseCount}
               incomeCount={incomeCount}
+              transferCount={transferCount}
             />
           </div>
 
@@ -373,6 +404,14 @@ export function FinancialRecordsView({
         accounts={accounts}
         categories={categories}
         onRecordCreated={handleRecordCreated}
+      />
+
+      <CreateTransferModal
+        isOpen={isTransferModalOpen}
+        onClose={() => setIsTransferModalOpen(false)}
+        accounts={accounts}
+        categories={categories}
+        onTransferCreated={handleTransferCreated}
       />
 
       <EditFinancialRecordModal

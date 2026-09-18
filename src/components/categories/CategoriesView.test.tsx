@@ -78,7 +78,7 @@ describe("CategoriesView", () => {
     expect(screen.getByRole("heading", { name: "Deactivate Category" })).toBeTruthy();
   });
 
-  it("switches sub-tabs and dynamically updates title and action button text", () => {
+  it("switches sub-tabs and dynamically updates active tab state while maintaining New action button", () => {
     render(
       <CategoriesView
         initialCategories={[mockInitialCategory, mockExpenseCategory]}
@@ -87,14 +87,14 @@ describe("CategoriesView", () => {
 
     // Initial state: All
     expect(screen.getByRole("heading", { name: "Categories" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Category");
+    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("New");
 
     // Click Expenses tab
     const expensesTab = screen.getByRole("tab", { name: /expenses/i });
     fireEvent.click(expensesTab);
 
     expect(screen.getByRole("tab", { name: /expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Expense Category");
+    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("New");
     expect(screen.getByText("Groceries")).toBeTruthy();
     expect(screen.queryByText("Salary")).toBeNull();
 
@@ -103,7 +103,7 @@ describe("CategoriesView", () => {
     fireEvent.click(incomeTab);
 
     expect(screen.getByRole("tab", { name: /income/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("Add Income Category");
+    expect(screen.getByRole("button", { name: /Add new category/i }).textContent).toContain("New");
     expect(screen.getByText("Salary")).toBeTruthy();
     expect(screen.queryByText("Groceries")).toBeNull();
   });

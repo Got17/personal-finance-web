@@ -2,43 +2,36 @@ import { Account, AccountType } from "@/lib/schemas/accounts";
 import { AccountAvatar } from "@/components/ui/avatars/AccountAvatar";
 import { Badge, BadgeVariant } from "@/components/ui/badges/Badge";
 import { StatusBadge } from "@/components/ui/badges/StatusBadge";
-import { EditPencilIcon, TrashIcon } from "@/components/financial-records/icons";
+import { EditPencilIcon, TrashIcon, TransferArrowsIcon } from "@/components/financial-records/icons";
 import styles from "./AccountsTable.module.css";
 
 interface AccountsTableProps {
   readonly accounts: Account[];
   readonly onEdit?: (account: Account) => void;
   readonly onDeactivate?: (account: Account) => void;
+  readonly onTransfer?: (account: Account) => void;
 }
 
 const TYPE_LABELS: Record<AccountType, string> = {
   checking: "Checking",
   savings: "Savings",
-  credit_card: "Credit Card",
   investment: "Investment",
   cash: "Cash",
-  loan: "Loan",
   other: "Other",
 };
 
-function getAccountBadgeVariant(type: AccountType): BadgeVariant {
-  if (type === "credit_card" || type === "loan") {
-    return "expense";
-  }
-  if (type === "savings" || type === "cash") {
-    return "income";
-  }
-  return "default";
-}
 
 export function AccountsTable({
   accounts,
   onEdit,
   onDeactivate,
+  onTransfer,
 }: Readonly<AccountsTableProps>) {
   if (accounts.length === 0) {
     return <div className={styles.emptyState}>No accounts match your filters.</div>;
   }
+
+  const activeAccountsCount = accounts.filter((a) => a.is_active).length;
 
   return (
     <div className={styles.tableWrapper}>
@@ -57,7 +50,8 @@ export function AccountsTable({
         <tbody>
           {accounts.map((account) => {
             const typeLabel = TYPE_LABELS[account.type] || account.type;
-            const badgeVariant = getAccountBadgeVariant(account.type);
+            const badgeVariant: BadgeVariant =
+              account.type === "savings" || account.type === "cash" ? "income" : "default";
 
             return (
               <tr
@@ -91,6 +85,17 @@ export function AccountsTable({
                 </td>
                 <td className={styles.actionsCell}>
                   <div className={styles.actionsGroup}>
+                    {onTransfer && account.is_active && activeAccountsCount >= 2 && (
+                      <button
+                        type="button"
+                        className={`${styles.actionButton} ${styles.transferButton}`}
+                        onClick={() => onTransfer(account)}
+                        aria-label={`Transfer from ${account.name}`}
+                        title={`Transfer from ${account.name}`}
+                      >
+                        <TransferArrowsIcon />
+                      </button>
+                    )}
                     {onEdit && (
                       <button
                         type="button"
