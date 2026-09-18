@@ -27,8 +27,8 @@ const mockAccounts: Account[] = [
   {
     id: "acc-3",
     user_id: "usr-1",
-    name: "Credit Card",
-    type: "credit_card",
+    name: "Brokerage Reserve",
+    type: "investment",
     currency: "EUR",
     is_active: true,
     created_at: "2026-09-07T00:00:00Z",

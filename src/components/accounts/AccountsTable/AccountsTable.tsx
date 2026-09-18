@@ -15,22 +15,11 @@ interface AccountsTableProps {
 const TYPE_LABELS: Record<AccountType, string> = {
   checking: "Checking",
   savings: "Savings",
-  credit_card: "Credit Card",
   investment: "Investment",
   cash: "Cash",
-  loan: "Loan",
   other: "Other",
 };
 
-function getAccountBadgeVariant(type: AccountType): BadgeVariant {
-  if (type === "credit_card" || type === "loan") {
-    return "expense";
-  }
-  if (type === "savings" || type === "cash") {
-    return "income";
-  }
-  return "default";
-}
 
 export function AccountsTable({
   accounts,
@@ -61,7 +50,8 @@ export function AccountsTable({
         <tbody>
           {accounts.map((account) => {
             const typeLabel = TYPE_LABELS[account.type] || account.type;
-            const badgeVariant = getAccountBadgeVariant(account.type);
+            const badgeVariant: BadgeVariant =
+              account.type === "savings" || account.type === "cash" ? "income" : "default";
 
             return (
               <tr

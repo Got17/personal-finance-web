@@ -23,10 +23,8 @@ interface EditAccountFormProps {
 const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   checking: "Checking Account",
   savings: "Savings Account",
-  credit_card: "Credit Card",
   investment: "Investment Account",
   cash: "Cash / Wallet",
-  loan: "Loan / Mortgage",
   other: "Other Account",
 };
 
@@ -209,7 +207,7 @@ export function EditAccountForm({
         )}
         <button
           type="submit"
-          className={type === "credit_card" || type === "loan" ? styles.submitButtonExpense : styles.submitButtonIncome}
+          className={styles.submitButtonIncome}
           disabled={isPending}
         >
           {isPending ? "Saving..." : "Save Changes"}

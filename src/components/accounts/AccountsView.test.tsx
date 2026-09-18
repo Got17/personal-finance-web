@@ -20,11 +20,11 @@ const mockChecking: Account = {
   updated_at: "2026-09-07T00:00:00Z",
 };
 
-const mockCredit: Account = {
+const mockOther: Account = {
   id: "acc-2",
   user_id: "usr-1",
   name: "Sapphire Preferred",
-  type: "credit_card",
+  type: "other",
   currency: "USD",
   description: "Travel card",
   is_active: false,
@@ -44,7 +44,7 @@ const mockInvestment: Account = {
   updated_at: "2026-09-07T00:00:00Z",
 };
 
-const mockAccounts = [mockChecking, mockCredit, mockInvestment];
+const mockAccounts = [mockChecking, mockOther, mockInvestment];
 
 describe("AccountsView", () => {
   beforeEach(() => {
@@ -128,7 +128,7 @@ describe("AccountsView", () => {
     expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
     expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
     expect(screen.queryByText("Everyday Checking")).toBeNull();
-    expect(screen.queryByText("Sapphire Preferred")).toBeNull();
+    expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
   });
 
   it("filters accounts by search query and allows clearing filters", () => {

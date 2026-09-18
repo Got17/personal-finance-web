@@ -1,4 +1,4 @@
-﻿import { ReactNode } from "react";
+import { ReactNode } from "react";
 import { AccountType } from "@/lib/schemas/accounts";
 import styles from "./AccountAvatar.module.css";
 
@@ -43,24 +43,6 @@ function SavingsVaultIcon() {
   );
 }
 
-function CreditCardIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect width="20" height="14" x="2" y="5" rx="2" />
-      <line x1="2" x2="22" y1="10" y2="10" />
-      <line x1="7" x2="7.01" y1="15" y2="15" />
-      <line x1="11" x2="13" y1="15" y2="15" />
-    </svg>
-  );
-}
 
 function InvestmentIcon() {
   return (
@@ -97,23 +79,6 @@ function CashIcon() {
   );
 }
 
-function LoanIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="9" y1="15" x2="15" y2="15" />
-    </svg>
-  );
-}
 
 function OtherIcon() {
   return (
@@ -137,14 +102,10 @@ export function getAccountAvatarIcon(type: AccountType): ReactNode {
       return <BankIcon />;
     case "savings":
       return <SavingsVaultIcon />;
-    case "credit_card":
-      return <CreditCardIcon />;
     case "investment":
       return <InvestmentIcon />;
     case "cash":
       return <CashIcon />;
-    case "loan":
-      return <LoanIcon />;
     case "other":
     default:
       return <OtherIcon />;

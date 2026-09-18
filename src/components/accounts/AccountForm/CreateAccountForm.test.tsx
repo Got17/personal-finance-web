@@ -57,6 +57,16 @@ describe("CreateAccountForm", () => {
     expect(currenciesActions.getCurrenciesAction).toHaveBeenCalled();
   });
 
+  it("offers only account types supported by the API", () => {
+    render(<CreateAccountForm />);
+
+    const typeOptions = Array.from(
+      (screen.getByLabelText(/Account Type/i) as HTMLSelectElement).options,
+      (option) => option.value,
+    );
+
+    expect(typeOptions).toEqual(["checking", "savings", "investment", "cash", "other"]);
+  });
   it("disables the currency dropdown while currencies are loading", () => {
     vi.mocked(currenciesActions.getCurrenciesAction).mockReturnValue(new Promise(() => {}));
 
@@ -65,8 +75,7 @@ describe("CreateAccountForm", () => {
     expect((screen.getByLabelText(/Currency/i) as HTMLSelectElement).disabled).toBe(true);
   });
 
-  it("keeps the currency dropdown usable with just the default code if the currency fetch fails", async () => {
-    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
+  it("keeps the currency dropdown usable with just the default code if the currency fetch fails", async () => {    vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
       success: false,
       error: "Unable to connect to currencies server.",
     });

@@ -46,11 +46,6 @@
   border-color: #a7f3d0;
 }
 
-.credit_card {
-  background-color: #fdf2f0;
-  color: #b55042;
-  border-color: #f8d0cd;
-}
 
 .investment {
   background-color: #f5f3ff;
@@ -64,11 +59,6 @@
   border-color: #fde68a;
 }
 
-.loan {
-  background-color: #fff7ed;
-  color: #c2410c;
-  border-color: #fed7aa;
-}
 
 .other {
   background-color: var(--surface-muted);
