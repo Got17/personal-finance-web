@@ -4,6 +4,12 @@
   gap: 1.5rem;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .mainCard {
   background-color: var(--surface);
   border: 1px solid var(--line);

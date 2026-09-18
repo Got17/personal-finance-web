@@ -19,7 +19,8 @@ import styles from "./CreateTransferModal.module.css";
 interface CreateTransferModalProps {
   readonly isOpen: boolean;
   readonly accounts: Account[];
-  readonly categories: Category[];
+  readonly categories?: Category[];
+  readonly initialSourceAccountId?: string;
   readonly onClose: () => void;
   readonly onTransferCreated: (record: FinancialRecord, feeRecord?: FinancialRecord) => void;
 }
@@ -27,23 +28,35 @@ interface CreateTransferModalProps {
 export function CreateTransferModal(props: Readonly<CreateTransferModalProps>) {
   if (!props.isOpen) return null;
 
-  return <CreateTransferFormModal {...props} />;
+  return (
+    <CreateTransferFormModal
+      key={`${props.initialSourceAccountId || ""}-${props.isOpen}`}
+      {...props}
+    />
+  );
 }
 
 function CreateTransferFormModal({
   isOpen,
   accounts,
-  categories,
+  categories = [],
+  initialSourceAccountId,
   onClose,
   onTransferCreated,
 }: Readonly<CreateTransferModalProps>) {
   const activeAccounts = accounts.filter((a) => a.is_active);
   const activeExpenseCategories = categories.filter((c) => c.is_active && c.type === "expense");
 
-  const [sourceAccountId, setSourceAccountId] = useState(activeAccounts[0]?.id || "");
-  const [destAccountId, setDestAccountId] = useState(
-    activeAccounts[1]?.id || activeAccounts[0]?.id || "",
-  );
+  const initialSrcId =
+    initialSourceAccountId && activeAccounts.some((a) => a.id === initialSourceAccountId)
+      ? initialSourceAccountId
+      : activeAccounts[0]?.id || "";
+
+  const initialDestId =
+    activeAccounts.find((a) => a.id !== initialSrcId)?.id || initialSrcId;
+
+  const [sourceAccountId, setSourceAccountId] = useState(initialSrcId);
+  const [destAccountId, setDestAccountId] = useState(initialDestId);
 
   const [amount, setAmount] = useState("");
   const [destAmount, setDestAmount] = useState("");

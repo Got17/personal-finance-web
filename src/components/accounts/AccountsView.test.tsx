@@ -173,6 +173,36 @@ describe("AccountsView", () => {
     expect(screen.queryByText("Sapphire Preferred")).toBeNull();
     expect(screen.getByText("2 accounts")).toBeTruthy();
   });
+
+  it("renders Transfer button in header when at least 2 active accounts exist, and opens modal on click", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
+
+    const transferHeaderBtn = screen.getByRole("button", { name: /^transfer$/i });
+    expect(transferHeaderBtn).toBeTruthy();
+
+    fireEvent.click(transferHeaderBtn);
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Transfer Funds" })).toBeTruthy();
+  });
+
+  it("renders row transfer action button for active accounts and opens modal with preselected source account", () => {
+    render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
+
+    const rowTransferBtn = screen.getByRole("button", { name: "Transfer from Everyday Checking" });
+    expect(rowTransferBtn).toBeTruthy();
+
+    fireEvent.click(rowTransferBtn);
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Transfer Funds" })).toBeTruthy();
+  });
+
+  it("does not render Transfer button in header when fewer than 2 active accounts exist", () => {
+    render(<AccountsView initialAccounts={[mockChecking]} defaultCurrency="USD" />);
+
+    expect(screen.queryByRole("button", { name: /^transfer$/i })).toBeNull();
+  });
 });
 
 

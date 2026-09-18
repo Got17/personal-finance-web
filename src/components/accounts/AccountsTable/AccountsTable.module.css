@@ -127,6 +127,11 @@
     transform: scale(1.08);
   }
 
+  .transferButton:hover:not(:disabled) {
+    background-color: #f0fdf4;
+    color: #16a34a;
+  }
+
   .editButton:hover:not(:disabled) {
     background-color: #eff6ff;
     color: #2563eb;

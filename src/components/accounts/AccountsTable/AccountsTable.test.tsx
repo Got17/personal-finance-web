@@ -1,4 +1,4 @@
-﻿import { describe, expect, it, vi, afterEach } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { AccountsTable } from "./AccountsTable";
 import { Account } from "@/lib/schemas/accounts";
@@ -54,5 +54,39 @@ describe("AccountsTable", () => {
     const deactivateBtn = screen.getByRole("button", { name: "Deactivate Everyday Checking" });
     fireEvent.click(deactivateBtn);
     expect(onDeactivate).toHaveBeenCalledWith(mockAccount);
+  });
+
+  it("renders onTransfer button when at least 2 active accounts exist and calls handler on click", () => {
+    const onTransfer = vi.fn();
+    const secondAccount: Account = {
+      ...mockAccount,
+      id: "acc-2",
+      name: "Savings Account",
+      type: "savings",
+    };
+
+    render(
+      <AccountsTable
+        accounts={[mockAccount, secondAccount]}
+        onTransfer={onTransfer}
+      />
+    );
+
+    const transferBtn = screen.getByRole("button", { name: "Transfer from Everyday Checking" });
+    fireEvent.click(transferBtn);
+    expect(onTransfer).toHaveBeenCalledWith(mockAccount);
+  });
+
+  it("does not render onTransfer button when fewer than 2 active accounts exist", () => {
+    const onTransfer = vi.fn();
+
+    render(
+      <AccountsTable
+        accounts={[mockAccount]}
+        onTransfer={onTransfer}
+      />
+    );
+
+    expect(screen.queryByRole("button", { name: "Transfer from Everyday Checking" })).toBeNull();
   });
 });

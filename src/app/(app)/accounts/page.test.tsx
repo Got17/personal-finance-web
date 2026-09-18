@@ -4,6 +4,7 @@ import AccountsPage from "./page";
 import * as session from "@/lib/session";
 import * as authService from "@/lib/auth-service";
 import * as accountsService from "@/lib/accounts-service";
+import * as categoriesService from "@/lib/categories-service";
 import * as currenciesActions from "@/app/actions/currencies";
 import { redirect } from "next/navigation";
 import { Account } from "@/lib/schemas/accounts";
@@ -18,6 +19,10 @@ vi.mock("@/lib/auth-service", () => ({
 
 vi.mock("@/lib/accounts-service", () => ({
   getAccounts: vi.fn(),
+}));
+
+vi.mock("@/lib/categories-service", () => ({
+  getCategories: vi.fn(),
 }));
 
 vi.mock("@/app/actions/currencies", () => ({
@@ -46,6 +51,10 @@ describe("AccountsPage", () => {
     vi.mocked(currenciesActions.getCurrenciesAction).mockResolvedValue({
       success: true,
       currencies: [{ code: "USD", name: "US Dollar", symbol: "$", decimal_digits: 2 }],
+    });
+    vi.mocked(categoriesService.getCategories).mockResolvedValue({
+      success: true,
+      categories: [],
     });
   });
 

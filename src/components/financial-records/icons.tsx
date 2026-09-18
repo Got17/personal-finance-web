@@ -106,6 +106,25 @@ export function TrashIcon({ className }: Readonly<IconProps>) {
   );
 }
 
+export function TransferArrowsIcon({ className }: Readonly<IconProps>) {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4" />
+    </svg>
+  );
+}
+
 export function ChevronDownIcon({ className }: Readonly<IconProps>) {
   return (
     <svg

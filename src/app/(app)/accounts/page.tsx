@@ -1,6 +1,7 @@
 import { getSessionToken } from "@/lib/session";
 import { getCurrentUser } from "@/lib/auth-service";
 import { getAccounts } from "@/lib/accounts-service";
+import { getCategories } from "@/lib/categories-service";
 import { redirect } from "next/navigation";
 import { AccountsView } from "@/components/accounts/AccountsView";
 import { AccountTab } from "@/components/accounts/AccountsTable/AccountSubTabs";
@@ -33,7 +34,10 @@ export default async function AccountsPage({ searchParams }: PageProps = {}) {
       ? tabParam
       : AccountTab.All;
 
-  const accountsResult = await getAccounts(token);
+  const [accountsResult, categoriesResult] = await Promise.all([
+    getAccounts(token),
+    getCategories(token),
+  ]);
 
   return (
     <div className={styles.pageContainer}>
@@ -52,6 +56,7 @@ export default async function AccountsPage({ searchParams }: PageProps = {}) {
         <AccountsView
           initialTab={initialTab}
           initialAccounts={accountsResult.accounts}
+          categories={categoriesResult.success ? categoriesResult.categories : []}
           defaultCurrency={userResult.user.base_currency || "LAK"}
         />
       )}
