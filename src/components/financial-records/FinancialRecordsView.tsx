@@ -11,7 +11,7 @@ import {
   WalletIcon,
   getCategoryIcon,
 } from "./icons";
-import { ActionButton } from "@/components/ui/buttons/ActionButton";
+import { RecordActionMenu } from "./RecordActionMenu/RecordActionMenu";
 import { PageHeader } from "@/components/ui/headers/PageHeader";
 import { TransactionSubTabs, TransactionTab } from "./FinancialRecordsTable/TransactionSubTabs";
 import { FinancialRecordsTable } from "./FinancialRecordsTable/FinancialRecordsTable";
@@ -276,17 +276,6 @@ export function FinancialRecordsView({
     setEndDate("");
   };
 
-  const isTransferTab = activeTab === TransactionTab.Transfer;
-  const defaultActionText =
-    activeTab === TransactionTab.Expense
-      ? "Add Expense"
-      : activeTab === TransactionTab.Income
-      ? "Add Income"
-      : "Transfer Funds";
-  const actionButtonText =
-    activeTab === TransactionTab.All ? "Add Transaction" : defaultActionText;
-  const actionVariant = activeTab === TransactionTab.Expense ? "expense" : "forest";
-
   return (
     <div className={styles.container}>
       <PageHeader
@@ -294,36 +283,10 @@ export function FinancialRecordsView({
         title="Transactions"
         subtitle="Record income and spending in the currency it happened."
         action={
-          isTransferTab ? (
-            <ActionButton
-              variant="forest"
-              onClick={() => setIsTransferModalOpen(true)}
-            >
-              Transfer Funds
-            </ActionButton>
-          ) : activeTab === TransactionTab.All ? (
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <ActionButton
-                variant="transaction"
-                onClick={() => setIsTransferModalOpen(true)}
-              >
-                Transfer
-              </ActionButton>
-              <ActionButton
-                variant="forest"
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                Add Transaction
-              </ActionButton>
-            </div>
-          ) : (
-            <ActionButton
-              variant={actionVariant}
-              onClick={() => setIsCreateModalOpen(true)}
-            >
-              {actionButtonText}
-            </ActionButton>
-          )
+          <RecordActionMenu
+            onSelectTransaction={() => setIsCreateModalOpen(true)}
+            onSelectTransfer={() => setIsTransferModalOpen(true)}
+          />
         }
       />
 

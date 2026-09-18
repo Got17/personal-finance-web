@@ -135,7 +135,7 @@ describe("FinancialRecordsView", () => {
     const expenseTab = screen.getByRole("tab", { name: /expenses/i });
     fireEvent.click(expenseTab);
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
 
@@ -143,7 +143,7 @@ describe("FinancialRecordsView", () => {
     const incomeTab = screen.getByRole("tab", { name: /income/i });
     fireEvent.click(incomeTab);
     expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
   });
@@ -206,9 +206,10 @@ describe("FinancialRecordsView", () => {
     // Switch to Expenses tab
     fireEvent.click(screen.getByRole("tab", { name: /expenses/i }));
 
-    // Open modal
-    const addExpenseBtn = screen.getByRole("button", { name: /^add expense$/i });
-    fireEvent.click(addExpenseBtn);
+    // Open modal via New action menu
+    const newBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    fireEvent.click(newBtn);
+    fireEvent.click(screen.getByRole("menuitem", { name: /Transaction/i }));
 
     expect(screen.getByRole("dialog")).toBeTruthy();
 
@@ -412,7 +413,7 @@ describe("FinancialRecordsView", () => {
     );
 
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
     expect(screen.getByText("Supermarket run")).toBeTruthy();
     expect(screen.queryByText("Monthly Paycheck")).toBeNull();
   });
@@ -450,12 +451,12 @@ describe("FinancialRecordsView", () => {
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: /^income/i, selected: true })).toBeTruthy();
     });
-    expect(screen.getByRole("button", { name: /^add income$/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
     expect(screen.getByText("Monthly Paycheck")).toBeTruthy();
     expect(screen.queryByText("Supermarket run")).toBeNull();
   });
 
-  it("opens Add Income modal when clicking Add Income button on Income tab", async () => {
+  it("opens Add Income modal when selecting Transaction from New menu on Income tab", async () => {
     vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
     createFinancialRecordAction.mockResolvedValueOnce({
       success: true,
@@ -486,8 +487,9 @@ describe("FinancialRecordsView", () => {
     const incomeTab = screen.getByRole("tab", { name: /income/i });
     fireEvent.click(incomeTab);
 
-    const addIncomeBtn = screen.getByRole("button", { name: /^add income$/i });
-    fireEvent.click(addIncomeBtn);
+    const newBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    fireEvent.click(newBtn);
+    fireEvent.click(screen.getByRole("menuitem", { name: /Transaction/i }));
 
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByText("Add New Income")).toBeTruthy();

@@ -19,3 +19,7 @@ _Avoid_: Merchant logo, generic icon, category sticker
 **Account Transfer Shortcut**:
 An account-anchored action button located within a specific account's table row that initiates a transfer modal with the source account already pre-populated.
 _Avoid_: Global transfer trigger, header transfer button, floating transfer action
+
+**Unified Record Creation Action**:
+A single top-level `New` action button with an action menu on the Transactions view that allows the user to choose between creating an Income/Expense record or initiating a Transfer, replacing separate unanchored header buttons.
+_Avoid_: Dual header buttons, "Add Transaction" + "Add Transfer" split, verbose action label

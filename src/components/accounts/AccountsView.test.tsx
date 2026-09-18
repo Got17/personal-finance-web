@@ -65,7 +65,7 @@ describe("AccountsView", () => {
 
     expect(screen.getByRole("heading", { name: "Accounts" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /Add new account/i })).toBeTruthy();
-    expect(screen.getByText("Add Account")).toBeTruthy();
+    expect(screen.getByText("New")).toBeTruthy();
 
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
     expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
@@ -108,14 +108,14 @@ describe("AccountsView", () => {
     expect(screen.getByRole("heading", { name: "Deactivate Account" })).toBeTruthy();
   });
 
-  it("filters accounts by sub-tab and updates action button label", () => {
+  it("filters accounts by sub-tab and maintains New action button", () => {
     render(<AccountsView initialAccounts={mockAccounts} defaultCurrency="USD" />);
 
     // Switch to Banking tab
     const bankingTab = screen.getByRole("tab", { name: /Banking/i });
     fireEvent.click(bankingTab);
 
-    expect(screen.getByText("Add Bank Account")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
     expect(screen.getByText("Everyday Checking")).toBeTruthy();
     expect(screen.queryByText("Sapphire Preferred")).toBeNull();
     expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
@@ -124,7 +124,7 @@ describe("AccountsView", () => {
     const creditTab = screen.getByRole("tab", { name: /Credit & Loans/i });
     fireEvent.click(creditTab);
 
-    expect(screen.getByText("Add Credit Account")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
     expect(screen.getByText("Sapphire Preferred")).toBeTruthy();
     expect(screen.queryByText("Everyday Checking")).toBeNull();
     expect(screen.queryByText("Vanguard Brokerage")).toBeNull();
@@ -133,7 +133,7 @@ describe("AccountsView", () => {
     const investmentTab = screen.getByRole("tab", { name: /Investments/i });
     fireEvent.click(investmentTab);
 
-    expect(screen.getByText("Add Investment Account")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
     expect(screen.getByText("Vanguard Brokerage")).toBeTruthy();
     expect(screen.queryByText("Everyday Checking")).toBeNull();
     expect(screen.queryByText("Sapphire Preferred")).toBeNull();

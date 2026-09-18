@@ -123,7 +123,7 @@ describe("TransactionsPage", () => {
     render(pageComponent!);
 
     expect(screen.getByRole("tab", { name: /^expenses/i, selected: true })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /^add expense$/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
   });
 
   it("displays error message when services fail", async () => {

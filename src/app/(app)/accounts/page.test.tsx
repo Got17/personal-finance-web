@@ -119,7 +119,7 @@ describe("AccountsPage", () => {
     render(pageComponent);
 
     expect(screen.getByRole("tab", { name: /Banking/i, selected: true })).toBeTruthy();
-    expect(screen.getByText("Add Bank Account")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Add new account/i }).textContent).toContain("New");
   });
 
   it("displays error banner when fetching accounts fails", async () => {

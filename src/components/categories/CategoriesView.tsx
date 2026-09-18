@@ -55,16 +55,6 @@ function SearchIcon() {
   );
 }
 
-function getActionButtonText(tab: CategoryTab): string {
-  if (tab === CategoryTab.Expense) {
-    return "Add Expense Category";
-  }
-  if (tab === CategoryTab.Income) {
-    return "Add Income Category";
-  }
-  return "Add Category";
-}
-
 export interface CategoriesViewProps {
   readonly initialTab?: CategoryTab;
   readonly initialCategories: Category[];
@@ -180,8 +170,6 @@ export function CategoriesView({
 
   const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
-  const actionButtonText = getActionButtonText(activeTab);
-
   const actionVariant = activeTab === CategoryTab.Expense ? "expense" : "forest";
 
   const statusOptions: FilterDropdownOption[] = [
@@ -202,7 +190,7 @@ export function CategoriesView({
             onClick={() => setIsCreateModalOpen(true)}
             aria-label="Add new category"
           >
-            {actionButtonText}
+            New
           </ActionButton>
         }
       />

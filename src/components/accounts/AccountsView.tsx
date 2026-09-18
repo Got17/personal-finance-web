@@ -56,19 +56,6 @@ function getInitialTab(initialTab?: AccountTab): AccountTab {
   return AccountTab.All;
 }
 
-function getActionButtonText(tab: AccountTab): string {
-  if (tab === AccountTab.Banking) {
-    return "Add Bank Account";
-  }
-  if (tab === AccountTab.Credit) {
-    return "Add Credit Account";
-  }
-  if (tab === AccountTab.Investment) {
-    return "Add Investment Account";
-  }
-  return "Add Account";
-}
-
 function getDefaultCreateType(tab: AccountTab): AccountType {
   if (tab === AccountTab.Credit) {
     return "credit_card";
@@ -209,8 +196,6 @@ export function AccountsView({
 
   const hasSecondaryFilters = statusFilter !== StatusFilter.All || searchQuery.trim() !== "";
 
-  const actionButtonText = getActionButtonText(activeTab);
-
   const actionVariant = activeTab === AccountTab.Credit ? "expense" : "forest";
 
   const defaultCreateType: AccountType = getDefaultCreateType(activeTab);
@@ -233,7 +218,7 @@ export function AccountsView({
             onClick={() => setIsCreateModalOpen(true)}
             aria-label="Add new account"
           >
-            {actionButtonText}
+            New
           </ActionButton>
         }
       />

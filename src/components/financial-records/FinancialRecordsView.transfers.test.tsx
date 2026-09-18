@@ -166,11 +166,11 @@ describe("FinancialRecordsView transfers", () => {
     expect(screen.getByText("Vacation exchange")).toBeTruthy();
     expect(screen.queryByText("FX Wire Fee")).toBeNull();
 
-    // Primary action button updates to Transfer Funds
-    expect(screen.getByRole("button", { name: /Transfer Funds/i })).toBeTruthy();
+    // Primary action button remains New
+    expect(screen.getByRole("button", { name: /Add new transaction or transfer/i })).toBeTruthy();
   });
 
-  it("opens CreateTransferModal when clicking Transfer button", () => {
+  it("opens CreateTransferModal when selecting Transfer from the New action menu", () => {
     render(
       <FinancialRecordsView
         initialRecords={mockRecords}
@@ -179,9 +179,13 @@ describe("FinancialRecordsView transfers", () => {
       />
     );
 
-    // On "All" tab, click "Transfer" action button
-    const transferBtn = screen.getByRole("button", { name: /^Transfer$/i });
-    fireEvent.click(transferBtn);
+    // Click "New" action button to open menu
+    const newBtn = screen.getByRole("button", { name: /Add new transaction or transfer/i });
+    fireEvent.click(newBtn);
+
+    // Click "Transfer" menu item
+    const transferMenuItem = screen.getByRole("menuitem", { name: /Transfer/i });
+    fireEvent.click(transferMenuItem);
 
     expect(screen.getByTestId("create-transfer-modal")).toBeTruthy();
   });
