@@ -53,6 +53,24 @@ export function convertCurrencyAmount(
 }
 
 /**
+ * Converts a destination minor-unit amount to source minor units given an exchange rate.
+ * Uses exact decimal-power scaling inverse aligned with the backend math/Pow10 calculation.
+ */
+export function convertCurrencyAmountInverse(
+  fromCurrency: string,
+  toCurrency: string,
+  destMinor: number,
+  rate: number,
+): number {
+  if (rate <= 0) return 0;
+  const fromDigits = getCurrencyDecimals(fromCurrency);
+  const toDigits = getCurrencyDecimals(toCurrency);
+  const powerDiff = toDigits - fromDigits;
+  const converted = destMinor / (rate * Math.pow(10, powerDiff));
+  return Math.round(converted);
+}
+
+/**
  * Validates that destinationMinor equals expected converted minor units from rate.
  */
 export function validateTransferPrecision(

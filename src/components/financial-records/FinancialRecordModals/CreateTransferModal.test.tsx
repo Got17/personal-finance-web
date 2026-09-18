@@ -248,7 +248,15 @@ describe("CreateTransferModal", () => {
     });
   });
 
-  it("shows validation feedback when cross-currency precision does not match", async () => {
+  it("supports two-way input: entering destination amount automatically computes source amount", async () => {
+    vi.mocked(actions.getFXQuoteAction).mockResolvedValue({
+      success: true,
+      rate: 0.92,
+      from_currency: "USD",
+      to_currency: "EUR",
+      date: "2026-09-17T12:00:00.000Z",
+    });
+
     render(
       <CreateTransferModal
         isOpen={true}
@@ -263,25 +271,81 @@ describe("CreateTransferModal", () => {
       target: { value: "acc-eur-1" },
     });
 
-    fireEvent.change(screen.getByLabelText(/Source Amount/i), {
-      target: { value: "100" },
-    });
+    const destInput = await screen.findByLabelText(/Destination Amount/i);
+    const sourceInput = screen.getByLabelText(/Source Amount/i);
 
     fireEvent.click(screen.getByLabelText(/Override exchange rate manually/i));
     fireEvent.change(screen.getByLabelText(/^Rate Override/i), {
       target: { value: "0.92" },
     });
 
-    fireEvent.change(screen.getByLabelText(/Destination Amount/i), {
-      target: { value: "95.00" },
+    // Enter 92.00 EUR in destination -> 92 / 0.92 = 100 USD in source
+    fireEvent.change(destInput, { target: { value: "92.00" } });
+    expect((sourceInput as HTMLInputElement).value).toBe("100");
+  });
+
+  it("reconciles destination amount on blur to ensure exact forward precision match", async () => {
+    render(
+      <CreateTransferModal
+        isOpen={true}
+        accounts={mockAccounts}
+        categories={mockCategories}
+        onClose={onClose}
+        onTransferCreated={onTransferCreated}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText(/Destination Account/i), {
+      target: { value: "acc-eur-1" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Transfer Funds/i }));
+    const destInput = await screen.findByLabelText(/Destination Amount/i);
+    const sourceInput = screen.getByLabelText(/Source Amount/i);
 
-    expect(
-      await screen.findByText(/Destination amount does not match rate conversion precision/i)
-    ).toBeTruthy();
-    expect(actions.createTransferAction).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByLabelText(/Override exchange rate manually/i));
+    fireEvent.change(screen.getByLabelText(/^Rate Override/i), {
+      target: { value: "1.2673" },
+    });
+
+    // Enter 50.00 EUR: 50.00 / 1.2673 = 39.4539... -> 39.45 USD (3945 minor)
+    fireEvent.change(destInput, { target: { value: "50.00" } });
+    expect((sourceInput as HTMLInputElement).value).toBe("39.45");
+
+    // On blur, forward convert: 3945 * 1.2673 = 4999.4985 -> 4999 minor = 49.99 EUR
+    fireEvent.blur(destInput);
+    expect((destInput as HTMLInputElement).value).toBe("49.99");
+  });
+
+  it("updates source amount when rate changes and destination was last edited", async () => {
+    render(
+      <CreateTransferModal
+        isOpen={true}
+        accounts={mockAccounts}
+        categories={mockCategories}
+        onClose={onClose}
+        onTransferCreated={onTransferCreated}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText(/Destination Account/i), {
+      target: { value: "acc-eur-1" },
+    });
+
+    const destInput = await screen.findByLabelText(/Destination Amount/i);
+    const sourceInput = screen.getByLabelText(/Source Amount/i);
+
+    fireEvent.click(screen.getByLabelText(/Override exchange rate manually/i));
+    const rateInput = screen.getByLabelText(/^Rate Override/i);
+    fireEvent.change(rateInput, { target: { value: "1" } });
+
+    // Type into destination
+    fireEvent.change(destInput, { target: { value: "90.00" } });
+    expect((sourceInput as HTMLInputElement).value).toBe("90");
+
+    // Now change rate override to 0.5: 90 / 0.5 = 180 USD
+    fireEvent.change(rateInput, { target: { value: "0.5" } });
+    expect((sourceInput as HTMLInputElement).value).toBe("180");
+    expect((destInput as HTMLInputElement).value).toBe("90.00");
   });
 
   it("allows adding a separately categorized transfer fee expense and explains it counts as spending", async () => {

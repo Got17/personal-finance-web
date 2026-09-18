@@ -15,6 +15,7 @@ interface TransferCrossCurrencySectionProps {
   readonly isPending: boolean;
   readonly onSourceAmountChange: (val: string) => void;
   readonly onDestAmountChange: (val: string) => void;
+  readonly onDestBlur?: () => void;
   readonly onRateChange: (val: string) => void;
   readonly onToggleManualOverride: (override: boolean) => void;
 }
@@ -30,6 +31,7 @@ export function TransferCrossCurrencySection({
   isPending,
   onSourceAmountChange,
   onDestAmountChange,
+  onDestBlur,
   onRateChange,
   onToggleManualOverride,
 }: Readonly<TransferCrossCurrencySectionProps>) {
@@ -65,6 +67,7 @@ export function TransferCrossCurrencySection({
             className={modalStyles.input}
             value={destAmount}
             onChange={(e) => onDestAmountChange(e.target.value)}
+            onBlur={onDestBlur}
             disabled={isPending}
             required
           />

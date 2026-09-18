@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition, type SubmitEvent } from "react";
+import { useEffect, useRef, useState, useTransition, type SubmitEvent } from "react";
 import { Modal } from "@/components/ui/modals/Modal";
 import { Account } from "@/lib/schemas/accounts";
 import { Category } from "@/lib/schemas/categories";
@@ -8,6 +8,7 @@ import { FinancialRecord } from "@/lib/schemas/financial-records";
 import { createTransferAction, getFXQuoteAction } from "@/app/actions/financial-records";
 import {
   convertCurrencyAmount,
+  convertCurrencyAmountInverse,
   fromMinorUnits,
   toMinorUnits,
   validateTransferPrecision,
@@ -61,9 +62,15 @@ function CreateTransferFormModal({
 
   const [amount, setAmount] = useState("");
   const [destAmount, setDestAmount] = useState("");
+  const [lastEditedField, setLastEditedField] = useState<"source" | "dest">("source");
   const [rate, setRate] = useState<number>(1);
   const [rateSource, setRateSource] = useState<"provider" | "manual_override">("provider");
   const [isManualOverride, setIsManualOverride] = useState(false);
+
+  const amountsRef = useRef({ amount, destAmount, lastEditedField });
+  useEffect(() => {
+    amountsRef.current = { amount, destAmount, lastEditedField };
+  });
 
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [note, setNote] = useState("");
@@ -96,10 +103,21 @@ function CreateTransferFormModal({
         if (res.success && res.rate > 0) {
           setRate(res.rate);
           setRateSource("provider");
-          if (amount) {
-            const srcMinor = toMinorUnits(Number(amount), sourceCurrency);
-            const convertedMinor = convertCurrencyAmount(sourceCurrency, destCurrency, srcMinor, res.rate);
-            setDestAmount(fromMinorUnits(convertedMinor, destCurrency).toString());
+          const { amount: currentSrc, destAmount: currentDest, lastEditedField: currentLast } = amountsRef.current;
+          if (currentLast === "dest" && currentDest) {
+            const numDest = Number(currentDest);
+            if (Number.isFinite(numDest) && numDest > 0) {
+              const destMinor = toMinorUnits(numDest, destCurrency);
+              const srcMinor = convertCurrencyAmountInverse(sourceCurrency, destCurrency, destMinor, res.rate);
+              setAmount(fromMinorUnits(srcMinor, sourceCurrency).toString());
+            }
+          } else if (currentSrc) {
+            const numSrc = Number(currentSrc);
+            if (Number.isFinite(numSrc) && numSrc > 0) {
+              const srcMinor = toMinorUnits(numSrc, sourceCurrency);
+              const convertedMinor = convertCurrencyAmount(sourceCurrency, destCurrency, srcMinor, res.rate);
+              setDestAmount(fromMinorUnits(convertedMinor, destCurrency).toString());
+            }
           }
         }
       })
@@ -108,12 +126,17 @@ function CreateTransferFormModal({
     return () => {
       isMounted = false;
     };
-  }, [isOpen, isCrossCurrency, sourceCurrency, destCurrency, date, isManualOverride, amount]);
+  }, [isOpen, isCrossCurrency, sourceCurrency, destCurrency, date, isManualOverride]);
 
   const handleSourceAmountChange = (val: string) => {
     setAmount(val);
+    setLastEditedField("source");
     if (!isCrossCurrency) {
       setDestAmount(val);
+      return;
+    }
+    if (!val.trim()) {
+      setDestAmount("");
       return;
     }
     const num = Number(val);
@@ -124,13 +147,54 @@ function CreateTransferFormModal({
     }
   };
 
+  const handleDestAmountChange = (val: string) => {
+    setDestAmount(val);
+    setLastEditedField("dest");
+    if (!isCrossCurrency) {
+      setAmount(val);
+      return;
+    }
+    if (!val.trim()) {
+      setAmount("");
+      return;
+    }
+    const num = Number(val);
+    if (Number.isFinite(num) && num > 0 && rate > 0) {
+      const destMinor = toMinorUnits(num, destCurrency);
+      const srcMinor = convertCurrencyAmountInverse(sourceCurrency, destCurrency, destMinor, rate);
+      setAmount(fromMinorUnits(srcMinor, sourceCurrency).toString());
+    }
+  };
+
+  const handleDestBlur = () => {
+    if (!isCrossCurrency || !amount || rate <= 0) return;
+    const numSrc = Number(amount);
+    if (Number.isFinite(numSrc) && numSrc > 0) {
+      const srcMinor = toMinorUnits(numSrc, sourceCurrency);
+      const forwardDestMinor = convertCurrencyAmount(sourceCurrency, destCurrency, srcMinor, rate);
+      setDestAmount(fromMinorUnits(forwardDestMinor, destCurrency).toString());
+    }
+  };
+
   const handleRateChange = (val: string) => {
     const numRate = Number(val);
     setRate(numRate);
-    if (amount && Number.isFinite(numRate) && numRate > 0) {
-      const srcMinor = toMinorUnits(Number(amount), sourceCurrency);
-      const convertedMinor = convertCurrencyAmount(sourceCurrency, destCurrency, srcMinor, numRate);
-      setDestAmount(fromMinorUnits(convertedMinor, destCurrency).toString());
+    if (!Number.isFinite(numRate) || numRate <= 0) return;
+
+    if (lastEditedField === "dest" && destAmount) {
+      const numDest = Number(destAmount);
+      if (Number.isFinite(numDest) && numDest > 0) {
+        const destMinor = toMinorUnits(numDest, destCurrency);
+        const srcMinor = convertCurrencyAmountInverse(sourceCurrency, destCurrency, destMinor, numRate);
+        setAmount(fromMinorUnits(srcMinor, sourceCurrency).toString());
+      }
+    } else if (amount) {
+      const numSrc = Number(amount);
+      if (Number.isFinite(numSrc) && numSrc > 0) {
+        const srcMinor = toMinorUnits(numSrc, sourceCurrency);
+        const convertedMinor = convertCurrencyAmount(sourceCurrency, destCurrency, srcMinor, numRate);
+        setDestAmount(fromMinorUnits(convertedMinor, destCurrency).toString());
+      }
     }
   };
 
@@ -158,9 +222,17 @@ function CreateTransferFormModal({
     setError(null);
 
     const sourceMinor = toMinorUnits(Number(amount), sourceCurrency);
-    const destinationMinor = isCrossCurrency
+    let destinationMinor = isCrossCurrency
       ? toMinorUnits(Number(destAmount), destCurrency)
       : sourceMinor;
+
+    if (isCrossCurrency && rate > 0 && Number.isFinite(sourceMinor) && sourceMinor > 0) {
+      const expectedMinor = convertCurrencyAmount(sourceCurrency, destCurrency, sourceMinor, rate);
+      if (destinationMinor !== expectedMinor) {
+        destinationMinor = expectedMinor;
+        setDestAmount(fromMinorUnits(expectedMinor, destCurrency).toString());
+      }
+    }
 
     const validationMsg = validateInputs(sourceMinor, destinationMinor);
     if (validationMsg) {
@@ -278,7 +350,8 @@ function CreateTransferFormModal({
             isManualOverride={isManualOverride}
             isPending={isPending}
             onSourceAmountChange={handleSourceAmountChange}
-            onDestAmountChange={setDestAmount}
+            onDestAmountChange={handleDestAmountChange}
+            onDestBlur={handleDestBlur}
             onRateChange={handleRateChange}
             onToggleManualOverride={(override) => {
               setIsManualOverride(override);

@@ -5,6 +5,7 @@ import {
   validateTransferPrecision,
   toMinorUnits,
   fromMinorUnits,
+  convertCurrencyAmountInverse,
 } from "./currency-utils";
 
 describe("currency-utils", () => {
@@ -83,6 +84,33 @@ describe("currency-utils", () => {
 
     it("returns false when destination minor does not match rate precision", () => {
       expect(validateTransferPrecision("USD", "EUR", 10000, 9190, 0.92)).toBe(false);
+    });
+  });
+
+  describe("convertCurrencyAmountInverse", () => {
+    it("converts destination minor to source minor at rate", () => {
+      // 92.00 EUR (9200 minor) at 0.92 rate -> 10000 minor USD ($100.00)
+      const source = convertCurrencyAmountInverse("USD", "EUR", 9200, 0.92);
+      expect(source).toBe(10000);
+    });
+
+    it("converts destination USD to source GBP correctly", () => {
+      // 50.00 USD (5000 minor) at rate 1.2673 (1 GBP = 1.2673 USD)
+      // 5000 / 1.2673 = 3945.3957... -> 3945 minor GBP (£39.45)
+      const source = convertCurrencyAmountInverse("GBP", "USD", 5000, 1.2673);
+      expect(source).toBe(3945);
+    });
+
+    it("converts LAK to USD inverse", () => {
+      // 10.00 USD (1000 minor). Rate 22000 USD to LAK.
+      // 220000 minor LAK at 22000 -> 1000 minor USD
+      const source = convertCurrencyAmountInverse("USD", "LAK", 220000, 22000);
+      expect(source).toBe(1000);
+    });
+
+    it("returns 0 for invalid non-positive rate", () => {
+      expect(convertCurrencyAmountInverse("USD", "EUR", 5000, 0)).toBe(0);
+      expect(convertCurrencyAmountInverse("USD", "EUR", 5000, -1)).toBe(0);
     });
   });
 });
